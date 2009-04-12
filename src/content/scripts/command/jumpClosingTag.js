@@ -8,9 +8,10 @@ $self.controller = function() {
 
 	this.trigger = function(e) {
 
-		var scimoz = ko.views.manager.currentView.scimoz;
+		var view = ko.views.manager.currentView,
+			scimoz = view.scimoz;
 
-		// Move caret while if no selection and remaining tabstops
+		// Move caret if no selection and remaining tabstops
 		if (scimoz.anchor !== scimoz.currentPos ||
 			(view.document.hasTabstopInsertionTable && view.document.getTabstopInsertionTable({}).length > 0))
 			return false;
