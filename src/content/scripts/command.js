@@ -137,8 +137,8 @@ $self.controller.prototype.onKeyUp = function(callback) {
 
 		var keyUpCallback = function() {
 
-			callback();
-			topView.removeEventListener('keyup', keyUpCallback, true);
+			try { callback(); }
+			finally { topView.removeEventListener('keyup', keyUpCallback, true); }
 		};
 
 		topView.addEventListener('keyup', keyUpCallback, true);

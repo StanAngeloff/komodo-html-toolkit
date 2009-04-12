@@ -35,8 +35,7 @@ if (typeof (extensions) === 'undefined')
 
 	$toolkit.include = function(namespace, includeOnce) {
 
-		var loader = Cc['@mozilla.org/moz/jssubscript-loader;1'].getService(Ci.mozIJSSubScriptLoader),
-			l10n = Cc['@mozilla.org/intl/stringbundle;1'].getService(Ci.nsIStringBundleService).createBundle('chrome://htmltoolkit/locale/htmltoolkit.properties');
+		var loader = Cc['@mozilla.org/moz/jssubscript-loader;1'].getService(Ci.mozIJSSubScriptLoader);
 
 		// Split parent namespace and basename of package
 		var namespaceParts = namespace.split('.'),
@@ -71,9 +70,8 @@ if (typeof (extensions) === 'undefined')
 			scriptNamespace[scriptName]['$self'] = scriptNamespace[scriptName];
 		}
 
-		try { loader.loadSubScript('chrome://htmltoolkit/content/scripts/' + (parentNamespace.length ? parentNamespace.join('/') + '/' : '') + scriptName + '.js',
-								   scriptNamespace[scriptName]); }
-		catch (e) { ko.dialogs.alert(l10n.GetStringFromName('uncaughtException'), e); }
+		loader.loadSubScript('chrome://htmltoolkit/content/scripts/' + (parentNamespace.length ? parentNamespace.join('/') + '/' : '') + scriptName + '.js',
+							 scriptNamespace[scriptName]);
 
 		return scriptNamespace[scriptName];
 	};
@@ -84,6 +82,44 @@ if (typeof (extensions) === 'undefined')
 
 		consoleService.logStringMessage(message);
 	};
+
+	$toolkit.trapExceptions = function(obj, bound) {
+
+		if (obj && typeof (obj) === 'object') {
+
+			for (var key in obj) {
+
+				if (typeof (obj[key]) === 'function' && ! obj[key].__trapped__) {
+
+					(function(fn) {
+
+						obj[key] = function() {
+
+							try { return fn.apply(bound || obj, arguments || []); }
+							catch (e) {
+
+								var l10n = Cc['@mozilla.org/intl/stringbundle;1'].getService(Ci.nsIStringBundleService)
+																				 .createBundle('chrome://htmltoolkit/locale/htmltoolkit.properties');
+
+								ko.dialogs.alert(l10n.GetStringFromName('uncaughtException'), e);
+
+								throw e;
+							}
+
+							return null;
+						};
+
+					})(obj[key]);
+
+					obj[key].__trapped__ = true;
+
+				} else
+					$toolkit.trapExceptions(obj[key], bound || obj);
+			}
+		}
+	};
+
+	$toolkit.trapExceptions($toolkit);
 
 	$toolkit.include('command.nonBreakingSpace');
 

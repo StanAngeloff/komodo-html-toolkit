@@ -4,6 +4,8 @@ $self.controller = function() {
 
 	// Call parent's constructor
 	$toolkit.command.controller.apply(this, ['nonBreakingSpace', 'Shift+Space']);
+
+	$toolkit.trapExceptions(this);
 };
 
 $self.controller.prototype = $toolkit.command.controller.prototype;

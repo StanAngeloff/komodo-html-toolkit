@@ -1,3 +1,1 @@
 - Move all regular expressions to a new toolkit namespace
-
-- Remove TRY...CATCH blocks and wrap each method in @handler

@@ -2,7 +2,7 @@ $toolkit.include('htmlUtils');
 
 var $F = $toolkit.htmlUtils.fixTagCase;
 
-const LIBRARY_SNIPPETS_MAP = {
+var LIBRARY_SNIPPETS_MAP = {
 	'ul': function(tagName) { return
 			  '<' + tagName + '>\n'
 			+     '\t<' + $F('li', tagName) + '>[[%tabstop0]]</' + $F('li', tagName) + '>\n'
@@ -23,7 +23,7 @@ const LIBRARY_SNIPPETS_MAP = {
 		  }
 };
 
-const LIBRARY_NEWLINE_MAP = {
+var LIBRARY_NEWLINE_MAP = {
 
 	'@li': function(tagBefore, tagAfter) { return
 			   '\n<' + $F('li', tagBefore) + '>[[%tabstop0]]</' + $F('li', tagBefore) + '>';
