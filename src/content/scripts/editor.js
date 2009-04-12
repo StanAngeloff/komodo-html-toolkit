@@ -115,3 +115,8 @@ $self.findTagAfter = function(position, scimoz) {
 
 	return null;
 };
+
+$self.invalidate = function() {
+
+	ko.views.manager.currentView.scimoz.colourise(0, ko.views.manager.currentView.scimoz.length);
+};

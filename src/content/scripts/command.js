@@ -100,7 +100,7 @@ $self.dispatcher = {
 	process: function(key, e) {
 
 		for (var i = 0; i < $self.dispatcher.commands.length; i ++)
-			if ($self.dispatcher.commands[i].key === key)
+			if ($self.dispatcher.commands[i].keys.indexOf(key) >= 0)
 				if ($self.dispatcher.commands[i].canExecute(e))
 					$self.dispatcher.commands[i].trigger(e);
 	}
@@ -111,50 +111,46 @@ $toolkit.trapExceptions($self.dispatcher);
 $toolkit.events.onLoad($self.dispatcher.register);
 $toolkit.events.onUnload($self.dispatcher.unregister);
 
-$self.controller = function(command, key) {
+$self.controller = function(command, keys) {
 
 	this.command = command;
-	this.key = key;
+	this.keys = (typeof (keys) === 'string' ? [keys] : keys);
 
-	this.register();
-};
+	this.register = function() {
 
-$self.controller.prototype.constructor = $self.controller;
+		$self.dispatcher.addCommand(this);
+	};
 
-$self.controller.prototype.register = function() {
+	this.unregister = function() {
 
-	$self.dispatcher.addCommand(this);
-};
+		$self.dispatcher.removeCommand(this);
+	};
 
-$self.controller.prototype.unregister = function() {
+	this.canExecute = function(e) {
 
-	$self.dispatcher.removeCommand(this);
-};
-
-$self.controller.prototype.canExecute = function(e) {
-
-	// Most commands cannot execute outside an editor
-	return (ko.views.manager &&
-			ko.views.manager.currentView &&
-			ko.views.manager.currentView.getAttribute('type') === 'editor' &&
-			ko.views.manager.currentView.document &&
-			ko.views.manager.currentView.scimoz);
-}
-
-$self.controller.prototype.onKeyUp = function(callback) {
-
-	var topView = ko.views.manager.topView;
-	if (topView) {
-
-		var keyUpCallback = function() {
-
-			try { callback(); }
-			finally { topView.removeEventListener('keyup', keyUpCallback, true); }
-		};
-
-		topView.addEventListener('keyup', keyUpCallback, true);
+		// Most commands cannot execute outside an editor
+		return (ko.views.manager &&
+				ko.views.manager.currentView &&
+				ko.views.manager.currentView.getAttribute('type') === 'editor' &&
+				ko.views.manager.currentView.document &&
+				ko.views.manager.currentView.scimoz);
 	}
-};
 
-/** @abstract **/
-$self.controller.prototype.trigger = function(e) {};
+	this.onKeyUp = function(callback) {
+
+		var topView = ko.views.manager.topView;
+		if (topView) {
+
+			var keyUpCallback = function() {
+
+				try { callback(); }
+				finally { topView.removeEventListener('keyup', keyUpCallback, true); }
+			};
+
+			topView.addEventListener('keyup', keyUpCallback, true);
+		}
+	};
+
+	/** @abstract **/
+	this.trigger = function(e) {};
+};

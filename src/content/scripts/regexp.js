@@ -1,7 +1,11 @@
 var REGEXP_PATTERNS = {
 
 	'Tag': '<([a-zA-Z0-9\\-\\_\\:\\/]+)\\b',
+	'TagWord': '[<a-zA-Z0-9\\-\\_\\:]+>?',
+	'OpeningTag': '<([a-zA-Z0-9\\-\\_\\:]+)',
 	'ClosedTag': '<\\/([a-zA-Z0-9\\-\\_\\:]+)>',
+	'Operator': '[\\/\\-\\?\\#]+\\s*',
+	'OutOfTag': '.<',
 	'Whitespace': '\\s+'
 };
 

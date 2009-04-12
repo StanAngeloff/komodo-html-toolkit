@@ -3,47 +3,47 @@ $toolkit.include('htmlUtils');
 var $F = $toolkit.htmlUtils.fixTagCase;
 
 var LIBRARY_SNIPPETS_MAP = {
-	'ul': function(tagName) { return
+	'ul': function(tagName) { return (
 			  '<' + tagName + '>\n'
 			+     '\t<' + $F('li', tagName) + '>[[%tabstop0]]</' + $F('li', tagName) + '>\n'
-			+ '</' + tagName + '>';
+			+ '</' + tagName + '>');
 		  },
 
-	'ol': function(tagName) { return
+	'ol': function(tagName) { return (
 			  '<' + tagName + ' type="[[%tabstop1:1]]">\n'
 			+     '\t<' + $F('li', tagName) + '>[[%tabstop0]]</' + $F('li', tagName) + '>\n'
-			+ '</' + tagName + '>';
+			+ '</' + tagName + '>');
 		  },
 
-	'dl': function(tagName) { return
+	'dl': function(tagName) { return (
 			  '<' + tagName + '>\n'
 			+     '\t<' + $F('dt', tagName) + '>[[%tabstop1]]</' + $F('dt', tagName) + '>\n'
 			+     '\t<' + $F('dd', tagName) + '>[[%tabstop0]]</' + $F('dd', tagName) + '>\n'
-			+ '</' + tagName + '>';
+			+ '</' + tagName + '>');
 		  }
 };
 
 var LIBRARY_NEWLINE_MAP = {
 
-	'@li': function(tagBefore, tagAfter) { return
-			   '\n<' + $F('li', tagBefore) + '>[[%tabstop0]]</' + $F('li', tagBefore) + '>';
+	'@li': function(tagBefore, tagAfter) { return (
+			   '\n<' + $F('li', tagBefore) + '>[[%tabstop0]]</' + $F('li', tagBefore) + '>');
 		   },
 
 		'</li><li>': '@li',
 		'</li></ul>': '@li',
 		'</li></ol>': '@li',
 
-	'@td': function(tagBefore, tagAfter) { return
-			   '\n<' + $F('td', tagBefore) + '>[[%tabstop0]]</' + $F('td', tagBefore) + '>';
+	'@td': function(tagBefore, tagAfter) { return (
+			   '\n<' + $F('td', tagBefore) + '>[[%tabstop0]]</' + $F('td', tagBefore) + '>');
 		   },
 
 		'</td><td>': '@td',
 		'</td></tr>': '@td',
 
-	'@tr': function(tagBefore, tagAfter) { return
+	'@tr': function(tagBefore, tagAfter) { return (
 			   '\n<' + $F('tr', tagBefore) + '>'
 			 +     '\n\t[[%tabstop0]]'
-			 + '\n</' + $F('tr', tagBefore) + '>';
+			 + '\n</' + $F('tr', tagBefore) + '>');
 		   },
 
 		'</tr><tr>': '@tr',
@@ -52,15 +52,15 @@ var LIBRARY_NEWLINE_MAP = {
 		'</tr></tfoot>': '@tr',
 		'</tr></table>': '@tr',
 
-	'@dt': function(tagBefore, tagAfter) { return
+	'@dt': function(tagBefore, tagAfter) { return (
 			   '\n\n<' + $F('dt', tagBefore) + '>[[%tabstop1]]</' + $F('dt', tagBefore) + '>'
-			 + '\n<' + $F('dd', tagBefore) + '>[[%tabstop0]]</' + $F('dd', tagBefore) + '>';
+			 + '\n<' + $F('dd', tagBefore) + '>[[%tabstop0]]</' + $F('dd', tagBefore) + '>');
 		   },
 
 		'</dd></dl>': '@dt',
 
-	'@dd': function(tagBefore, tagAfter) { return
-			   '\n<' + $F('dd', tagBefore) + '>[[%tabstop0]]</' + $F('dd', tagBefore) + '>';
+	'@dd': function(tagBefore, tagAfter) { return (
+			   '\n<' + $F('dd', tagBefore) + '>[[%tabstop0]]</' + $F('dd', tagBefore) + '>');
 		   },
 
 		'</dt><dd>': '@dd',
@@ -84,7 +84,7 @@ $self.getTagSnippet = function(tagName) {
 
 	var tagNameLower = tagName.toLowerCase();
 	if (tagNameLower in LIBRARY_SNIPPETS_MAP)
-		return $toolkit.library.createSnippet(LIBRARY_SNIPPETS_MAP[tagNameLower](tagName));
+		return $self.createSnippet(LIBRARY_SNIPPETS_MAP[tagNameLower](tagName));
 
 	return null;
 };

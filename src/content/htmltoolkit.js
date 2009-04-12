@@ -62,7 +62,7 @@ if (typeof (extensions) === 'undefined')
 		} else {
 
 			// Set up references back to the toolkit and a circular reference to the namespace itself
-			scriptNamespace[scriptName] = {};
+			scriptNamespace[scriptName] = { __namespace__: namespace };
 
 			scriptNamespace[scriptName]['$toolkit'] = $toolkit;
 			scriptNamespace[scriptName]['$log'] = $toolkit.log;
@@ -122,6 +122,14 @@ if (typeof (extensions) === 'undefined')
 	$toolkit.trapExceptions($toolkit);
 
 	$toolkit.include('command.jumpClosingTag');
+	$toolkit.include('command.newLine');
+	$toolkit.include('command.nonBreakingSpace');
+	$toolkit.include('command.tagComplete');
+	$toolkit.include('command.tagWord');
 
-	new $toolkit.command.jumpClosingTag.controller();
+	new $toolkit.command.jumpClosingTag.controller().register();
+	new $toolkit.command.newLine.controller().register();
+	new $toolkit.command.nonBreakingSpace.controller().register();
+	new $toolkit.command.tagComplete.controller().register();
+	new $toolkit.command.tagWord.controller().register();
 })();
