@@ -1,3 +1,6 @@
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+
 var EVENTS_LOAD_CHAIN = [];
 var EVENTS_UNLOAD_CHAIN = [];
 
@@ -38,5 +41,17 @@ $self.callUnloadChain = function() {
 	EVENTS_HAS_UNLOADED = true;
 };
 
-window.addEventListener('load', $self.callLoadChain, false);
+$self.observerService = Cc['@mozilla.org/observer-service;1'].getService(Ci.nsIObserverService);
+$self.observer = {
+
+	observe: function(subject, topic, data) {
+
+		$self.observerService.removeObserver($self.observer, 'komodo-ui-started');
+
+		$self.callLoadChain();
+	}
+};
+
+// Listen for komodo-ui-started instead of window.load to ensure all managers are set up
+$self.observerService.addObserver($self.observer, 'komodo-ui-started', false);
 window.addEventListener('unload', $self.callUnloadChain, false);

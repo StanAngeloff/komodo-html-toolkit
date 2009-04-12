@@ -1,115 +1,126 @@
-xtk.include("controller");
-
 $toolkit.include('events');
 
-const XUL_NS = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul';
+$self.destroy = function() {
 
-// TODO: Need another set of command - keyboard interception, not controller
-
-$self.controller = function(cmd) {
-
-	this.setCommand(cmd);
-
-	var $instance = this;
-
-	$toolkit.events.onLoad(function() {
-
-		$instance.registerCommand();
-		window.controllers.appendController($instance);
-	});
-
-	$toolkit.events.onUnload(function() { window.controllers.removeController($instance); });
+	if ($self.dispatcher)
+		$self.dispatcher.unregister();
 };
 
-$self.controller.prototype = new xtk.Controller();
+$self.dispatcher = {
+
+	isRegistered: false,
+	commands: [],
+	event2key: function() { return null; },
+
+	register: function() {
+
+		var topView = ko.views.manager.topView;
+		if (topView) {
+
+			topView.addEventListener('keypress', $self.dispatcher.onKeyPress, true);
+
+			$self.dispatcher.isRegistered = true;
+
+			// HACK: Komodo does not recognise Shift+Space so we need to hack
+			// it in the most dumb way possible
+			var keybindingManager = new ko.keybindings.manager(),
+				code = keybindingManager.event2keylabel.toString();
+
+			eval('$self.dispatcher.event2key = ' + code.replace('normCharCode >=', 'normCharCode == 32 || normCharCode >=') + ';');
+
+			return true;
+		}
+
+		return false;
+	},
+
+	unregister: function() {
+
+		if ($self.dispatcher.isRegistered) {
+
+			var topView = ko.views.manager.topView;
+			if (topView) {
+
+				topView.removeEventListener('keypress', $self.dispatcher.onKeyPress, true);
+
+				$self.dispatcher.isRegistered = false;
+
+				return true;
+			}
+		}
+
+		return false;
+	},
+
+	addCommand: function(obj) {
+
+		var index = $self.dispatcher.indexOfCommand(obj);
+		if (index < 0) {
+
+			$self.dispatcher.commands.push(obj);
+			return $self.dispatcher.commands.length;
+		}
+
+		return index;
+	},
+
+	removeCommand: function(obj) {
+
+		var index = $self.dispatcher.indexOfCommand(obj);
+		if (index >= 0)
+			return $self.dispatcher.commands.splice(index, 1);
+
+		return null;
+	},
+
+	indexOfCommand: function(obj) {
+
+		for (var index = 0; index < $self.dispatcher.commands.length; index ++)
+			if ($self.dispatcher.commands[index] === obj)
+				return index;
+
+		return -1;
+	},
+
+	onKeyPress: function(e) {
+
+		if ($self.dispatcher.commands.length)
+			$self.dispatcher.process($self.dispatcher.event2key(e, true), e);
+	},
+
+	process: function(key, e) {
+
+		for (var i = 0; i < $self.dispatcher.commands.length; i ++)
+			if ($self.dispatcher.commands[i].key === key)
+				if ($self.dispatcher.commands[i].canExecute(e))
+					$self.dispatcher.commands[i].trigger(e);
+	}
+};
+
+$toolkit.events.onLoad($self.dispatcher.register);
+$toolkit.events.onUnload($self.dispatcher.unregister);
+
+$self.controller = function(command, key) {
+
+	this.command = command;
+	this.key = key;
+
+	this.register();
+};
+
 $self.controller.prototype.constructor = $self.controller;
 
-$self.controller.prototype.onEvent = function(e) {};
+$self.controller.prototype.register = function() {
 
-$self.controller.prototype.supportsCommand = function(cmd) {
-
-	$log('supportsCommand: ' + cmd + ' = ' + (cmd === this.commandName));
-	if (cmd === this.commandName)
-		return true;
-
-	return false;
+	$self.dispatcher.addCommand(this);
 };
 
-$self.controller.prototype.isCommandEnabled = function(cmd) {
+$self.controller.prototype.unregister = function() {
 
-	$log('isCommandEnabled: ' + cmd + ' = ' + (cmd === this.commandName));
-	if (cmd === this.commandName)
-		return this.canExecute();
-
-	return false;
+	$self.dispatcher.removeCommand(this);
 };
 
-$self.controller.prototype.doCommand = function(cmd) {
-
-	$log('doCommand: ' + cmd + ' = ' + (cmd === this.commandName));
-	if (cmd === this.commandName)
-		this.trigger();
-};
-
-$self.controller.prototype.setCommand = function(cmd) {
-
-	this.command = cmd;
-
-	this.commandId = 'HTMLToolkit:' + this.command;
-	this.commandName = 'cmd_htmlToolkit_' + this.command;
-	this.commandKey = 'key_' + this.commandName;
-
-	// If a broadcaster is already registered, update accordingly
-	if (this.broadcasterEl) {
-
-		this.broadcasterEl.setAttribute('key', this.commandKey);
-		this.broadcasterEl.setAttribute('oncommand', 'ko.commands.doCommand("' + this.commandName + '");');
-	};
-};
-
-$self.controller.prototype.registerCommand = function() {
-
-	var globalSet = document.getElementById('broadcasterset_global');
-	if ( ! globalSet)
-		throw "FATAL: Cannot find Komodo's global broadcaster set.";
-
-	// Make sure we are not registered already
-	if (globalSet.getElementsByAttribute('id', this.commandId).length > 0)
-		return true;
-
-	// Register command as new broadcaster
-	var broadcasterEl = document.createElementNS(XUL_NS, 'broadcaster');
-
-	broadcasterEl.setAttribute('id', this.commandId);
-	broadcasterEl.setAttribute('key', this.commandKey);
-	broadcasterEl.setAttribute('desc', 'Hello: World');
-	// TODO: event ?
-	broadcasterEl.setAttribute('oncommand', 'ko.commands.doCommand("' + this.commandName + '");');
-
-	globalSet.appendChild(broadcasterEl);
-
-	this.broadcasterEl = broadcasterEl;
-
-	// Register default keybinding
-	var wideKeyset = document.getElementById('widekeyset');
-	if ( ! wideKeyset)
-		throw "FATAL: Cannot find Komod's keybinding set.";
-
-	var keyEl = document.createElementNS(XUL_NS, 'key');
-
-	keyEl.setAttribute('id', this.commandKey);
-	keyEl.setAttribute('command', this.commandId);
-	keyEl.setAttribute('modifiers', 'accel,shift');
-	keyEl.setAttribute('key', 'D');
-
-	wideKeyset.appendChild(keyEl);
-
-	this.keyEl = keyEl;
-
-	return true;
-};
-
-$self.controller.prototype.canExecute = function() {
+$self.controller.prototype.canExecute = function(e) {
 
 	// Most commands cannot execute outside an editor
 	return (ko.views.manager &&
@@ -119,5 +130,20 @@ $self.controller.prototype.canExecute = function() {
 			ko.views.manager.currentView.scimoz);
 }
 
+$self.controller.prototype.onKeyUp = function(callback) {
+
+	var topView = ko.views.manager.topView;
+	if (topView) {
+
+		var keyUpCallback = function() {
+
+			callback();
+			topView.removeEventListener('keyup', keyUpCallback, true);
+		};
+
+		topView.addEventListener('keyup', keyUpCallback, true);
+	}
+};
+
 /** @abstract **/
-$self.controller.prototype.trigger = function() {};
+$self.controller.prototype.trigger = function(e) {};

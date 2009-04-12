@@ -27,13 +27,10 @@ $self.fixTagCase = function(tagName, referenceName) {
 	for (var i = 0; i < tagName.length; i ++) {
 
 		referenceChar = referenceName.charAt(i);
-		// Test for uppercase
 		if (referenceChar.toLowerCase() !== referenceChar)
 			tagCased += tagName.charAt(i).toUpperCase();
-		// Test for lowercase
 		else if (referenceChar.toUpperCase() !== referenceChar)
 			tagCased += tagName.charAt(i).toLowerCase();
-		// Case remains unchanged
 		else
 			tagCased += tagName.charAt(i);
 	}

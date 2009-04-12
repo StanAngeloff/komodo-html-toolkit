@@ -71,7 +71,6 @@ if (typeof (extensions) === 'undefined')
 			scriptNamespace[scriptName]['$self'] = scriptNamespace[scriptName];
 		}
 
-		// Capture all errors in subscript and throw an alert box
 		try { loader.loadSubScript('chrome://htmltoolkit/content/scripts/' + (parentNamespace.length ? parentNamespace.join('/') + '/' : '') + scriptName + '.js',
 								   scriptNamespace[scriptName]); }
 		catch (e) { ko.dialogs.alert(l10n.GetStringFromName('uncaughtException'), e); }
