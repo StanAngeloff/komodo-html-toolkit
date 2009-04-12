@@ -26,7 +26,16 @@ $self.dispatcher = {
 			var keybindingManager = new ko.keybindings.manager(),
 				code = keybindingManager.event2keylabel.toString();
 
-			eval('$self.dispatcher.event2key = ' + code.replace('normCharCode >=', 'normCharCode == 32 || normCharCode >=') + ';');
+			code = code.replace('var data', 'var _log = { info: function(e) { $log(e); }, '
+													   + 'warn: function(e) { $log(e); }, '
+													   + 'error: function(e) { $log(e); }, '
+													   + 'exception: function(e) { $log(e); } }; var data');
+			code = code.replace('var data', 'var VKCodes = ko.keybindings.VKCodes; var data');
+			code = code.replace('var data', 'var VKModifiers = ko.keybindings.VKModifiers; var data');
+
+			code = code.replace('normCharCode >=', 'normCharCode == 32 || normCharCode >=');
+
+			eval('$self.dispatcher.event2key = ' + code + ';');
 
 			return true;
 		}
@@ -96,6 +105,8 @@ $self.dispatcher = {
 					$self.dispatcher.commands[i].trigger(e);
 	}
 };
+
+$toolkit.trapExceptions($self.dispatcher);
 
 $toolkit.events.onLoad($self.dispatcher.register);
 $toolkit.events.onUnload($self.dispatcher.unregister);

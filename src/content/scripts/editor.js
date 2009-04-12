@@ -1,3 +1,5 @@
+$toolkit.include('regexp');
+
 $self.findTagBefore = function(position, scimoz) {
 
 	var positionChar, positionStyle,
@@ -21,11 +23,10 @@ $self.findTagBefore = function(position, scimoz) {
 
 				if (closeTagFound) {
 
-					var tagComplete = scimoz.getTextRange(prevPosition, position),
-						tagName;
+					var tagComplete = scimoz.getTextRange(prevPosition, position);
 
-					[, tagName] = tagComplete.match(/^<([a-zA-Z0-9\-\_\:\/]+)\b/);
-					return tagName;
+					if ($toolkit.regexp.matchTag(tagComplete, '^'))
+						return $toolkit.regexp.lastMatches[1];
 				}
 				// Fail if we encounter an opening tag first
 				else
@@ -43,7 +44,7 @@ $self.findTagBefore = function(position, scimoz) {
 				closeTagFound = true;
 
 		// Process non-whitespace characters
-		} else if ( ! closeTagFound && ! /\s+/.test(String.fromCharCode(positionChar))) {
+		} else if ( ! closeTagFound && ! $toolkit.regexp.matchWhitespace(String.fromCharCode(positionChar))) {
 
 			positionStyle = scimoz.getStyleAt(prevPosition);
 
@@ -83,11 +84,10 @@ $self.findTagAfter = function(position, scimoz) {
 					return null;
 				else {
 
-					var tagComplete = scimoz.getTextRange(openTagPosition, nextPosition),
-						tagName;
+					var tagComplete = scimoz.getTextRange(openTagPosition, nextPosition);
 
-					[, tagName] = tagComplete.match(/^<([a-zA-Z0-9\-\_\:\/]+)\b/);
-					return tagName;
+					if ($toolkit.regexp.matchTag(tagComplete, '^'))
+						return $toolkit.regexp.lastMatches[1];
 				}
 			}
 
@@ -102,7 +102,7 @@ $self.findTagAfter = function(position, scimoz) {
 				openTagPosition = nextPosition;
 
 		// Process non-whitespace characters
-		} else if (openTagPosition < 0 && ! /\s+/.test(String.fromCharCode(positionChar))) {
+		} else if (openTagPosition < 0 && ! $toolkit.regexp.matchWhitespace(String.fromCharCode(positionChar))) {
 
 			positionStyle = scimoz.getStyleAt(nextPosition);
 

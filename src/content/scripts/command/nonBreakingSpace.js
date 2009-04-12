@@ -16,7 +16,7 @@ $self.controller.prototype.canExecuteBase = $self.controller.prototype.canExecut
 $self.controller.prototype.canExecute = function(e) {
 
 	if (this.canExecuteBase(e))
-		return ('HTML' === ko.views.manager.currentView.document.subLanguage);
+		return (['HTML', 'XML'].indexOf(ko.views.manager.currentView.document.subLanguage) >= 0);
 
 	return false;
 };

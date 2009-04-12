@@ -121,7 +121,7 @@ if (typeof (extensions) === 'undefined')
 
 	$toolkit.trapExceptions($toolkit);
 
-	$toolkit.include('command.nonBreakingSpace');
+	$toolkit.include('command.jumpClosingTag');
 
-	new $toolkit.command.nonBreakingSpace.controller();
+	new $toolkit.command.jumpClosingTag.controller();
 })();

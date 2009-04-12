@@ -16,6 +16,7 @@ $self.isBlockTag = function(tagName) {
 
 $self.fixTagCase = function(tagName, referenceName) {
 
+	// Strip leading slash e.g. when passed as /tagName
 	referenceName = referenceName.replace(/^\/?/, '');
 	// If our reference tag is shorter, expand its last character
 	while (referenceName.length < tagName.length)
