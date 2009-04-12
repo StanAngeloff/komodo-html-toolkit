@@ -1,2 +1,1 @@
-- Move all regular expressions to a new toolkit namespace
 - jumpClosingTag support in empty elements

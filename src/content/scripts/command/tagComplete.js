@@ -101,7 +101,7 @@ $self.controller = function() {
 							view.document.subLanguage === 'HTML' &&
 							$toolkit.htmlUtils.isEmptyTag(tagNameLower)) {
 
-							tagComplete = (/\s+$/.test(lineBuffer) ? '' : ' ') + '/';
+							tagComplete = ($toolkit.regexp.matchWhitespace(lineBuffer, null, '$') ? '' : ' ') + '/';
 							tagPosition = editorPosition;
 							isTagEmpty = true;
 						}
@@ -161,7 +161,8 @@ $self.controller = function() {
 							}
 						}
 
-						// TODO: $self.undoAnchor = editorPosition;
+						if (typeof ($toolkit.command.undo) === 'object')
+							$toolkit.command.undo.anchor = editorPosition;
 
 						// If autocomplete is visible, close it to prevent autocomplete on selected item
 						if (scimoz.autoCActive()) scimoz.autoCCancel();
@@ -184,14 +185,18 @@ $self.controller = function() {
 						} else
 							scimoz.insertText(tagPosition, tagComplete);
 
-						// TODO: $self.undoPositon = Math.max(scimoz.anchor, scimoz.currentPos);
-						// If we have indicators within the document, we can't undo
-						if (view.document.hasTabstopInsertionTable &&
-							view.document.getTabstopInsertionTable({}).length > 0 &&
-							scimoz.anchor !== scimoz.currentPos)
-							; // TODO: $self.canUndo = false;
-						else
-							; // TODO: $self.canUndo = true;
+						if (typeof ($toolkit.command.undo) === 'object') {
+
+							$toolkit.command.undo.position = Math.max(scimoz.anchor, scimoz.currentPos);
+
+							// If we have indicators within the document, we can't undo
+							if (view.document.hasTabstopInsertionTable &&
+								view.document.getTabstopInsertionTable({}).length > 0 &&
+								scimoz.anchor !== scimoz.currentPos)
+								$toolkit.command.undo.undoable = false;
+							else
+								$toolkit.command.undo.undoable = true;
+						}
 
 					} finally {
 

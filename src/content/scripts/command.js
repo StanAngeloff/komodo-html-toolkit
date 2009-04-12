@@ -93,6 +93,10 @@ $self.dispatcher = {
 
 	onKeyPress: function(e) {
 
+		// We cannot undo if the user makes changes to the buffer
+		if (typeof ($toolkit.command.undo) === 'object')
+			if (e.charCode > 0) $toolkit.command.undo.undoable = false;
+
 		if ($self.dispatcher.commands.length)
 			$self.dispatcher.process($self.dispatcher.event2key(e, true), e);
 	},

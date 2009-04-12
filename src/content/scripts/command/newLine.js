@@ -34,7 +34,8 @@ $self.controller = function() {
 
 				scimoz.beginUndoAction();
 
-				// TODO: $self.undoAnchor = Math.min(scimoz.anchor, scimoz.currentPos);
+				if (typeof ($toolkit.command.undo) === 'object')
+					$toolkit.command.undo.anchor = Math.min(scimoz.anchor, scimoz.currentPos);
 
 				Snippet_insert(newLineSnippet);
 
@@ -42,15 +43,19 @@ $self.controller = function() {
 				e.preventDefault();
 				e.stopPropagation();
 
-				// TODO: $self.undoPositon = Math.max(scimoz.anchor, scimoz.currentPos);
+				if (typeof ($toolkit.command.undo) === 'object')
+					$toolkit.command.undo.position = Math.max(scimoz.anchor, scimoz.currentPos);
 
 				// If we have indicators within the document, we can't undo
-				if (view.document.hasTabstopInsertionTable &&
-					view.document.getTabstopInsertionTable({}).length > 0 &&
-					scimoz.currentPos !== scimoz.anchor)
-					; // TODP: $self.canUndo = false;
-				else
-					; // TODP: $self.canUndo = true;
+				if (typeof ($toolkit.command.undo) === 'object') {
+
+					if (view.document.hasTabstopInsertionTable &&
+						view.document.getTabstopInsertionTable({}).length > 0 &&
+						scimoz.currentPos !== scimoz.anchor)
+						$toolkit.command.undo.undoable = false;
+					else
+						$toolkit.command.undo.undoable = true;
+				}
 
 				return true;
 

@@ -126,10 +126,12 @@ if (typeof (extensions) === 'undefined')
 	$toolkit.include('command.nonBreakingSpace');
 	$toolkit.include('command.tagComplete');
 	$toolkit.include('command.tagWord');
+	$toolkit.include('command.undo');
 
 	new $toolkit.command.jumpClosingTag.controller().register();
 	new $toolkit.command.newLine.controller().register();
 	new $toolkit.command.nonBreakingSpace.controller().register();
 	new $toolkit.command.tagComplete.controller().register();
 	new $toolkit.command.tagWord.controller().register();
+	new $toolkit.command.undo.controller().register();
 })();

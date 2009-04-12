@@ -84,8 +84,9 @@ $self.controller = function() {
 				e.preventUndo = true;
 				new $toolkit.command.tagComplete.controller().trigger(e);
 
-				// TODO: if ($self.canUndo)
-				// TODO: 	$self.undoAnchor = undoAnchor;
+				if (typeof ($toolkit.command.undo) === 'object' &&
+					$toolkit.command.undo.undoable)
+					$toolkit.command.undo.anchor = undoAnchor;
 
 			} finally { scimoz.endUndoAction(); }
 		}
