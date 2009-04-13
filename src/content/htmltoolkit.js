@@ -30,7 +30,6 @@ if (typeof (extensions) === 'undefined')
 	const Cc = Components.classes;
 	const Ci = Components.interfaces;
 
-	/** @version 0.6 **/
 	var $toolkit = extensions.htmlToolkit || (extensions.htmlToolkit = {});
 
 	$toolkit.include = function(namespace, includeOnce) {

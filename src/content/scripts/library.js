@@ -1,72 +1,12 @@
 $toolkit.include('htmlUtils');
+$toolkit.include('io');
+$toolkit.include('regexp');
 
-var $F = $toolkit.htmlUtils.fixTagCase;
+var LIBRARY_SNIPPETS_MAP = null,
+	LIBRARY_SNIPPETS_PATH = 'content/library/tagSnippets';
 
-var LIBRARY_SNIPPETS_MAP = {
-	'ul': function(tagName) { return (
-			  '<' + tagName + '>\n'
-			+     '\t<' + $F('li', tagName) + '>[[%tabstop0]]</' + $F('li', tagName) + '>\n'
-			+ '</' + tagName + '>');
-		  },
-
-	'ol': function(tagName) { return (
-			  '<' + tagName + ' type="[[%tabstop1:1]]">\n'
-			+     '\t<' + $F('li', tagName) + '>[[%tabstop0]]</' + $F('li', tagName) + '>\n'
-			+ '</' + tagName + '>');
-		  },
-
-	'dl': function(tagName) { return (
-			  '<' + tagName + '>\n'
-			+     '\t<' + $F('dt', tagName) + '>[[%tabstop1]]</' + $F('dt', tagName) + '>\n'
-			+     '\t<' + $F('dd', tagName) + '>[[%tabstop0]]</' + $F('dd', tagName) + '>\n'
-			+ '</' + tagName + '>');
-		  }
-};
-
-var LIBRARY_NEWLINE_MAP = {
-
-	'@li': function(tagBefore, tagAfter) { return (
-			   '\n<' + $F('li', tagBefore) + '>[[%tabstop0]]</' + $F('li', tagBefore) + '>');
-		   },
-
-		'</li><li>': '@li',
-		'</li></ul>': '@li',
-		'</li></ol>': '@li',
-
-	'@td': function(tagBefore, tagAfter) { return (
-			   '\n<' + $F('td', tagBefore) + '>[[%tabstop0]]</' + $F('td', tagBefore) + '>');
-		   },
-
-		'</td><td>': '@td',
-		'</td></tr>': '@td',
-
-	'@tr': function(tagBefore, tagAfter) { return (
-			   '\n<' + $F('tr', tagBefore) + '>'
-			 +     '\n\t[[%tabstop0]]'
-			 + '\n</' + $F('tr', tagBefore) + '>');
-		   },
-
-		'</tr><tr>': '@tr',
-		'</tr></thead>': '@tr',
-		'</tr></tbody>': '@tr',
-		'</tr></tfoot>': '@tr',
-		'</tr></table>': '@tr',
-
-	'@dt': function(tagBefore, tagAfter) { return (
-			   '\n\n<' + $F('dt', tagBefore) + '>[[%tabstop1]]</' + $F('dt', tagBefore) + '>'
-			 + '\n<' + $F('dd', tagBefore) + '>[[%tabstop0]]</' + $F('dd', tagBefore) + '>');
-		   },
-
-		'</dd></dl>': '@dt',
-
-	'@dd': function(tagBefore, tagAfter) { return (
-			   '\n<' + $F('dd', tagBefore) + '>[[%tabstop0]]</' + $F('dd', tagBefore) + '>');
-		   },
-
-		'</dt><dd>': '@dd',
-		'</dd><dd>': '@dd',
-		'</dd><dt>': '@dd'
-};
+var LIBRARY_NEWLINE_MAP = null,
+	LIBRARY_NEWLINE_PATH = 'content/library/newlineSnippets';
 
 $self.createSnippet = function(value, name, parentName, setSelection, indentRelative) {
 
@@ -82,6 +22,9 @@ $self.createSnippet = function(value, name, parentName, setSelection, indentRela
 
 $self.getTagSnippet = function(tagName) {
 
+	if (LIBRARY_SNIPPETS_MAP === null)
+		$self.initializeTagSnippets();
+
 	var tagNameLower = tagName.toLowerCase();
 	if (tagNameLower in LIBRARY_SNIPPETS_MAP)
 		return $self.createSnippet(LIBRARY_SNIPPETS_MAP[tagNameLower](tagName));
@@ -90,6 +33,9 @@ $self.getTagSnippet = function(tagName) {
 };
 
 $self.getNewLineSnippet = function(tagBefore, tagAfter) {
+
+	if (LIBRARY_NEWLINE_MAP === null)
+		$self.initializeNewlineSnippets();
 
 	var tagPairLower = ('<' + tagBefore + '><' + tagAfter + '>').toLowerCase();
 	if (tagPairLower in LIBRARY_NEWLINE_MAP) {
@@ -103,4 +49,53 @@ $self.getNewLineSnippet = function(tagBefore, tagAfter) {
 	}
 
 	return null;
+};
+
+$self.initializeTagSnippets = function() {
+
+	LIBRARY_SNIPPETS_MAP = {};
+	$self.initializeSnippetsFromURI(LIBRARY_SNIPPETS_PATH, LIBRARY_SNIPPETS_MAP);
+};
+
+$self.initializeNewlineSnippets = function() {
+
+	LIBRARY_NEWLINE_MAP = {};
+	$self.initializeSnippetsFromURI(LIBRARY_NEWLINE_PATH, LIBRARY_NEWLINE_MAP, '@');
+
+	var whereFiles = $toolkit.io.findFilesInURI(LIBRARY_NEWLINE_PATH, '*.where', true);
+
+	for (var i = 0; i < whereFiles.length; i ++) {
+
+		var snippetName = whereFiles[i].leafName.replace(/\.where$/, ''),
+			whereLines = $toolkit.io.readLinesFromFile(whereFiles[i]);
+
+		if ( ! (whereLines && whereLines.length))
+			continue;
+
+		for (var j = 0; j < whereLines.length; j ++)
+			LIBRARY_NEWLINE_MAP[whereLines[j]] = '@' + snippetName;
+	}
+};
+
+$self.initializeSnippetsFromURI = function(path, map, prepend) {
+
+	var snippetFiles = $toolkit.io.findFilesInURI(path, '*.html', true);
+
+	for (var i = 0; i < snippetFiles.length; i ++) {
+
+		var snippetName = snippetFiles[i].leafName.replace(/\.html$/, ''),
+			snippetContents = $toolkit.io.readEntireFile(snippetFiles[i]);
+
+		if ( ! snippetContents)
+			continue;
+
+		map[(prepend || '') + snippetName] = (function(contents) {
+			return function(tagName) {
+				return contents.replace(new RegExp($toolkit.regexp.patterns['SnippetTag'], 'g'),
+										function(entireMatch, tagBefore, tagMatch, tagAfter) {
+					return tagBefore + $toolkit.htmlUtils.fixTagCase(tagMatch, tagName) + tagAfter;
+				});
+			};
+		})(snippetContents);
+	}
 };

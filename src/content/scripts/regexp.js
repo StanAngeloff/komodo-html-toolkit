@@ -1,9 +1,10 @@
-var REGEXP_PATTERNS = {
+$self.patterns = {
 
 	'Tag': '<([a-zA-Z0-9\\-\\_\\:\\/]+)\\b',
 	'TagWord': '[<a-zA-Z0-9\\-\\_\\:]+>?',
 	'OpeningTag': '<([a-zA-Z0-9\\-\\_\\:]+)',
 	'ClosedTag': '<\\/([a-zA-Z0-9\\-\\_\\:]+)>',
+	'SnippetTag': '(<[\\/]?)html\\:([a-zA-Z0-9\\-\\_\\:]+)(\\b)',
 	'Operator': '[\\/\\-\\?\\#]+\\s*',
 	'OutOfTag': '.<',
 	'Whitespace': '\\s+'
@@ -18,9 +19,9 @@ $self.match = function(regexp, context, prepend, append) {
 	return ($self.lastMatches && $self.lastMatches.length);
 };
 
-for (var pattern in REGEXP_PATTERNS)
+for (var pattern in $self.patterns)
 	$self['match' + pattern] = (function(regexp) {
 		return function(context, prepend, append) {
 			return $self.match(regexp, context, prepend, append);
 		};
-	})(REGEXP_PATTERNS[pattern]);
+	})($self.patterns[pattern]);
