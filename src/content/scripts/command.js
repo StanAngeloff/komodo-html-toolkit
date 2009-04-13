@@ -1,4 +1,11 @@
+xtk.include('controller');
+
 $toolkit.include('events');
+
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+
+const XUL_NS = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul';
 
 $self.destroy = function() {
 
@@ -115,19 +122,105 @@ $toolkit.trapExceptions($self.dispatcher);
 $toolkit.events.onLoad($self.dispatcher.register);
 $toolkit.events.onUnload($self.dispatcher.unregister);
 
-$self.controller = function(command, keys) {
+$self.controller = function(command, keys, allowChange) {
 
 	this.command = command;
+
+	this.commandName = 'cmd_htmlToolkit_' + this.command;
+	this.commandKey = 'key_' + this.commandName;
+
 	this.keys = (typeof (keys) === 'string' ? [keys] : keys);
+	this.allowChange = !! allowChange;
 
 	this.register = function() {
 
-		$self.dispatcher.addCommand(this);
+		if (this.allowChange) {
+
+			var $instance = this;
+			$toolkit.events.onLoad(function() {
+
+				$instance.registerCommand();
+				window.controllers.appendController($instance);
+			});
+
+		} else
+			$self.dispatcher.addCommand(this);
+	};
+
+	this.registerCommand = function() {
+
+		var globalSet = document.getElementById('broadcasterset_global');
+		if ( ! globalSet)
+			throw "FATAL: Cannot find Komodo's global broadcaster set.";
+
+		// Make sure we are not registered already
+		if (globalSet.getElementsByAttribute('id', this.commandName).length > 0)
+			return true;
+
+		// Register command as new broadcaster
+		var broadcasterEl = document.createElementNS(XUL_NS, 'broadcaster');
+
+		broadcasterEl.setAttribute('id', this.commandName);
+		broadcasterEl.setAttribute('key', this.commandKey);
+		broadcasterEl.setAttribute('oncommand', 'ko.commands.doCommandAsync("' + this.commandName + '", event);');
+
+		var l10n = Cc['@mozilla.org/intl/stringbundle;1'].getService(Ci.nsIStringBundleService)
+														 .createBundle('chrome://htmltoolkit/locale/command.properties');
+
+		broadcasterEl.setAttribute('desc', l10n.GetStringFromName('command.' + this.command));
+
+		globalSet.appendChild(broadcasterEl);
+
+		// Make sure the User has not overridden the default key bindings
+		var existingKeyBindings = gKeybindingMgr.command2keysequences(this.commandName);
+		if (existingKeyBindings.length < 1) {
+
+			var defaultKeyBindings = {};
+
+			defaultKeyBindings[this.commandName] = this.keys;
+			gKeybindingMgr._add_keybinding_sequences(defaultKeyBindings);
+		}
+
+		return true;
 	};
 
 	this.unregister = function() {
 
-		$self.dispatcher.removeCommand(this);
+		if (this.allowChange) {
+
+			var $instance = this;
+			$toolkit.events.onUnload(function() { window.controllers.removeController($instance); });
+		}
+		else
+			$self.dispatcher.removeCommand(this);
+	};
+
+	this.supportsCommand = function(command) {
+
+		if (command === this.commandName)
+			return true;
+
+		return false;
+	};
+
+	this.isCommandEnabled = function(command) {
+
+		if (command === this.commandName)
+			return this.canExecute(false);
+
+		return false;
+	};
+
+	this.doCommand = function(command) {
+
+		if (this.isCommandEnabled(command)) {
+
+			var $a = [];
+			for (var i = 1; i < arguments.length; i ++)
+				$a.push(arguments[i]);
+
+			this.trigger.apply(this, $a);
+		}
 	};
 
 	this.canExecute = function(e) {

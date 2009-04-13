@@ -4,10 +4,12 @@ $toolkit.include('editor');
 
 $self.controller = function() {
 
-	// Call parent's constructor
-	$toolkit.command.language.controller.apply(this, ['tagWord', ['Ctrl+.', 'Meta+.'], ['HTML', 'XML']]);
+	var isMac = (navigator.platform.indexOf('Mac') >= 0);
 
-	this.trigger = function(e) {
+	// Call parent's constructor
+	$toolkit.command.language.controller.apply(this, ['tagWord', (isMac ? 'Meta' : 'Ctrl') + '+.', ['HTML', 'XML'], true]);
+
+	this.trigger = function() {
 
 		var view = ko.views.manager.currentView,
 			scimoz = view.scimoz,
@@ -81,8 +83,10 @@ $self.controller = function() {
 					abbreviation = abbreviation.substr(0, abbreviation.length - 1);
 				}
 
-				e.preventUndo = true;
-				new $toolkit.command.tagComplete.controller().trigger(e);
+				var $e = { preventUndo: true,
+						   preventDefault: function() {},
+						   stopPropagation: function() {} };
+				new $toolkit.command.tagComplete.controller().trigger($e);
 
 				if (typeof ($toolkit.command.undo) === 'object' &&
 					$toolkit.command.undo.undoable)

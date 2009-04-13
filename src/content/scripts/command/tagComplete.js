@@ -81,8 +81,9 @@ $self.controller = function() {
 
 							abbrevSnippet = ko.abbrev.findAbbrevSnippet(tagName) ||
 											ko.abbrev.findAbbrevSnippet(tagNameLower);
-							// Check in pre-defined snippets next if no match
-							if ( ! abbrevSnippet)
+							// Check in pre-defined HTML snippets next if no match
+							if ( ! abbrevSnippet &&
+								view.document.subLanguage === 'HTML')
 								abbrevSnippet = $toolkit.library.getTagSnippet(tagName) ||
 												$toolkit.library.getTagSnippet(tagNameLower);
 

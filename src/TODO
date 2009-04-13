@@ -1,1 +1,5 @@
-- jumpClosingTag support in empty elements
+- Menu items for tagWord.js and wrap(Block/Lines)InTag.js
+
+- Don't assign default key bindings if User has cleared all sequences
+
+- Clearing a key binding does not take effect until Komodo is restarted

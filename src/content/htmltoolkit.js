@@ -120,17 +120,17 @@ if (typeof (extensions) === 'undefined')
 
 	$toolkit.trapExceptions($toolkit);
 
-	$toolkit.include('command.jumpClosingTag');
-	$toolkit.include('command.newLine');
-	$toolkit.include('command.nonBreakingSpace');
-	$toolkit.include('command.tagComplete');
-	$toolkit.include('command.tagWord');
-	$toolkit.include('command.undo');
+	$toolkit.include('io');
 
-	new $toolkit.command.jumpClosingTag.controller().register();
-	new $toolkit.command.newLine.controller().register();
-	new $toolkit.command.nonBreakingSpace.controller().register();
-	new $toolkit.command.tagComplete.controller().register();
-	new $toolkit.command.tagWord.controller().register();
-	new $toolkit.command.undo.controller().register();
+	var commandFiles = $toolkit.io.findFilesInURI('content/scripts/command', '*.js', true);
+	if (commandFiles && commandFiles.length)
+		commandFiles.forEach(function(commandEntry) {
+
+			var commandName = commandEntry.leafName.replace(/\.js$/, '');
+
+			$toolkit.include('command.' + commandName);
+
+			if ( ! $toolkit.command[commandName].skipCommand)
+				new $toolkit.command[commandName].controller().register();
+		});
 })();

@@ -2,12 +2,14 @@ $toolkit.include('command');
 
 var LANGUAGE_SUPPORTED_LIST = ['HTML', 'XML', 'XUL', 'MXML', 'RXML', 'PHP', 'Smarty', 'Django', 'RHTML'];
 
+$self.skipCommand = true;
+
 $self.controller = function() {
 
-	this.supportedLanguages = (arguments.length > 2 ? (typeof (arguments[2]) === 'string' ? [arguments[2]] : arguments[2]) : []);
+	this.supportedLanguages = (arguments[2] ? (typeof (arguments[2]) === 'string' ? [arguments[2]] : arguments[2]) : []);
 
 	// Call parent's constructor
-	$toolkit.command.controller.apply(this, [arguments[0], arguments[1]]);
+	$toolkit.command.controller.apply(this, [arguments[0], arguments[1], arguments[3]]);
 
 	this.canExecuteBase = this.canExecute;
 
