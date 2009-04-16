@@ -72,7 +72,22 @@ if (typeof (extensions) === 'undefined')
 		loader.loadSubScript('chrome://htmltoolkit/content/scripts/' + (parentNamespace.length ? parentNamespace.join('/') + '/' : '') + scriptName + '.js',
 							 scriptNamespace[scriptName]);
 
+		if ('initialize' in scriptNamespace[scriptName])
+			scriptNamespace[scriptName]['initialize']();
+
 		return scriptNamespace[scriptName];
+	};
+
+	var _l10nCache = {};
+	$toolkit.l10n = function(bundle) {
+
+		if (bundle in _l10nCache)
+			return _l10nCache[bundle];
+
+		_l10nCache[bundle] = Cc['@mozilla.org/intl/stringbundle;1'].getService(Ci.nsIStringBundleService)
+																   .createBundle('chrome://htmltoolkit/locale/' + bundle + '.properties');
+
+		return _l10nCache[bundle];
 	};
 
 	$toolkit.log = function(message) {
@@ -97,10 +112,7 @@ if (typeof (extensions) === 'undefined')
 							try { return fn.apply(bound || obj, arguments || []); }
 							catch (e) {
 
-								var l10n = Cc['@mozilla.org/intl/stringbundle;1'].getService(Ci.nsIStringBundleService)
-																				 .createBundle('chrome://htmltoolkit/locale/htmltoolkit.properties');
-
-								ko.dialogs.alert(l10n.GetStringFromName('uncaughtException'), e);
+								ko.dialogs.alert($toolkit.l10n('htmltoolkit').GetStringFromName('uncaughtException'), e);
 
 								throw e;
 							}
@@ -120,6 +132,7 @@ if (typeof (extensions) === 'undefined')
 
 	$toolkit.trapExceptions($toolkit);
 
+
 	$toolkit.include('io');
 
 	var commandFiles = $toolkit.io.findFilesInURI('content/scripts/command', '*.js', true);
@@ -130,7 +143,7 @@ if (typeof (extensions) === 'undefined')
 
 			$toolkit.include('command.' + commandName);
 
-			if ( ! $toolkit.command[commandName].skipCommand)
-				new $toolkit.command[commandName].controller().register();
+			if ($toolkit.command[commandName].registerAll)
+				$toolkit.command[commandName].registerAll();
 		});
 })();

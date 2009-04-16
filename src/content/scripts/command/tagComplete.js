@@ -93,7 +93,7 @@ $self.controller = function() {
 								tagComplete = abbrevSnippet;
 								isTagAbbreviation = true;
 
-								ko.statusBar.AddMessage("Abbreviation '" + tagName + "' (" + tagComplete.parent.name + ") was found.", 'abbrev', 2500, false);
+								ko.statusBar.AddMessage($toolkit.l10n('command').formatStringFromName('command.tagComplete.snippetFound', [tagName, tagComplete.parent.name], 2), 'htmltoolkit', 2500, true);
 							}
 						}
 
@@ -215,4 +215,9 @@ $self.controller = function() {
 	};
 
 	$toolkit.trapExceptions(this);
+};
+
+$self.registerAll = function() {
+
+	new $self.controller().register();
 };

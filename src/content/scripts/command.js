@@ -13,6 +13,12 @@ $self.destroy = function() {
 		$self.dispatcher.unregister();
 };
 
+$self.initialize = function() {
+
+	$toolkit.events.onLoad($self.dispatcher.register);
+	$toolkit.events.onUnload($self.dispatcher.unregister);
+};
+
 $self.dispatcher = {
 
 	isRegistered: false,
@@ -118,9 +124,6 @@ $self.dispatcher = {
 };
 
 $toolkit.trapExceptions($self.dispatcher);
-
-$toolkit.events.onLoad($self.dispatcher.register);
-$toolkit.events.onUnload($self.dispatcher.unregister);
 
 $self.controller = function(command, keys, allowChange) {
 

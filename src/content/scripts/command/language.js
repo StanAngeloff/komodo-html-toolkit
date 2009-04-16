@@ -2,8 +2,6 @@ $toolkit.include('command');
 
 var LANGUAGE_SUPPORTED_LIST = ['HTML', 'XML', 'XUL', 'MXML', 'RXML', 'PHP', 'Smarty', 'Django', 'RHTML'];
 
-$self.skipCommand = true;
-
 $self.controller = function() {
 
 	this.supportedLanguages = (arguments[2] ? (typeof (arguments[2]) === 'string' ? [arguments[2]] : arguments[2]) : []);

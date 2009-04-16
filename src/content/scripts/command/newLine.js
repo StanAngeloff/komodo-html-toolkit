@@ -28,7 +28,7 @@ $self.controller = function() {
 		var newLineSnippet = $toolkit.library.getNewLineSnippet(tagBefore, tagAfter);
 		if (newLineSnippet) {
 
-			ko.statusBar.AddMessage("Repeat section triggered.", 'abbrev', 2500, false);
+			ko.statusBar.AddMessage($toolkit.l10n('command').GetStringFromName('command.newLine.triggered'), 'htmltoolkit', 1500, false);
 
 			try {
 
@@ -66,4 +66,9 @@ $self.controller = function() {
 	};
 
 	$toolkit.trapExceptions(this);
+};
+
+$self.registerAll = function() {
+
+	new $self.controller().register();
 };

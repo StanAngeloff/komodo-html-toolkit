@@ -43,3 +43,8 @@ $self.controller = function() {
 
 	$toolkit.trapExceptions(this);
 };
+
+$self.registerAll = function() {
+
+	new $self.controller().register();
+};

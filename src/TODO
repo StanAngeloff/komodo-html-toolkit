@@ -3,3 +3,22 @@
 - Don't assign default key bindings if User has cleared all sequences
 
 - Clearing a key binding does not take effect until Komodo is restarted
+
+- Auto-complete quotes when = is pressed after an attribute name
+
+- [00:14:49] Florent: I have a concern with one feature for that toolbox
+  [00:15:02] Stan Angeloff: yes ?
+  [00:15:07] Florent: i think *maybe* we should remove it
+  [00:15:55] Stan Angeloff: which toolbox are you referring to ?
+  [00:15:55] Florent: the list of block tags, and the fact that they get outputed as <tagname>\n\t\n</tagname> instead of just <tagname></tagname>
+  [00:16:20] Florent: For instance, for a div you get <div>, line break, indent, line break, </div>
+  [00:16:54] Florent: But sometimes you want to write <div class="deco"><div><span>Something</span></div></div>
+  [00:16:57] Florent: or things like that
+  [00:17:26] Stan Angeloff: yes, sometimes you may want that, but chances are you are much more likely to want a block element
+  [00:17:46] Florent: My point is that if we output <div>[[%tabstop]]</div>, it's trivial to add an empty line between those tags, to indent IF YOU WANT TO, etc.
+  [00:18:18] Florent: But if you don't want that, it's not comfortable to undo this behavior
+  [00:19:01] Florent: so: more work 90% of times, but that work is trivial, and less painful work for the remaining 10%
+  [00:19:38] Stan Angeloff: i dunno really, let me sleep on it; it's quite useful to me and recall Jeff liked this default behaviour as well; perhaps a checkbox under Preferences can switch between both behaviours
+  [00:39:41] Florent: "For block-level HTML elements:
+                       [ x ]  Leave a blank line between the start and end tags
+                       [ x ]  Indent that new line once"

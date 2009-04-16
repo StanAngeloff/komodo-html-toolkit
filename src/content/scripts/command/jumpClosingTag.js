@@ -1,10 +1,12 @@
 $toolkit.include('command.language');
 $toolkit.include('regexp');
 
-$self.controller = function() {
+$self.controller = function(type, keys, direction) {
 
 	// Call parent's constructor
-	$toolkit.command.language.controller.apply(this, ['jumpClosingTag', 'Tab', ['HTML', 'XML']]);
+	$toolkit.command.language.controller.apply(this, ['jumpClosingTag.' + type, keys, ['HTML', 'XML']]);
+
+	this.direction = direction;
 
 	this.trigger = function(e) {
 
@@ -16,25 +18,69 @@ $self.controller = function() {
 			(view.document.hasTabstopInsertionTable && view.document.getTabstopInsertionTable({}).length > 0))
 			return false;
 
-		// Read buffer until end of line
-		var lineEndPosition = scimoz.getLineEndPosition(scimoz.lineFromPosition(scimoz.currentPos)),
-			currentRange = scimoz.getTextRange(scimoz.currentPos, lineEndPosition);
+		// Going backwards i.e. jump before closing tag
+		if (this.direction < 0) {
 
-		// Check if we match a closing tag
-		if (currentRange && currentRange.length &&
-			$toolkit.regexp.matchClosedTag(currentRange, '^')) {
+			// Read buffer until start of line
+			var lineStartPosition = scimoz.positionFromLine(scimoz.lineFromPosition(scimoz.currentPos)),
+				currentRange = scimoz.getTextRange(lineStartPosition, scimoz.currentPos);
 
-			scimoz.anchor = scimoz.currentPos += $toolkit.regexp.lastMatches[0].length;
+			// Check if we match a closing tag before the cursor
+			if (currentRange && currentRange.length &&
+				$toolkit.regexp.matchClosedTag(currentRange, '', '$')) {
 
-			// Do not process event any further
-			e.preventDefault();
-			e.stopPropagation();
+				scimoz.anchor = scimoz.currentPos -= $toolkit.regexp.lastMatches[0].length;
 
-			return true;
+				// Do not process event any further
+				e.preventDefault();
+				e.stopPropagation();
+
+				return true;
+			}
+
+		// Going forwards i.e. jump after closing tag
+		} else {
+
+			// Read buffer until end of line
+			var lineEndPosition = scimoz.getLineEndPosition(scimoz.lineFromPosition(scimoz.currentPos)),
+				currentRange = scimoz.getTextRange(scimoz.currentPos, lineEndPosition);
+
+			// Check if we match a closing tag after the cursor
+			if (currentRange && currentRange.length &&
+				$toolkit.regexp.matchClosedTag(currentRange, '^')) {
+
+				scimoz.anchor = scimoz.currentPos += $toolkit.regexp.lastMatches[0].length;
+
+				// Do not process event any further
+				e.preventDefault();
+				e.stopPropagation();
+
+				return true;
+			}
 		}
 
 		return false;
 	};
 
 	$toolkit.trapExceptions(this);
+};
+
+$self.after = {};
+$self.after.controller = function() {
+
+	// Call parent's constructor
+	$self.controller.apply(this, ['after', 'Tab', +1]);
+};
+
+$self.before = {};
+$self.before.controller = function() {
+
+	// Call parent's constructor
+	$self.controller.apply(this, ['before', 'Shift+Tab', -1]);
+};
+
+$self.registerAll = function() {
+
+	new $self.after.controller().register();
+	new $self.before.controller().register();
 };
