@@ -50,6 +50,11 @@ $self.controller = function() {
 			originalAnchor = scimoz.anchor,
 			originalPosition = scimoz.currentPos;
 
+		// Make sure another wrapping is not already in progress
+		for (var i = 0; i < scimoz.length; i ++)
+			if (scimoz.indicatorValueAt(DECORATOR_WBIT_SELECTION, i))
+				return false;
+
 		// If no selection, select entire line
 		if (scimoz.anchor === scimoz.currentPos) {
 
@@ -95,7 +100,7 @@ $self.controller = function() {
 			markerEnd = -1;
 
 		// Find where last tabstop is
-		for (var i = markerStart; i < scimoz.length; i ++)
+		for (i = markerStart; i < scimoz.length; i ++)
 			if (scimoz.indicatorValueAt(Ci.koILintResult.DECORATOR_TABSTOP_TSZW, i)) {
 
 				markerEnd = i;
@@ -133,7 +138,7 @@ $self.controller = function() {
 			try {
 
 				// First where marker starts and ends
-				for (var i = 0; i < scimoz.length; i ++)
+				for (i = 0; i < scimoz.length; i ++)
 					if (scimoz.indicatorValueAt(DECORATOR_WBIT_SELECTION, i)) {
 
 						var indicatorStart = scimoz.indicatorStart(DECORATOR_WBIT_SELECTION, i),
