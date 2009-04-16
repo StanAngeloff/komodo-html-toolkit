@@ -25,7 +25,7 @@ $self.getTagSnippet = function(tagName) {
 	if (LIBRARY_SNIPPETS_MAP === null)
 		$self.initializeTagSnippets();
 
-	var tagNameLower = tagName.toLowerCase();
+	var tagNameLower = '$' + tagName.toLowerCase();
 	if (tagNameLower in LIBRARY_SNIPPETS_MAP)
 		return $self.createSnippet(LIBRARY_SNIPPETS_MAP[tagNameLower](tagName));
 
@@ -60,7 +60,7 @@ $self.initializeTagSnippets = function() {
 $self.initializeNewlineSnippets = function() {
 
 	LIBRARY_NEWLINE_MAP = {};
-	$self.initializeSnippetsFromURI(LIBRARY_NEWLINE_PATH, LIBRARY_NEWLINE_MAP, '@');
+	$self.initializeSnippetsFromURI(LIBRARY_NEWLINE_PATH, LIBRARY_NEWLINE_MAP);
 
 	var whereFiles = $toolkit.io.findFilesInURI(LIBRARY_NEWLINE_PATH, '*.where', true);
 
@@ -73,11 +73,11 @@ $self.initializeNewlineSnippets = function() {
 			continue;
 
 		for (var j = 0; j < whereLines.length; j ++)
-			LIBRARY_NEWLINE_MAP[whereLines[j]] = '@' + snippetName;
+			LIBRARY_NEWLINE_MAP[whereLines[j]] = '$' + snippetName;
 	}
 };
 
-$self.initializeSnippetsFromURI = function(path, map, prepend) {
+$self.initializeSnippetsFromURI = function(path, map) {
 
 	var snippetFiles = $toolkit.io.findFilesInURI(path, '*.html', true);
 
@@ -89,7 +89,7 @@ $self.initializeSnippetsFromURI = function(path, map, prepend) {
 		if ( ! snippetContents)
 			continue;
 
-		map[(prepend || '') + snippetName] = (function(contents) {
+		map['$' + snippetName] = (function(contents) {
 			return function(tagName) {
 				return contents.replace(new RegExp($toolkit.regexp.patterns['SnippetTag'], 'g'),
 										function(entireMatch, tagBefore, tagMatch, tagAfter) {

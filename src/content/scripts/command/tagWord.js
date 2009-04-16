@@ -92,6 +92,8 @@ $self.controller = function() {
 					$toolkit.command.undo.undoable)
 					$toolkit.command.undo.anchor = undoAnchor;
 
+				return true;
+
 			} finally { scimoz.endUndoAction(); }
 		}
 

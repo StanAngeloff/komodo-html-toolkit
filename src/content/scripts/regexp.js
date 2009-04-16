@@ -3,7 +3,7 @@ $self.patterns = {
 	'Tag': '<([a-zA-Z0-9\\-\\_\\:\\/]+)\\b',
 	'TagWord': '[<a-zA-Z0-9\\-\\_\\:]+>?',
 	'OpeningTag': '<([a-zA-Z0-9\\-\\_\\:]+)',
-	'ClosedTag': '(<\\/([a-zA-Z0-9\\-\\_\\:]+)>)|(\s*\\/>)',
+	'ClosedTag': '(<\\/([a-zA-Z0-9\\-\\_\\:]+)>)|(\\s*\\/>)',
 	'SnippetTag': '(<[\\/]?)html\\:([a-zA-Z0-9\\-\\_\\:]+)(\\b)',
 	'Operator': '[\\/\\-\\?\\#\\%]+\\s*',
 	'OutOfTag': '(.<)|(<\\/)',
@@ -12,7 +12,9 @@ $self.patterns = {
 
 $self.match = function(regexp, context, prepend, append) {
 
-	var re = new RegExp((prepend || '') + regexp + (append || ''));
+	var re = new RegExp((prepend || '')
+					  + regexp.replace('|', (append || '') + '|' + (prepend || ''), 'g')
+					  + (append || ''));
 
 	$self.lastMatches = ('' + context).match(re);
 

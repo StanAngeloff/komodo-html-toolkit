@@ -123,7 +123,7 @@ if (typeof (extensions) === 'undefined')
 	$toolkit.include('io');
 
 	var commandFiles = $toolkit.io.findFilesInURI('content/scripts/command', '*.js', true);
-	if (commandFiles && commandFiles.length)
+	if (commandFiles)
 		commandFiles.forEach(function(commandEntry) {
 
 			var commandName = commandEntry.leafName.replace(/\.js$/, '');

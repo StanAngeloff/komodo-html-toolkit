@@ -199,6 +199,8 @@ $self.controller = function() {
 								$toolkit.command.undo.undoable = true;
 						}
 
+						return true;
+
 					} finally {
 
 						if (editorEndUndo) scimoz.endUndoAction();
