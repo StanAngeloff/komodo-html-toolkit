@@ -58,6 +58,10 @@ $self.controller = function() {
 
 					try {
 
+						// If autocomplete is visible, close it to prevent autocomplete on selected item
+						if (scimoz.autoCActive())
+							scimoz.autoCCancel();
+
 						// We will complete the tag ourselves, don't bubble the event to Komodo
 						scimoz.targetStart = editorPosition;
 						scimoz.targetEnd = Math.max(scimoz.anchor, scimoz.currentPos);
@@ -157,6 +161,12 @@ $self.controller = function() {
 
 							} else {
 
+								// Don't autocomplete HTML tags we don't know about
+								if (view.document.subLanguage === 'HTML' &&
+									tagName.indexOf(':') < 0 && // Allow tags in namespaces
+									! $toolkit.htmlUtils.isHtmlTag(tagNameLower))
+									return false;
+
 								tagComplete = '[[%tabstop0]]</' + tagName + '>';
 								tagPosition = editorPosition + 1;
 							}
@@ -164,9 +174,6 @@ $self.controller = function() {
 
 						if (typeof ($toolkit.command.undo) === 'object')
 							$toolkit.command.undo.anchor = editorPosition;
-
-						// If autocomplete is visible, close it to prevent autocomplete on selected item
-						if (scimoz.autoCActive()) scimoz.autoCCancel();
 
 						if (isTagAbbreviation) {
 
