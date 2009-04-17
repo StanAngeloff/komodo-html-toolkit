@@ -16,7 +16,7 @@ $self.controller = function() {
 			scimoz.beginUndoAction();
 
 			var $instance = this;
-			this.onKeyUp(function() { $instance.stop(); });
+			this.onKeyEvent('up', function() { $instance.stop(); });
 		}
 
 		// If no selection, insert after current position

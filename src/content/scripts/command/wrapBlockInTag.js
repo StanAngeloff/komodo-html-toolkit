@@ -4,11 +4,28 @@ $toolkit.include('events');
 
 const DECORATOR_WBIT_SELECTION = 31; // Values above 32 just won't work
 
+const Cc = Components.classes;
 const Ci = Components.interfaces;
+
+$self.schemeService = Cc['@activestate.com/koScintillaSchemeService;1'].getService(Ci.koIScintillaSchemeService);
+
+$self.observerService = Cc['@mozilla.org/observer-service;1'].getService(Ci.nsIObserverService);
+$self.observer = {
+
+	isObserving: false,
+
+	observe: function(subject, topic, data) {
+
+		$self.applyThemeToEditors();
+	}
+};
 
 $self.destroy = function() {
 
-	// Remove existing handler if included twice
+	// Remove existing observer and handler if included twice
+	if ($self.observer.isObserving)
+		$self.observerService.removeObserver($self.observer, 'scheme-changed');
+
 	window.removeEventListener('view_opened', $self.onViewOpened, true);
 };
 
@@ -17,12 +34,16 @@ $self.initialize = function() {
 	// Capture new buffers and fire simulated event on existing
 	window.addEventListener('view_opened', $self.onViewOpened, true);
 
-	$toolkit.events.onLoad(function() {
+	// Listen for scheme changes
+	$self.observerService.addObserver($self.observer, 'scheme-changed', false);
+	$self.observer.isObserving = true;
+};
 
-		var editorViews = ko.views.manager.topView.getViewsByType(true, 'editor');
-		for (var i = 0; i < editorViews.length; i ++)
-			$self.onViewOpened({ originalTarget: editorViews[i] });
-	});
+$self.applyThemeToEditors = function() {
+
+	var editorViews = ko.views.manager.topView.getViewsByType(true, 'editor');
+	for (var i = 0; i < editorViews.length; i ++)
+		$self.onViewOpened({ originalTarget: editorViews[i] });
 };
 
 $self.onViewOpened = function(e) {
@@ -30,9 +51,16 @@ $self.onViewOpened = function(e) {
 	var view = e.originalTarget;
 	if (view && view.scimoz) {
 
+		// Read selection background colour from current theme
+		var currentScheme = $self.schemeService.getScheme(gPrefs.getStringPref('editor-scheme')),
+			schemeSelectionColour = currentScheme.getColor('selBack');
+
 		view.scimoz.indicSetStyle(DECORATOR_WBIT_SELECTION, view.scimoz.INDIC_ROUNDBOX);
-		// Keep this if we decide to change the style to a box
-		view.scimoz.indicSetFore(DECORATOR_WBIT_SELECTION, 0xFF + 0xFF * 256 + 0xCC * 256 * 256);
+		view.scimoz.indicSetAlpha(DECORATOR_WBIT_SELECTION, 95);
+		view.scimoz.indicSetFore(DECORATOR_WBIT_SELECTION,
+								 parseInt(schemeSelectionColour.substr(1, 2), 16)
+							   + parseInt(schemeSelectionColour.substr(3, 2), 16) * 256
+							   + parseInt(schemeSelectionColour.substr(5, 2), 16) * 256 * 256);
 	}
 };
 
@@ -124,20 +152,16 @@ $self.controller = function() {
 		if (markerEnd <= markerStart)
 			return false;
 
+		var markerActive = true;
+
 		scimoz.indicatorCurrent = DECORATOR_WBIT_SELECTION;
 		scimoz.indicatorFillRange(markerStart, markerEnd - markerStart);
 
-		// Make sure we clear after ourselves
-		var clearLeftoversTimer = window.setInterval(function() {
+		var $instance = this,
 
-			// If there is at least one more tabstop within the document, leave marker
-			if (view.document.hasTabstopInsertionTable && view.document.getTabstopInsertionTable({}).length > 0)
-				return false;
+			clearMarker = function(selectOnClear) {
 
-			// There are no more tabstops within the buffer, clear marker and restore selection
-			try {
-
-				// First where marker starts and ends
+				// First find where marker starts and ends
 				for (i = 0; i < scimoz.length; i ++)
 					if (scimoz.indicatorValueAt(DECORATOR_WBIT_SELECTION, i)) {
 
@@ -147,18 +171,65 @@ $self.controller = function() {
 						scimoz.indicatorCurrent = DECORATOR_WBIT_SELECTION;
 						scimoz.indicatorClearRange(indicatorStart, indicatorEnd);
 
-						// Respect anchor position i.e. before or after the cursor
-						scimoz.anchor = Math[originalAnchor < originalPosition ? 'min' : 'max'](indicatorStart, indicatorEnd);
-						scimoz.currentPos = Math[originalAnchor < originalPosition ? 'max' : 'min'](indicatorStart, indicatorEnd);
+						// Select marker, respect anchor position i.e. before or after the cursor
+						if (selectOnClear) {
+
+							scimoz.anchor = Math[originalAnchor < originalPosition ? 'min' : 'max'](indicatorStart, indicatorEnd);
+							scimoz.currentPos = Math[originalAnchor < originalPosition ? 'max' : 'min'](indicatorStart, indicatorEnd);
+						}
 
 						break;
 					}
 
+				markerActive = false;
+			},
+
+			onTabKey = function(e) {
+
+				if (markerActive) {
+
+					// TAB was pressed, restore original selection
+					if (e.keyLabel === 'Tab') {
+
+						if (clearLeftoversTimer) {
+
+							window.clearInterval(clearLeftoversTimer);
+							clearLeftoversTimer = null;
+						}
+
+						// Let Komodo handle the key first
+						window.setTimeout(function() { clearMarker(true); }, 1);
+					}
+					// If the selection marker is still within the document, wait for TAB key
+					else
+						$instance.onKeyEvent('press', onTabKey);
+				}
+			};
+
+		// Wait for TAB key
+		$instance.onKeyEvent('press', onTabKey);
+
+		// Make sure we clear after ourselves e.g. after Undo is triggered
+		var clearLeftoversTimer = window.setInterval(function() {
+
+			// If there is at least one more tabstop within the document, leave marker
+			if (view.document.hasTabstopInsertionTable && view.document.getTabstopInsertionTable({}).length > 0)
+				return false;
+
+			// There are no more tabstops within the buffer, clear marker
+			try {
+
+				clearMarker(false);
+
 				return true;
 
-			} finally { window.clearInterval(clearLeftoversTimer); }
+			} finally {
 
-		}, 100);
+				window.clearInterval(clearLeftoversTimer);
+				clearLeftoversTimer = null;
+			}
+
+		}, 500);
 
 		return true;
 	};

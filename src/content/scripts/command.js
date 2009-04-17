@@ -236,18 +236,20 @@ $self.controller = function(command, keys, allowChange) {
 				ko.views.manager.currentView.scimoz);
 	}
 
-	this.onKeyUp = function(callback) {
+	this.onKeyEvent = function(type, callback) {
 
 		var topView = ko.views.manager.topView;
 		if (topView) {
 
-			var keyUpCallback = function() {
+			var keyEventCallback = function(e) {
 
-				try { callback(); }
-				finally { topView.removeEventListener('keyup', keyUpCallback, true); }
+				e.keyLabel = $self.dispatcher.event2key(e, true);
+
+				try { callback(e); }
+				finally { topView.removeEventListener('key' + type, keyEventCallback, true); }
 			};
 
-			topView.addEventListener('keyup', keyUpCallback, true);
+			topView.addEventListener('key' + type, keyEventCallback, true);
 		}
 	};
 
