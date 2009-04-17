@@ -130,20 +130,25 @@ if (typeof (extensions) === 'undefined')
 		}
 	};
 
+	$toolkit.registerAll = function(type) {
+
+		$toolkit.include('io');
+
+		var typeFiles = $toolkit.io.findFilesInURI('content/scripts/' + type, '*.js', true);
+		if (typeFiles)
+			typeFiles.forEach(function(typeEntry) {
+
+				var typeName = typeEntry.leafName.replace(/\.js$/, '');
+
+				$toolkit.include(type + '.' + typeName);
+
+				if ($toolkit[type][typeName].registerAll)
+					$toolkit[type][typeName].registerAll();
+			});
+	};
+
 	$toolkit.trapExceptions($toolkit);
 
-
-	$toolkit.include('io');
-
-	var commandFiles = $toolkit.io.findFilesInURI('content/scripts/command', '*.js', true);
-	if (commandFiles)
-		commandFiles.forEach(function(commandEntry) {
-
-			var commandName = commandEntry.leafName.replace(/\.js$/, '');
-
-			$toolkit.include('command.' + commandName);
-
-			if ($toolkit.command[commandName].registerAll)
-				$toolkit.command[commandName].registerAll();
-		});
+	$toolkit.registerAll('command');
+	$toolkit.registerAll('hyperlink');
 })();

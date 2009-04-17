@@ -111,7 +111,7 @@ $self.controller = function() {
 			scimoz.anchor = originalAnchor;
 			scimoz.currentPos = originalPosition;
 
-			ko.statusBar.AddMessage($toolkit.l10n('command').GetStringFromName('command.wrapBlockInTag.rangeEmpty'), 'htmltoolkit', 2500, true);
+			ko.statusBar.AddMessage($toolkit.l10n('command').GetStringFromName('wrapBlockInTag.rangeEmpty'), 'htmltoolkit', 2500, true);
 
 			return false;
 		}

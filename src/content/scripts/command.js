@@ -170,7 +170,7 @@ $self.controller = function(command, keys, allowChange) {
 		var l10n = Cc['@mozilla.org/intl/stringbundle;1'].getService(Ci.nsIStringBundleService)
 														 .createBundle('chrome://htmltoolkit/locale/command.properties');
 
-		broadcasterEl.setAttribute('desc', l10n.GetStringFromName('command.' + this.command));
+		broadcasterEl.setAttribute('desc', l10n.GetStringFromName(this.command));
 
 		globalSet.appendChild(broadcasterEl);
 

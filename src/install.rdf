@@ -9,7 +9,7 @@
 		<em:version>0.7</em:version>
 		<em:type>2</em:type>
 		<em:homepageURL>http://www.psp-webtech.co.uk/?ref=komodo&amp;id=HTML%20Toolkit</em:homepageURL>
-		<em:iconURL>chrome://htmltoolkit/skin/icon.png</em:iconURL>
+		<em:iconURL>chrome://htmltoolkit/skin/images/icon.png</em:iconURL>
 
 		<!-- Komodo IDE -->
 		<em:targetApplication>
