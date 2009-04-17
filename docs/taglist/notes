@@ -1,0 +1,45 @@
+NOTES
+=====
+
+The html_elements_* files in this folder list HTML elements, writtend in
+lowercase.
+
+html_elements_all
+-----------------
+
+A comprehensive list of HTML elements. This list covers:
+
+- All 91 valid HTML 4.01 elements (whether deprecated or not).
+- Elements listed in the HTML 5 Working Draft (as of April 2009)
+- Elements that are not part of HTML 4.01 or HTML 5, but are still widely used.
+
+html_elements_empty
+-------------------
+
+Based on the html_elements_all list. This one only lists the elements whose
+content model is "EMPTY". Typically, such elements should be outputted as
+<tagname> (HTML syntax) or <tagname /> (XHTML syntax).
+
+html_elements_block
+-------------------
+
+Based on the html_elements_all list. This one only lists the elements which can
+be considered "block-level" (notion defined in HTML 4.01).
+
+This list is used to check an autocomplete pattern against, and to decide
+whether it should be treated as a "normal" tag or as a "block" tag. A block
+tag will be outputted, by default, like this:
+
+<tagname>
+	[[%tabstop]]
+</tagname>
+
+Options could let the user opt for this pattern:
+
+<tagname>
+[[%tabstop]]
+</tagname>
+
+Or a neutral pattern (as with "normal" tags):
+
+<tagname>[[%tabstop]]</tagname>
