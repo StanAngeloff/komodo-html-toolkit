@@ -125,7 +125,17 @@ ko.hyperlinks.ImagePreviewHandler.prototype.show = function(view, scimoz, positi
 
 	if (popupEl === null) {
 
-		popupEl = document.createElementNS(XUL_NS, 'panel');
+		// Creating a "panel" element on Linux makes the main Komodo window to
+		// lose focus completely, and now popup is shown. "tooltip" works.
+		// Duplicating code from:
+		// http://svn.openkomodo.com/openkomodo/view/openkomodo/trunk/src/chrome/komodo/content/hyperlinks/csscolorpicker.js
+		var osPrefix = window.navigator.platform.substring(0, 3).toLowerCase();
+		if (osPrefix == 'mac') {
+			popupEl = document.createElementNS(XUL_NS, 'panel');
+			popupEl.setAttribute('noautofocus', 'true');
+		} else {
+			popupEl = document.createElementNS(XUL_NS, 'tooltip');
+		}
 
 		popupEl.setAttribute('id', 'imagepreview_popup');
 
