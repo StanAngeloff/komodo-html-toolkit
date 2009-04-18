@@ -5,19 +5,24 @@ const HTMLUTILS_ELEMENTS = ['a', 'abbr', 'acronym', 'address', 'applet', 'area',
 							'dialog', 'dir', 'div', 'dl', 'dt', 'em', 'embed', 'eventsource', 'fieldset',
 							'figure', 'font', 'footer', 'form', 'frame', 'frameset', 'h1', 'h2', 'h3',
 							'h4', 'h5', 'h6', 'head', 'header', 'hr', 'html', 'i', 'iframe', 'img',
-							'input', 'ins', 'isindex', 'kbd', 'label', 'legend', 'li', 'link', 'map',
-							'mark', 'marquee', 'menu', 'meta', 'meter', 'nav', 'noframes', 'noscript',
-							'object', 'ol', 'optgroup', 'option', 'output', 'p', 'param', 'pre',
-							'progress', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'script', 'section',
+							'input', 'ins', 'isindex', 'kbd', 'keygen', 'label', 'legend', 'li', 'link',
+							'map', 'mark', 'marquee', 'menu', 'meta', 'meter', 'nav', 'noframes',
+							'noscript', 'object', 'ol', 'optgroup', 'option', 'output', 'p', 'param',
+							'pre', 'progress', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'script', 'section',
 							'select', 'small', 'source', 'span', 'strike', 'strong', 'style', 'sub',
 							'sup', 'table', 'tbody', 'td', 'textarea', 'tfoot', 'th', 'thead', 'time',
 							'title', 'tr', 'tt', 'u', 'ul', 'var', 'video'];
 
-const HTMLUTILS_EMPTY_ELEMENTS = ['base', 'br', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param'];
+const HTMLUTILS_EMPTY_ELEMENTS = ['area', 'base', 'basefont', 'br', 'col', 'command', 'embed',
+								  'eventsource', 'hr', 'img', 'input', 'isindex', 'keygen', 'link',
+								  'meta', 'param', 'source'];
 
-const HTMLUTILS_BLOCK_ELEMENTS = ['blockquote', 'body', 'dl', 'fieldset', 'form', 'div', 'head', 'html',
-								  'marquee', 'object', 'ol', 'select', 'style', 'table', 'tbody', 'tfoot',
-								  'thead', 'tr'];
+const HTMLUTILS_BLOCK_ELEMENTS = ['article', 'aside', 'blockquote', 'body', 'center', 'datagrid',
+								  'datalist', 'details', 'dialog', 'dir', 'div', 'dl', 'fieldset',
+								  'figure', 'footer', 'form', 'frameset', 'head', 'header', 'html',
+								  'map', 'marquee', 'menu', 'nav', 'noframes', 'noscript', 'object',
+								  'ol', 'optgroup', 'ruby', 'script', 'section', 'select', 'style',
+								  'table', 'tbody', 'tfoot', 'thead', 'tr', 'ul'];
 
 $self.isHtmlTag = function(tagName) {
 

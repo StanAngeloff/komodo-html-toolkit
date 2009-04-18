@@ -1,23 +1,69 @@
-# Temporary list (i have to revue a lot of documentation to know for sure
-# what should go here).
+# List complete for HTML 4 and (planned) HTML 5 elements
+# List updated: 2009-04-18
 
+# htmlUtils.js updated accordingly: 2009-04-18
+# tag names followed by a double * were NOT included in htmlUtils.js for the
+# following reason: these elements are rarely indented by users, who often
+# prefer to write <p>Content</p> over <p>\n Content \n</p>
+
+# Note that the concept of "block-level element" mentionned in the HTML 4 spec
+# is a pedagogic simplification, rather than a strict rule. The default value
+# of the CSS "display" property is not a reliable criterium either. So insted
+# this list is based on a question, namely: "Do people tend to put a lot of
+# content or indent the content of this element?" If yes, the element is
+# included in the list.
+
+address **
+article
+aside
 blockquote
 body
-dl
-fieldset
-form
+center
+datagrid
+datalist
+dd **
+details
+dialog
+dir
 div
+dl
+dt **
+fieldset
+figure
+font **
+footer
+form
+frameset
+h1 **
+h2 **
+h3 **
+h4 **
+h5 **
+h6 **
 head
+header
 html
+li **
+map
 marquee
+menu
+nav
+noframes
+noscript
 object
 ol
+optgroup
+p **
+ruby
+script
+section
 select
 style
 table
 tbody
+td **
 tfoot
+th **
 thead
 tr
-
-# Stan: Synched
+ul

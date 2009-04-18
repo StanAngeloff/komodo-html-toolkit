@@ -1,14 +1,27 @@
-# Temporary list (i have to revue a lot of documentation to know for sure
-# what should go here).
+# List now complete for HTML 4, and HTML 5 draft (April 2009)
+# List updated: 2009-04-18
 
+# htmlUtils.js updated accordingly: 2009-04-18
+
+area
 base
+basefont
 br
+col
+command
 embed
+eventsource
 hr
 img
 input
+isindex
+keygen
 link
 meta
 param
+source
 
-# Stan: Synced
+# Here is a list of HTML tags that may be considered Empty, all the time or
+# in some situations, but are typically written <tagname></tagname> anyway.
+
+frame  # Empty in HTML 5, not 4, though you never put content within the tags

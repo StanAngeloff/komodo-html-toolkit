@@ -1,4 +1,7 @@
-# Finished list (unless i missed something).
+# List complete for HTML 4 and (planned) HTML 5 elements
+# List updated: 2009-04-18
+
+# htmlUtils.js updated accordingly: 2009-04-18
 
 a
 abbr
@@ -66,6 +69,7 @@ input
 ins
 isindex
 kbd
+keygen
 label
 legend
 li
@@ -120,5 +124,3 @@ u
 ul
 var
 video
-
-# Stan: Sycned
