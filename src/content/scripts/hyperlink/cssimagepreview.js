@@ -128,16 +128,15 @@ ko.hyperlinks.ImagePreviewHandler.prototype.show = function(view, scimoz, positi
 		// Creating a "panel" element on Linux causes the main Komodo window to
 		// lose focus completely, and no popup is shown. "tooltip" works.
 		var osPrefix = window.navigator.platform.substring(0, 3).toLowerCase();
-		if (osPrefix === 'mac') {
-
+		if (['win', 'mac'].indexOf(osPrefix) < 0)
+			popupEl = document.createElementNS(XUL_NS, 'tooltip');
+		else {
 			popupEl = document.createElementNS(XUL_NS, 'panel');
 
 			popupEl.setAttribute('noautofocus', 'true');
 			popupEl.setAttribute('noautohide', 'true');
 			popupEl.setAttribute('norestorefocus', 'true');
-
-		} else
-			popupEl = document.createElementNS(XUL_NS, 'tooltip');
+		}
 
 		popupEl.setAttribute('id', 'imagepreview_popup');
 
