@@ -1,5 +1,5 @@
 - TODO scimoz.scrollCaret calls to ensure cursor is visible after buffer
-  changes
+  changes (Snippet_insert may already call this)
 
 - Menu items for tagWord.js and wrap(Block/Lines)InTag.js
 
