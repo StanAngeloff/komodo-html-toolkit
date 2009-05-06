@@ -27,6 +27,19 @@ $self.destroy = function() {
 		$self.observerService.removeObserver($self.observer, 'scheme-changed');
 
 	window.removeEventListener('view_opened', $self.onViewOpened, true);
+
+	// Restore Komodo's default behaviour
+	if (ko.tabstops._updateAllHits__wrapBlockInTag) {
+
+		ko.tabstops._updateAllHits = ko.tabstops._updateAllHits__wrapBlockInTag;
+		delete ko.tabstops['_updateAllHits__wrapBlockInTag'];
+	}
+
+	if (ko.tabstops._updateAllZeroWidthHits__wrapBlockInTag) {
+
+		ko.tabstops._updateAllZeroWidthHits = ko.tabstops._updateAllZeroWidthHits__wrapBlockInTag;
+		delete ko.tabstops['_updateAllZeroWidthHits__wrapBlockInTag'];
+	}
 };
 
 $self.initialize = function() {
@@ -37,6 +50,35 @@ $self.initialize = function() {
 	// Listen for scheme changes
 	$self.observerService.addObserver($self.observer, 'scheme-changed', false);
 	$self.observer.isObserving = true;
+
+	// Replace Komodo's default behaviour when updating linked tabstops
+	ko.tabstops._updateAllHits__wrapBlockInTag = ko.tabstops._updateAllHits;
+	ko.tabstops._updateAllHits = function (scimoz, position, indicator, newUnicodeText, newUTF8Length) {
+
+		// If the marker is active, this means we are still in the tabstop
+		if ($self.markerActive && newUnicodeText.indexOf(' ') > 0) {
+
+			// Split and don't update attributes in linked tabstop
+			newUnicodeText = newUnicodeText.split(' ').shift();
+			newUTF8Length = ko.stringutils.bytelength(newUnicodeText);
+		}
+
+		return ko.tabstops._updateAllHits__wrapBlockInTag(scimoz, position, indicator, newUnicodeText, newUTF8Length);
+	};
+
+	ko.tabstops._updateAllZeroWidthHits__wrapBlockInTag = ko.tabstops._updateAllZeroWidthHits;
+	ko.tabstops._updateAllZeroWidthHits = function (scimoz, position, newUnicodeText, newUTF8Length) {
+
+		// If the marker is active, this means we are still in the tabstop
+		if ($self.markerActive && newUnicodeText.indexOf(' ') > 0) {
+
+			// Split and don't update attributes in linked tabstop
+			newUnicodeText = newUnicodeText.split(' ').shift();
+			newUTF8Length = ko.stringutils.bytelength(newUnicodeText);
+		}
+
+		return ko.tabstops._updateAllZeroWidthHits__wrapBlockInTag(scimoz, position, newUnicodeText, newUTF8Length);
+	};
 };
 
 $self.applyThemeToEditors = function() {
@@ -152,7 +194,7 @@ $self.controller = function() {
 		if (markerEnd <= markerStart)
 			return false;
 
-		var markerActive = true;
+		$self.markerActive = true;
 
 		scimoz.indicatorCurrent = DECORATOR_WBIT_SELECTION;
 		scimoz.indicatorFillRange(markerStart, markerEnd - markerStart);
@@ -181,12 +223,12 @@ $self.controller = function() {
 						break;
 					}
 
-				markerActive = false;
+				$self.markerActive = false;
 			},
 
 			onTabKey = function(e) {
 
-				if (markerActive) {
+				if ($self.markerActive) {
 
 					// TAB was pressed, restore original selection
 					if (e.keyLabel === 'Tab') {
