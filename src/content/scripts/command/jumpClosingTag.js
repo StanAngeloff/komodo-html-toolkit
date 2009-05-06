@@ -43,10 +43,14 @@ $self.controller = function(type, keys, direction) {
 
 			// Read buffer until end of line
 			var lineEndPosition = scimoz.getLineEndPosition(scimoz.lineFromPosition(scimoz.currentPos)),
+				lineStartPosition = scimoz.positionFromLine(scimoz.lineFromPosition(scimoz.currentPos)),
+				rangeBefore = scimoz.getTextRange(lineStartPosition, scimoz.currentPos),
 				currentRange = scimoz.getTextRange(scimoz.currentPos, lineEndPosition);
 
-			// Check if we match a closing tag after the cursor
-			if (currentRange && currentRange.length &&
+			// Check if we match a closing tag after the cursor and that we
+			// are not at the beginning of the line
+			if ( ! $toolkit.regexp.matchWhitespace(rangeBefore, '^', '$') &&
+				currentRange && currentRange.length &&
 				$toolkit.regexp.matchClosedTag(currentRange, '^')) {
 
 				scimoz.anchor = scimoz.currentPos += $toolkit.regexp.lastMatches[0].length;
