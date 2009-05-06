@@ -1,0 +1,11 @@
+window
+{
+	background: Window;
+	color:      WindowText;
+	height:     80px;
+	width:      320px;
+}
+
+vbox { padding: 10px; }
+
+label { padding-bottom: 4px; }

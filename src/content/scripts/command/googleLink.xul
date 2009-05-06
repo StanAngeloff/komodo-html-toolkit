@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css" ?>
+<?xml-stylesheet href="chrome://htmltoolkit/skin/command/googleLink.css" type="text/css" ?>
+
+<!DOCTYPE window SYSTEM "chrome://htmltoolkit/locale/command/googleLink.dtd" >
+
+<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+		title="&title;"
+		onload="onWindowLoad();"
+		onunload="onWindowUnload();">
+
+	<vbox>
+		<label id="wait" value="&wait;" />
+		<progressmeter mode="undetermined" />
+	</vbox>
+
+	<script type="text/javascript">
+	// <![CDATA[
+	const Cc = Components.classes;
+	const Ci = Components.interfaces;
+
+	var request = null,
+
+		// Cache access to JavaScript locales
+		l10n = Cc['@mozilla.org/intl/stringbundle;1'].getService(Ci.nsIStringBundleService)
+													 .createBundle('chrome://htmltoolkit/locale/command/googleLink.properties');
+
+	var throwError = function(key, args) {
+
+		if (args && args.length)
+			window.opener.ko.dialogs.alert(l10n.GetStringFromName('errorTitle'), l10n.formatStringFromName(key, args, args.length));
+		else
+			window.opener.ko.dialogs.alert(l10n.GetStringFromName('errorTitle'), l10n.GetStringFromName(key));
+
+		window.close();
+	};
+
+	var onWindowLoad = function() {
+
+		// Update UI to reflect our search query
+		var waitEl = document.getElementById('wait');
+		waitEl.setAttribute('value', waitEl.getAttribute('value').replace('$', window.arguments[0]));
+
+		// Listen for ESC key and close window
+		window.addEventListener('keydown', onKeyDown, true);
+
+		// The below Google URI could be replaced to provide local search
+		// results, but the UK version is the one we prefer
+		request = new XMLHttpRequest();
+		request.open('GET', 'http://www.google.co.uk/search?q=' + encodeURIComponent(window.arguments[0]), true);
+
+		request.onload = function() {
+
+			if (request.status === 200) {
+
+				// Attempt to extract the URI of the first result (if any)
+				window.arguments[1].address = (request.responseText.match(/<h3[^>]+><a href="([^"]+)/i) || ['']).pop();
+				if (window.arguments[1].address.length < 1) {
+
+					if (request.responseText.indexOf('did not match any documents') < 0)
+						throwError('errorParsingFailed')
+					else
+						window.opener.ko.statusBar.AddMessage(l10n.formatStringFromName('noSearchResults', [window.arguments[0]], 1), 'htmltoolkit', 2500, true);
+				}
+
+				window.close();
+
+			} else
+				throwError('errorRequestMismatch', [request.status, request.statusText]);
+		};
+
+		request.onerror = function() {
+
+			throwError('errorRequestFailed');
+		};
+
+		request.send(null);
+	};
+
+	var onWindowUnload = function() {
+
+		// Abort the on-going request before closing
+		if (request) {
+
+			request.abort();
+			request = null;
+		}
+	};
+
+	var onKeyDown = function(e) {
+
+		if (e.keyCode === 27 && ! (e.ctrlKey || e.metaKey))
+			window.close();
+	};
+	// ]]>
+	</script>
+
+</window>

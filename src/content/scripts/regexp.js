@@ -7,6 +7,7 @@ $self.patterns = {
 	'SnippetTag': '(<[\\/]?)html\\:([a-zA-Z0-9\\-\\_\\:]+)(\\b)',
 	'Operator': '[\\/\\-\\?\\#\\%]+\\s*',
 	'OutOfTag': '(.<)|(<\\/)',
+	'Word': '\\w+',
 	'Whitespace': '\\s+',
 	'GeckoImageFormats': '(\.(?:png|apng|jpg|jpeg|gif|bmp|xbm|svg))',
 	'Protocol': '\\w+:\/\/'

@@ -1,3 +1,6 @@
+- TODO scimoz.scrollCaret calls to ensure cursor is visible after buffer
+  changes
+
 - Menu items for tagWord.js and wrap(Block/Lines)InTag.js
 
 - Don't assign default key bindings if User has cleared all sequences

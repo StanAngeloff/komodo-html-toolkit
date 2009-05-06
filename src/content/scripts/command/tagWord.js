@@ -95,7 +95,9 @@ $self.controller = function() {
 				return true;
 
 			} finally { scimoz.endUndoAction(); }
-		}
+
+		} else
+			ko.statusBar.AddMessage($toolkit.l10n('command').GetStringFromName('tagWord.noWordUnderCursor'), 'htmltoolkit', 2500, true);
 
 		return false;
 	};
