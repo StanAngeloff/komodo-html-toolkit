@@ -54,8 +54,11 @@ $self.controller = function() {
 			searchEnd = Math.max(scimoz.anchor, scimoz.currentPos);
 		}
 
+		// Trim whitespace from query, this happens when we are at the last word in the buffer
+		searchQuery = (searchQuery || '').replace(/^\s+|\s+$/g, '');
+
 		// If we have a matching range
-		if (searchQuery !== null && searchQuery.length) {
+		if (searchQuery.length) {
 
 			if (typeof ($toolkit.command.undo) === 'object')
 				$toolkit.command.undo.anchor = searchEnd;
@@ -82,11 +85,18 @@ $self.controller = function() {
 
 				if (searchResult.address) {
 
+					var escapedAddress = searchResult.address.replace(/&/g, '&amp;')
+															 .replace(/"/g, '&quot;')
+															 .replace(/</g, '&lt;')
+															 .replace(/>/g, '&gt;');
+
 					// TODO: check casing for the rest of the document and determine whether we should use uppercase or lowercase
 					//       Look for <html, <body <any-other-known-html-tag and match against first occurrence
-					// TODO: Also need to escape the .address so it goes in as valid HTML: <"&>
-					// TODO: Fix selection as its lost after the insertion
-					Snippet_insert($toolkit.library.createSnippet('<a href="' + searchResult.address + '">[[%s]]</a>'));
+					Snippet_insert($toolkit.library.createSnippet('<a href="' + escapedAddress + '">[[%s]]</a>'));
+
+					// Unfortunately Komodo does not keep the selection so we need to restore it manually
+					scimoz.anchor = searchStart + 11 + escapedAddress.length;
+					scimoz.currentPos = scimoz.anchor + searchQuery.length;
 				}
 
 				if (typeof ($toolkit.command.undo) === 'object') {

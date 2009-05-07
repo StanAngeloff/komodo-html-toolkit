@@ -216,8 +216,26 @@ $self.controller = function() {
 						// Select marker, respect anchor position i.e. before or after the cursor
 						if (selectOnClear) {
 
-							scimoz.anchor = Math[originalAnchor < originalPosition ? 'min' : 'max'](indicatorStart, indicatorEnd);
-							scimoz.currentPos = Math[originalAnchor < originalPosition ? 'max' : 'min'](indicatorStart, indicatorEnd);
+							var selectionStart = Math[originalAnchor < originalPosition ? 'min' : 'max'](indicatorStart, indicatorEnd),
+								selectionEnd = Math[originalAnchor < originalPosition ? 'max' : 'min'](indicatorStart, indicatorEnd);
+
+							try {
+
+								scimoz.beginUndoAction();
+
+								scimoz.anchor = selectionStart;
+								scimoz.currentPos = selectionEnd;
+
+								// This is to work around Komodo's bug where zero-width tabstops are still active within
+								// the document even when the last one is activated. This will indent and dedent on
+								// currentPos and next indendation will work as expected
+								ko.commands.doCommand('cmd_indent');
+								ko.commands.doCommand('cmd_dedent');
+
+								scimoz.anchor = selectionStart;
+								scimoz.currentPos = selectionEnd;
+
+							} finally { scimoz.endUndoAction(); }
 						}
 
 						break;
