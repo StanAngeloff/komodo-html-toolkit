@@ -26,6 +26,10 @@ $self.controller = function() {
 			this.onKeyEvent('up', function() { $instance.stop(); });
 		}
 
+		// If autocomplete is visible, close it
+		if (scimoz.autoCActive())
+			scimoz.autoCCancel();
+
 		// When we have a selection, we want the indentation level of the line we are going to end up on
 		var editorPosition = Math.min(scimoz.anchor, scimoz.currentPos),
 			lineStartPosition = scimoz.positionFromLine(scimoz.lineFromPosition(editorPosition)),
@@ -34,7 +38,7 @@ $self.controller = function() {
 
 		// Determine indentation level by looking at the current line
 		$toolkit.regexp.matchWhitespace(lineRange, '^');
-		var thisLineIndent = ($toolkit.regexp.lastMatches[0] || '');
+		var thisLineIndent = ($toolkit.regexp.lastMatches || ['']).shift();
 
 		var newLineStyle = $toolkit.editor.guessNewLine(view.document),
 			brTag = $toolkit.htmlUtils.fixTagCase('br', $toolkit.editor.guessTagsCasing(scimoz)),
