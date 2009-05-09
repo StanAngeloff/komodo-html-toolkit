@@ -87,7 +87,7 @@ $self.controller = function() {
 											ko.abbrev.findAbbrevSnippet(tagNameLower);
 							// Check in pre-defined HTML snippets next if no match
 							if ( ! abbrevSnippet &&
-								view.document.subLanguage === 'HTML')
+								$toolkit.editor.isHtmlBuffer(view))
 								abbrevSnippet = $toolkit.library.getTagSnippet(tagName) ||
 												$toolkit.library.getTagSnippet(tagNameLower);
 
@@ -103,7 +103,7 @@ $self.controller = function() {
 
 						// We know a few HTML empty elements, process those accordingly
 						if ( ! isTagAbbreviation &&
-							view.document.subLanguage === 'HTML' &&
+							$toolkit.editor.isHtmlBuffer(view) &&
 							$toolkit.htmlUtils.isEmptyTag(tagNameLower)) {
 
 							tagComplete = ($toolkit.regexp.matchWhitespace(lineBuffer, null, '$') ? '' : ' ') + '/';
@@ -153,7 +153,7 @@ $self.controller = function() {
 								return false;
 
 							// We also know a few HTML block elements
-							if (view.document.subLanguage === 'HTML' &&
+							if ($toolkit.editor.isHtmlBuffer(view) &&
 								$toolkit.htmlUtils.isBlockTag(tagNameLower)) {
 
 								tagComplete = '\n\t[[%tabstop0]]\n</' + tagName + '>';
@@ -162,7 +162,7 @@ $self.controller = function() {
 							} else {
 
 								// Don't autocomplete HTML tags we don't know about
-								if (view.document.subLanguage === 'HTML' &&
+								if ($toolkit.editor.isHtmlBuffer(view) &&
 									tagName.indexOf(':') < 0 && // Allow tags in namespaces
 									! $toolkit.htmlUtils.isHtmlTag(tagNameLower))
 									return false;

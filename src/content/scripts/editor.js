@@ -15,6 +15,11 @@ const EDITOR_NEW_LINE_DEFAULT = '\n;'
 // Set default DOCTYPE for markup documents
 const EDITOR_DOCTYPE_DEFAULT = '-//W3C//DTD XHTML 1.0 Transitional//EN';
 
+$self.isHtmlBuffer = function(view) {
+
+	return ([view.document.subLanguage, view.document.language].indexOf('HTML') >= 0);
+};
+
 $self.findTagBefore = function(position, scimoz) {
 
 	var positionChar, positionStyle,
