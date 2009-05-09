@@ -87,9 +87,19 @@ $self.controller = function() {
 											ko.abbrev.findAbbrevSnippet(tagNameLower);
 							// Check in pre-defined HTML snippets next if no match
 							if ( ! abbrevSnippet &&
-								$toolkit.editor.isHtmlBuffer(view))
-								abbrevSnippet = $toolkit.library.getTagSnippet(tagName) ||
-												$toolkit.library.getTagSnippet(tagNameLower);
+								$toolkit.editor.isHtmlBuffer(view)) {
+
+								// Some built-in snippets have different contents depending on the buffer DOCTYPE
+								var isXHtml = $toolkit.htmlUtils.isXHtmlDoctype($toolkit.editor.guessDoctype(view)),
+									doctypeSwitch = (isXHtml ? '-xhtml' : '-html');
+
+								[doctypeSwitch, ''].forEach(function(suffix) {
+
+									if ( ! abbrevSnippet)
+										abbrevSnippet = $toolkit.library.getTagSnippet(tagName + suffix) ||
+														$toolkit.library.getTagSnippet(tagNameLower + suffix.toLowerCase());
+								});
+							}
 
 							// If we have a snippet in either location, notify User
 							if (abbrevSnippet) {
