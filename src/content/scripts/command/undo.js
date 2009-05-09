@@ -23,11 +23,11 @@ $self.controller = function() {
 		$self.undoable = false;
 
 		var scimoz = ko.views.manager.currentView.scimoz;
-		$log(scimoz.currentPos + ' === ' + $self.position);
 		if (scimoz.currentPos === $self.position) {
 
 			scimoz.undo();
 			scimoz.anchor = scimoz.currentPos = $self.anchor;
+			scimoz.scrollCaret();
 
 			// Do not process event any further
 			e.preventDefault();

@@ -30,6 +30,7 @@ $self.controller = function(type, keys, direction) {
 				$toolkit.regexp.matchClosedTag(currentRange, '', '$')) {
 
 				scimoz.anchor = scimoz.currentPos -= $toolkit.regexp.lastMatches[0].length;
+				scimoz.scrollCaret();
 
 				// Do not process event any further
 				e.preventDefault();
@@ -54,6 +55,7 @@ $self.controller = function(type, keys, direction) {
 				$toolkit.regexp.matchClosedTag(currentRange, '^')) {
 
 				scimoz.anchor = scimoz.currentPos += $toolkit.regexp.lastMatches[0].length;
+				scimoz.scrollCaret();
 
 				// Do not process event any further
 				e.preventDefault();

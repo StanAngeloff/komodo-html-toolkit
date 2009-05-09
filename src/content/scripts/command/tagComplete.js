@@ -193,6 +193,8 @@ $self.controller = function() {
 						} else
 							scimoz.insertText(tagPosition, tagComplete);
 
+						scimoz.scrollCaret();
+
 						if (typeof ($toolkit.command.undo) === 'object') {
 
 							$toolkit.command.undo.position = Math.max(scimoz.anchor, scimoz.currentPos);

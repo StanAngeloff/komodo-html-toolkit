@@ -38,6 +38,7 @@ $self.controller = function() {
 					$toolkit.command.undo.anchor = Math.min(scimoz.anchor, scimoz.currentPos);
 
 				Snippet_insert(newLineSnippet);
+				scimoz.scrollCaret();
 
 				// Do not process event any further
 				e.preventDefault();

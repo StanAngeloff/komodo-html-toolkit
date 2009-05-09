@@ -29,6 +29,8 @@ $self.controller = function() {
 		else
 			scimoz.replaceSel('&nbsp;');
 
+		scimoz.scrollCaret();
+
 		// Do not process event any further
 		e.preventDefault();
 		e.stopPropagation();
