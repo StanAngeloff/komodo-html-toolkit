@@ -3,7 +3,7 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css" ?>
 <?xml-stylesheet href="chrome://htmltoolkit/skin/command/googleLink.css" type="text/css" ?>
 
-<!DOCTYPE window SYSTEM "chrome://htmltoolkit/locale/command/googleLink.dtd" >
+<!DOCTYPE window SYSTEM "chrome://htmltoolkit/locale/command/googleLink.dtd">
 
 <window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 		title="&title;"

@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!DOCTYPE overlay SYSTEM "chrome://htmltoolkit/locale/pref/pref-html.dtd" >
+
+<!DOCTYPE overlay SYSTEM "chrome://htmltoolkit/locale/pref/pref-html.dtd">
+
 <overlay id="htmltoolkitPrefHtml" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
 	<script type="application/x-javascript" src="chrome://htmltoolkit/content/pref/pref-htmlOverlay.js" />
+
 	<!-- TODO:
 	<groupbox orient="vertical">
 		<caption label="&htmltoolkit.label;" />
@@ -11,4 +15,5 @@
 	</groupbox>
 	<spacer flex="1" />
 	-->
+
 </overlay>

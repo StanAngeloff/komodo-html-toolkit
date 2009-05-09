@@ -1,0 +1,7 @@
+#markdownview-vbox
+{
+	background: Window;
+	padding:    0;
+}
+
+	#markdownview-vbox iframe { background: transparent; }

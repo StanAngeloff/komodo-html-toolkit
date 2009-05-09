@@ -49,14 +49,19 @@ if (typeof (extensions) === 'undefined')
 		else
 			scriptNamespace = $toolkit;
 
+		var destroyOnUnload = true;
+
 		// Destroy/return a reference to the namespace if already present
 		if (scriptName in scriptNamespace) {
 
 			if (typeof (includeOnce) === 'undefined' || includeOnce)
 				return scriptNamespace[scriptName];
 
-			if ('destroy' in scriptNamespace[scriptName])
+			if ('destroy' in scriptNamespace[scriptName]) {
+
 				scriptNamespace[scriptName]['destroy']();
+				destroyOnUnload = false;
+			}
 
 		} else {
 
@@ -74,6 +79,13 @@ if (typeof (extensions) === 'undefined')
 
 		if ('initialize' in scriptNamespace[scriptName])
 			scriptNamespace[scriptName]['initialize']();
+
+		if (destroyOnUnload &&
+			'destroy' in scriptNamespace[scriptName]) {
+
+			$toolkit.include('events');
+			$toolkit.events.onUnload(scriptNamespace[scriptName]['destroy']);
+		}
 
 		return scriptNamespace[scriptName];
 	};
@@ -149,6 +161,7 @@ if (typeof (extensions) === 'undefined')
 
 	$toolkit.trapExceptions($toolkit);
 
+	$toolkit.registerAll('module');
 	$toolkit.registerAll('command');
 	$toolkit.registerAll('hyperlink');
 })();
