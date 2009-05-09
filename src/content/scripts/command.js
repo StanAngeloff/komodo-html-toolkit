@@ -16,7 +16,6 @@ $self.destroy = function() {
 $self.initialize = function() {
 
 	$toolkit.events.onLoad($self.dispatcher.register);
-	$toolkit.events.onUnload($self.dispatcher.unregister);
 };
 
 $self.dispatcher = {

@@ -90,10 +90,7 @@ $self.controller = function() {
 
 				if (searchResult.address) {
 
-					var escapedAddress = searchResult.address.replace(/&/g, '&amp;')
-															 .replace(/"/g, '&quot;')
-															 .replace(/</g, '&lt;')
-															 .replace(/>/g, '&gt;'),
+					var escapedAddress = $toolkit.htmlUtils.escape(searchResult.address),
 
 						anchorTag = $toolkit.htmlUtils.fixTagCase('a', $toolkit.editor.guessTagsCasing(scimoz)),
 						hrefAttribute = $toolkit.htmlUtils.fixTagCase('href', $toolkit.editor.guessAttributesCasing(scimoz)),

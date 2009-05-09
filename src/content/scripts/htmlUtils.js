@@ -68,3 +68,11 @@ $self.isXHtmlDoctype = function(doctype) {
 
 	return ((doctype || '').toUpperCase().indexOf('XHTML') > 0);
 };
+
+$self.escape = function(unsafe) {
+
+	return ('' + unsafe).replace(/&/g, '&amp;')
+						.replace(/"/g, '&quot;')
+						.replace(/</g, '&lt;')
+						.replace(/>/g, '&gt;');
+};

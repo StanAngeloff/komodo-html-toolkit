@@ -25,7 +25,7 @@ $self.getTagSnippet = function(tagName) {
 	if (LIBRARY_SNIPPETS_MAP === null)
 		$self.initializeTagSnippets();
 
-	var tagNameLower = '$' + tagName.toLowerCase();
+	var tagNameLower = '$snippet:' + tagName.toLowerCase();
 	if (tagNameLower in LIBRARY_SNIPPETS_MAP)
 		return $self.createSnippet(LIBRARY_SNIPPETS_MAP[tagNameLower](tagName));
 
@@ -73,7 +73,7 @@ $self.initializeNewlineSnippets = function() {
 			continue;
 
 		for (var j = 0; j < whereLines.length; j ++)
-			LIBRARY_NEWLINE_MAP[whereLines[j]] = '$' + snippetName;
+			LIBRARY_NEWLINE_MAP[whereLines[j]] = '$snippet:' + snippetName;
 	}
 };
 
@@ -89,7 +89,7 @@ $self.initializeSnippetsFromURI = function(path, map) {
 		if ( ! snippetContents)
 			continue;
 
-		map['$' + snippetName] = (function(contents) {
+		map['$snippet:' + snippetName] = (function(contents) {
 			return function(tagName) {
 				return contents.replace(new RegExp($toolkit.regexp.patterns['SnippetTag'], 'g'),
 										function(entireMatch, tagBefore, tagMatch, tagAfter) {
