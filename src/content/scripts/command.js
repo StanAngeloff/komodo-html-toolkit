@@ -167,10 +167,7 @@ $self.controller = function(command, keys, allowChange) {
 		broadcasterEl.setAttribute('key', this.commandKey);
 		broadcasterEl.setAttribute('oncommand', 'ko.commands.doCommandAsync("' + this.commandName + '", event);');
 
-		var l10n = Cc['@mozilla.org/intl/stringbundle;1'].getService(Ci.nsIStringBundleService)
-														 .createBundle('chrome://htmltoolkit/locale/command.properties');
-
-		broadcasterEl.setAttribute('desc', l10n.GetStringFromName(this.command));
+		broadcasterEl.setAttribute('desc', $toolkit.l10n('command').GetStringFromName(this.command));
 
 		globalSet.appendChild(broadcasterEl);
 
