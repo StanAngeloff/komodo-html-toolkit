@@ -63,3 +63,8 @@ $self.fixTagCase = function(tagName, referenceName) {
 
 	return tagCased;
 };
+
+$self.isXHtmlDoctype = function(doctype) {
+
+	return ((doctype || '').toUpperCase().indexOf('XHTML') > 0);
+};

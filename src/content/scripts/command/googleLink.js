@@ -1,4 +1,6 @@
 $toolkit.include('command.language');
+$toolkit.include('editor');
+$toolkit.include('htmlUtils');
 
 $self.controller = function() {
 
@@ -34,6 +36,9 @@ $self.controller = function() {
 
 			} while	(rangeStart >= 0 &&
 					 $toolkit.regexp.matchWord(currentRange, '^', '$'));
+
+			// This allows us to capture a new range first before we assign it over to searchQuery
+			currentRange = searchQuery;
 
 			do {
 
@@ -88,15 +93,21 @@ $self.controller = function() {
 					var escapedAddress = searchResult.address.replace(/&/g, '&amp;')
 															 .replace(/"/g, '&quot;')
 															 .replace(/</g, '&lt;')
-															 .replace(/>/g, '&gt;');
+															 .replace(/>/g, '&gt;'),
 
-					// TODO: check casing for the rest of the document and determine whether we should use uppercase or lowercase
-					//       Look for <html, <body <any-other-known-html-tag and match against first occurrence
-					Snippet_insert($toolkit.library.createSnippet('<a href="' + escapedAddress + '">[[%s]]</a>'));
+						anchorTag = $toolkit.htmlUtils.fixTagCase('a', $toolkit.editor.guessTagsCasing(scimoz)),
+						hrefAttribute = $toolkit.htmlUtils.fixTagCase('href', $toolkit.editor.guessAttributesCasing(scimoz)),
+						quotesStyle = $toolkit.editor.guessQuotesStyle(scimoz),
+
+						snippetValue = '<' + anchorTag + ' ' + hrefAttribute + '=' + quotesStyle + escapedAddress + quotesStyle + '>[[%s]]</' + anchorTag + '>';
+
+					Snippet_insert($toolkit.library.createSnippet(snippetValue));
 
 					// Unfortunately Komodo does not keep the selection so we need to restore it manually
-					scimoz.anchor = searchStart + 11 + escapedAddress.length;
+					scimoz.anchor = searchStart + snippetValue.split('>').shift().length + 1;
 					scimoz.currentPos = scimoz.anchor + searchQuery.length;
+
+					scimoz.scrollCaret();
 				}
 
 				if (typeof ($toolkit.command.undo) === 'object') {

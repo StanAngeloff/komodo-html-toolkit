@@ -1,6 +1,8 @@
 $toolkit.include('command.language');
 $toolkit.include('debug');
+$toolkit.include('editor');
 $toolkit.include('events');
+$toolkit.include('htmlUtils');
 
 const DECORATOR_WBIT_SELECTION = 31; // Values above 32 just won't work
 
@@ -146,7 +148,6 @@ $self.controller = function() {
 			   $toolkit.regexp.matchWhitespace(scimoz.getTextRange(rangeEnd - 1, rangeEnd), '^', '$'))
 			rangeEnd --;
 
-		// TODO: Add status bar message and restore original anchor and position
 		if (rangeStart === rangeEnd) {
 
 			// Restore original anchor and position
@@ -161,9 +162,11 @@ $self.controller = function() {
 		scimoz.anchor = rangeStart;
 		scimoz.currentPos = rangeEnd;
 
-		var wrapSnippet = '<[[%tabstop1:p]]>\n[[%s]]\n[[%tabstop]]</[[%tabstop1]]>';
+		var paragraphTag = $toolkit.htmlUtils.fixTagCase('p', $toolkit.editor.guessTagsCasing(scimoz)),
+			wrapSnippet = '<[[%tabstop1:' + paragraphTag + ']]>\n[[%s]]\n[[%tabstop]]</[[%tabstop1]]>';
 
 		Snippet_insert($toolkit.library.createSnippet(wrapSnippet));
+		scimoz.scrollCaret();
 
 		// Highlight old selection with our custom marker
 		var markerStart = Math.max(scimoz.anchor, scimoz.currentPos) + 2,

@@ -1,4 +1,6 @@
 $toolkit.include('command.language');
+$toolkit.include('editor');
+$toolkit.include('htmlUtils');
 $toolkit.include('regexp');
 
 $self.controller = function() {
@@ -32,27 +34,22 @@ $self.controller = function() {
 
 		// Determine indentation level by looking at the current line
 		$toolkit.regexp.matchWhitespace(lineRange, '^');
+		var thisLineIndent = ($toolkit.regexp.lastMatches[0] || '');
 
-		var newLine = (view.document.new_line_endings === view.document.EOL_LF ? '\n' :
-					  (view.document.new_line_endings === view.document.EOL_CR ? '\r' :
-					  (view.document.new_line_endings === view.document.EOL_CRLF ? '\r\n' : '\n')));
-			lineIndent = newLine + ($toolkit.regexp.lastMatches || '');
-
-		// TODO: check casing for the rest of the document and determine whether we should use uppercase or lowercase
-		//       Look for <html, <body <any-other-known-html-tag and match against first occurrence
-
-		// TODO: Perhaps determine from DOCTYPE whether to complete as <br /> or <br>?
-		// TODO: Another macro for Ctrl+Alt+Enter for <hr />?
+		var newLineStyle = $toolkit.editor.guessNewLine(view.document),
+			brTag = $toolkit.htmlUtils.fixTagCase('br', $toolkit.editor.guessTagsCasing(scimoz)),
+			closingStyle = ($toolkit.htmlUtils.isXHtmlDoctype($toolkit.editor.guessDoctype(view)) ? ' /' : ''),
+			breakingLineText = '<' + brTag + closingStyle + '>' + newLineStyle + thisLineIndent;
 
 		// If no selection, insert after current position
 		if (scimoz.anchor === scimoz.currentPos) {
 
-			scimoz.insertText(scimoz.currentPos, '<br />' + lineIndent);
-			scimoz.anchor = scimoz.currentPos += 6 + lineIndent.length;
+			scimoz.insertText(scimoz.currentPos, breakingLineText);
+			scimoz.anchor = scimoz.currentPos += breakingLineText.length;
 		}
 		// Otherwise if we have a selection, replace it
 		else
-			scimoz.replaceSel('<br />' + lineIndent);
+			scimoz.replaceSel(breakingLineText);
 
 		scimoz.scrollCaret();
 
