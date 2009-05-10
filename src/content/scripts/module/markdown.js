@@ -7,17 +7,23 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 
 const MARKDOWN_LANGUAGE = 'Markdown';
-const MARKDOWN_UPDATE_INTERVAL = 1000;
+const MARKDOWN_UPDATE_INTERVAL = 500;
 const MARKDOWN_ELEMENT_ID = 'markdownview-frame';
 
 var MARKDOWN_TEMPLATES = {};
+var MARKDOWN_LAST_PREVIEW = null;
 
 $self.preview = function() {
 
 	this.hasLoaded = false;
 	this.lastView = null;
-	this.converter = new $toolkit.external.showdown.Showdown.converter();
 	this.intervalId = null;
+
+	this.converter = new $toolkit.external.showdown.Showdown.converter();
+
+	// Cache these as used every XX milliseconds
+	this.osService = Cc['@activestate.com/koOs;1'].getService(Ci.koIOs);
+	this.pathService = Cc['@activestate.com/koOsPath;1'].getService(Ci.koIOsPath);
 
 	var $instance = this;
 
@@ -123,7 +129,12 @@ $self.preview = function() {
 		if ( ! this.intervalId) {
 
 			var $instance = this;
-			this.intervalId = window.setInterval(function() { $instance.displayPreview($instance.lastView); }, MARKDOWN_UPDATE_INTERVAL);
+			this.intervalId = window.setInterval(function() {
+
+				if ($instance.lastView.scimoz.focus)
+					$instance.displayPreview($instance.lastView);
+
+			}, MARKDOWN_UPDATE_INTERVAL);
 		}
 	};
 
@@ -138,24 +149,45 @@ $self.preview = function() {
 
 	this.displayPreview = function(view) {
 
+		if (MARKDOWN_LAST_PREVIEW === view.scimoz.text)
+		 	return false;
+
 		try {
+
+			var viewPath = '';
+
+			if (this.pathService.isfile(view.document.displayPath))
+				viewPath = 'file://' + this.pathService.dirname(view.document.displayPath) + this.osService.sep;
+			else
+				viewPath = 'file://' + this.osService.getcwd() + this.osService.sep;
 
 			var htmlCode = this.converter.makeHtml(view.scimoz.text);
 
-			this.renderTemplate('preview', { html: htmlCode });
+			this.renderTemplate('preview', { html: htmlCode,
+											 base: viewPath });
+
+			MARKDOWN_LAST_PREVIEW = view.scimoz.text
+
+			return true;
 
 		} catch (e) {
 
 			this.renderTemplate('exception', { exception: e });
 		}
+
+		return false;
 	};
 
 	this.clearPreview = function() {
+
+		MARKDOWN_LAST_PREVIEW = null;
 
 		this.renderTemplate('buffersEmpty', { markdownLanguage: MARKDOWN_LANGUAGE });
 	};
 
 	this.displayNotice = function(view) {
+
+		MARKDOWN_LAST_PREVIEW = null;
 
 		this.renderTemplate('unsupportedLanguage', { bufferLanguage: view.document.language,
 													 markdownLanguage: MARKDOWN_LANGUAGE });
@@ -205,11 +237,25 @@ $self.preview = function() {
 									   .replace('${' + key + '}', $toolkit.htmlUtils.escape(args[key]), 'g');
 				}
 
-		var previewDocument = document.getElementById(MARKDOWN_ELEMENT_ID).contentDocument;
+		var previewElement = document.getElementById(MARKDOWN_ELEMENT_ID);
 
-		previewDocument.open();
-		previewDocument.write(template);
-		previewDocument.close();
+		var updateHTML = function(e) {
+
+			previewElement.contentDocument.documentElement.innerHTML = template;
+
+			// If an Event object was passed in, unregister event handler
+			if (e)
+				previewElement.removeEventListener('load', updateHTML, true);
+		};
+
+		// If the User has navigated away, restore original location to prevent security errors
+		if (previewElement.contentWindow.location.href !== 'about:blank') {
+
+			previewElement.addEventListener('load', updateHTML, true);
+			previewElement.contentWindow.location.replace('about:blank');
+
+		} else
+			updateHTML();
 	};
 
 	$toolkit.events.onUnload(this.unregister);
