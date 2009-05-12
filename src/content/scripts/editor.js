@@ -304,6 +304,12 @@ $self.guessDoctype = function(view) {
 	return EDITOR_DOCTYPE_DEFAULT;
 };
 
+$self.isPHPDoc = function(view, position) {
+
+	return ('PHP' === view.document.language &&
+			view.scimoz.SCE_UDL_SSL_COMMENTBLOCK === view.scimoz.getStyleAt(position));
+};
+
 $self.invalidate = function() {
 
 	ko.views.manager.currentView.scimoz.colourise(0, ko.views.manager.currentView.scimoz.length);

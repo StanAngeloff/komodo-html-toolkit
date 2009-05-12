@@ -7,20 +7,23 @@ $toolkit.include('regexp');
 $self.controller = function() {
 
 	// Call parent's constructor
-	$toolkit.command.language.controller.apply(this, ['tagComplete', '>', ['HTML', 'XML']]);
+	$toolkit.command.language.controller.apply(this, ['tagComplete', '>', ['HTML', 'XML', '_PHPDoc']]);
 
 	this.trigger = function(e) {
 
 		var view = ko.views.manager.currentView,
 			scimoz = view.scimoz,
 			editorPosition = Math.min(scimoz.anchor, scimoz.currentPos),
-			positionStyle = scimoz.getStyleAt(editorPosition);
+			positionStyle = scimoz.getStyleAt(editorPosition),
+			startTagCharCode = '<'.charCodeAt(0);
 
 		// Make sure we are not within an attribute or an operator
 		if ([scimoz.SCE_UDL_M_ATTRNAME,
 			 scimoz.SCE_UDL_M_STRING,
 			 scimoz.SCE_UDL_M_OPERATOR].indexOf(positionStyle) >= 0)
 			return false;
+
+		var isDocLanguage = (['_PHPDoc'].indexOf(this.languageMatch) >= 0);
 
 		// Work our way back to the beginning of the document
 		for (var position = Math.max(0, editorPosition - 1); position >= 0; position --) {
@@ -32,7 +35,8 @@ $self.controller = function() {
 				break;
 
 			// If we match an opening tag, evaluate and stop processing
-			if (scimoz.getStyleAt(position) === scimoz.SCE_UDL_M_STAGO) {
+			if (scimoz.getStyleAt(position) === scimoz.SCE_UDL_M_STAGO ||
+				(isDocLanguage && startTagCharCode === scimoz.getCharAt(position))) {
 
 				var lineBuffer = scimoz.getTextRange(position, editorPosition);
 
@@ -113,7 +117,7 @@ $self.controller = function() {
 
 						// We know a few HTML empty elements, process those accordingly
 						if ( ! isTagAbbreviation &&
-							$toolkit.editor.isHtmlBuffer(view) &&
+							(isDocLanguage || $toolkit.editor.isHtmlBuffer(view)) &&
 							$toolkit.htmlUtils.isEmptyTag(tagNameLower)) {
 
 							tagComplete = ($toolkit.regexp.matchWhitespace(lineBuffer, null, '$') ? '' : ' ') + '/';
@@ -125,44 +129,47 @@ $self.controller = function() {
 						if ( ! isTagAbbreviation && ! isTagEmpty) {
 
 							// Get the number of open tags within the entire document
-							var startTagCharCode = '<'.charCodeAt(0),
-								closeTagCharCode = '>'.charCodeAt(0);
+							if ( ! isDocLanguage) {
 
-								isOpenTag = function(scimoz, position, tagName) {
-									return (scimoz.getCharAt(position) === startTagCharCode &&
-											scimoz.getStyleAt(position) === scimoz.SCE_UDL_M_STAGO &&
-											scimoz.getTextRange(position, Math.min(position + tagName.length + 1, scimoz.length)) === '<' + tagName);
-								},
+								var startTagCharCode = '<'.charCodeAt(0),
+									closeTagCharCode = '>'.charCodeAt(0);
 
-								isCloseTag = function(scimoz, position, tagName) {
-									return (scimoz.getCharAt(position) === closeTagCharCode &&
-											scimoz.getStyleAt(position) === scimoz.SCE_UDL_M_ETAGC &&
-											scimoz.getTextRange(Math.max(position - tagName.length - 1, 0), position) === '/' + tagName);
-								};
+									isOpenTag = function(scimoz, position, tagName) {
+										return (scimoz.getCharAt(position) === startTagCharCode &&
+												scimoz.getStyleAt(position) === scimoz.SCE_UDL_M_STAGO &&
+												scimoz.getTextRange(position, Math.min(position + tagName.length + 1, scimoz.length)) === '<' + tagName);
+									},
 
-							var openTagsLength = 0;
+									isCloseTag = function(scimoz, position, tagName) {
+										return (scimoz.getCharAt(position) === closeTagCharCode &&
+												scimoz.getStyleAt(position) === scimoz.SCE_UDL_M_ETAGC &&
+												scimoz.getTextRange(Math.max(position - tagName.length - 1, 0), position) === '/' + tagName);
+									};
 
-							for (var prevPosition = 0; prevPosition <= editorPosition; prevPosition ++) {
-								if (isOpenTag(scimoz, prevPosition, tagName))
-									openTagsLength ++;
-								else if (isCloseTag(scimoz, prevPosition, tagName))
-									// When working before the current position, ignore extra closing tags
-									if (openTagsLength > 0)
+								var openTagsLength = 0;
+
+								for (var prevPosition = 0; prevPosition <= editorPosition; prevPosition ++) {
+									if (isOpenTag(scimoz, prevPosition, tagName))
+										openTagsLength ++;
+									else if (isCloseTag(scimoz, prevPosition, tagName))
+										// When working before the current position, ignore extra closing tags
+										if (openTagsLength > 0)
+											openTagsLength --;
+								}
+
+								for (var nextPosition = editorPosition; nextPosition < scimoz.length; nextPosition ++) {
+									if (isOpenTag(scimoz, nextPosition, tagName))
+										openTagsLength ++;
+									else if (isCloseTag(scimoz, nextPosition, tagName))
 										openTagsLength --;
+								}
+
+								// If we have closed all tags within the document, don't autocomplete
+								if (openTagsLength < 1)
+									return false;
 							}
 
-							for (var nextPosition = editorPosition; nextPosition < scimoz.length; nextPosition ++) {
-								if (isOpenTag(scimoz, nextPosition, tagName))
-									openTagsLength ++;
-								else if (isCloseTag(scimoz, nextPosition, tagName))
-									openTagsLength --;
-							}
-
-							// If we have closed all tags within the document, don't autocomplete
-							if (openTagsLength < 1)
-								return false;
-
-							// We also know a few HTML block elements
+							// We also know a few HTML block elements, but only when processing 'true' HTML buffers
 							if ($toolkit.editor.isHtmlBuffer(view) &&
 								$toolkit.htmlUtils.isBlockTag(tagNameLower)) {
 

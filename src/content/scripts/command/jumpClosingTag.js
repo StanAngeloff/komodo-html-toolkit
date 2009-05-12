@@ -4,7 +4,7 @@ $toolkit.include('regexp');
 $self.controller = function(type, keys, direction) {
 
 	// Call parent's constructor
-	$toolkit.command.language.controller.apply(this, ['jumpClosingTag.' + type, keys, ['HTML', 'XML']]);
+	$toolkit.command.language.controller.apply(this, ['jumpClosingTag.' + type, keys, ['HTML', 'XML', '_PHPDoc']]);
 
 	this.direction = direction;
 

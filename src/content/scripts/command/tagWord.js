@@ -7,7 +7,7 @@ $self.controller = function() {
 	var isMac = (navigator.platform.indexOf('Mac') >= 0);
 
 	// Call parent's constructor
-	$toolkit.command.language.controller.apply(this, ['tagWord', (isMac ? 'Meta' : 'Ctrl') + '+.', ['HTML', 'XML'], true]);
+	$toolkit.command.language.controller.apply(this, ['tagWord', (isMac ? 'Meta' : 'Ctrl') + '+.', ['HTML', 'XML', '_PHPDoc'], true]);
 
 	this.trigger = function() {
 
@@ -83,10 +83,14 @@ $self.controller = function() {
 					abbreviation = abbreviation.substr(0, abbreviation.length - 1);
 				}
 
-				var $e = { preventUndo: true,
-						   preventDefault: function() {},
-						   stopPropagation: function() {} };
-				new $toolkit.command.tagComplete.controller().trigger($e);
+				var $event = { preventUndo: true,
+							   preventDefault: function() {},
+							   stopPropagation: function() {} };
+
+				var $tagComplete = new $toolkit.command.tagComplete.controller()
+
+				$tagComplete.languageMatch = this.languageMatch;
+				$tagComplete.trigger($event)
 
 				if (typeof ($toolkit.command.undo) === 'object' &&
 					$toolkit.command.undo.undoable)
