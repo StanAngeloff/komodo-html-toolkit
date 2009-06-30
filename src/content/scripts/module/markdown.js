@@ -48,7 +48,8 @@ $self.preview = function() {
 	this.onViewChanged = function(e) {
 
 		var view = e.originalTarget;
-		if (view && view.getAttribute('type') === 'editor') {
+		if (view && view.getAttribute('type') === 'editor' &&
+			view.document && view.scimoz) {
 
 			$instance.lastView = e.originalTarget;
 			// If we have loaded, we can display a preview, otherwise queue

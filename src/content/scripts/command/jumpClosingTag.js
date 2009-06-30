@@ -50,7 +50,8 @@ $self.controller = function(type, keys, direction) {
 
 			// Check if we match a closing tag after the cursor and that we
 			// are not at the beginning of the line
-			if ( ! $toolkit.regexp.matchWhitespace(rangeBefore, '^', '$') &&
+			if (scimoz.currentPos !== lineStartPosition &&
+				! $toolkit.regexp.matchWhitespace(rangeBefore, '^', '$') &&
 				currentRange && currentRange.length &&
 				$toolkit.regexp.matchClosedTag(currentRange, '^')) {
 

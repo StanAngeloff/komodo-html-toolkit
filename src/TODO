@@ -1,3 +1,5 @@
+- Move all Mac/Meta checks to command.js i.e. replace Ctrl with Meta on Mac
+
 - Menu items for commands that can be re-assigned
 
 - Don't assign default key bindings if User has cleared all sequences

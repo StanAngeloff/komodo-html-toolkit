@@ -124,7 +124,10 @@ if (typeof (extensions) === 'undefined')
 							try { return fn.apply(bound || obj, arguments || []); }
 							catch (e) {
 
-								ko.dialogs.alert($toolkit.l10n('htmltoolkit').GetStringFromName('uncaughtException'), e);
+								$toolkit.include('debug');
+
+								ko.dialogs.alert($toolkit.l10n('htmltoolkit').GetStringFromName('uncaughtException'),
+												 $toolkit.debug.print_r(e));
 
 								throw e;
 							}
