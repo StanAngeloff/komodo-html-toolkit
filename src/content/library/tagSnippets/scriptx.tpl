@@ -1,0 +1,1 @@
+<html:script type="text/javascript" src="[[%tabstop0]]"></html:script>
