@@ -62,11 +62,11 @@ $self.initializeNewlineSnippets = function() {
 	LIBRARY_NEWLINE_MAP = {};
 	$self.initializeSnippetsFromURI(LIBRARY_NEWLINE_PATH, LIBRARY_NEWLINE_MAP);
 
-	var whereFiles = $toolkit.io.findFilesInURI(LIBRARY_NEWLINE_PATH, '*.where', true);
+	var whereFiles = $toolkit.io.findFilesInURI(LIBRARY_NEWLINE_PATH, '*.pairs', true);
 
 	for (var i = 0; i < whereFiles.length; i ++) {
 
-		var snippetName = whereFiles[i].leafName.replace(/\.where$/, ''),
+		var snippetName = whereFiles[i].leafName.replace(/\.pairs$/, ''),
 			whereLines = $toolkit.io.readLinesFromFile(whereFiles[i]);
 
 		if ( ! (whereLines && whereLines.length))
@@ -79,11 +79,11 @@ $self.initializeNewlineSnippets = function() {
 
 $self.initializeSnippetsFromURI = function(path, map) {
 
-	var snippetFiles = $toolkit.io.findFilesInURI(path, '*.html', true);
+	var snippetFiles = $toolkit.io.findFilesInURI(path, '*.tpl', true);
 
 	for (var i = 0; i < snippetFiles.length; i ++) {
 
-		var snippetName = snippetFiles[i].leafName.replace(/\.html$/, ''),
+		var snippetName = snippetFiles[i].leafName.replace(/\.tpl$/, ''),
 			snippetContents = $toolkit.io.readEntireFile(snippetFiles[i]);
 
 		if ( ! snippetContents)
