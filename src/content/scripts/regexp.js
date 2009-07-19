@@ -13,14 +13,18 @@ $self.patterns = {
 	'Whitespace': '\\s+',
 	'GeckoImageFormats': '(\.(?:png|apng|jpg|jpeg|gif|bmp|xbm|svg))',
 	'Protocol': '\\w+:\/\/',
-	'DoctypeDeclaration': '<!DOCTYPE\\s+(\\S+)\\s+(PUBLIC|SYSTEM)\\s+("[^"]*"|\'[^\']*\')\\s*("[^"]*"|\'[^\']*\')?\\s*(\\[|>)'
+	'DoctypeDeclaration': '<!DOCTYPE\\s+(\\S+)\\s+(PUBLIC|SYSTEM)\\s+("[^"]*"|\'[^\']*\')\\s*("[^"]*"|\'[^\']*\')?\\s*(\\[|>)',
+	'Html5DoctypeDeclaration': '<!doctype\\s+html>',
+	'XmlDeclaration': '<\\?xml\\s+[^\\?]+\\?>'
 };
 
 $self.match = function(regexp, context, prepend, append, modifiers) {
 
-	var re = new RegExp((prepend || '')
-					  + regexp.replace('|', (append || '') + '|' + (prepend || ''), (modifiers || 'g'))
-					  + (append || ''));
+	prepend = (prepend || '');
+	append = (append || '');
+
+	var re = new RegExp(prepend + regexp.replace('|', append + '|' + prepend, 'g') + append,
+						(modifiers || ''));
 
 	$self.lastMatches = ('' + context).match(re);
 

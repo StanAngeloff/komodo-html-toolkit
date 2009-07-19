@@ -51,7 +51,8 @@ $self.controller = function() {
 					tagName = $toolkit.regexp.lastMatches[1];
 					tagNameLower = tagName.toLowerCase();
 
-					var editorEndUndo = false;
+					var isXHtmlView = $toolkit.htmlUtils.isXHtmlDoctype($toolkit.editor.guessDoctype(view)),
+						editorEndUndo = false;
 
 					// If this was an internal call, do no begin another undo action
 					if ( ! e || ! e.preventUndo) {
@@ -94,10 +95,7 @@ $self.controller = function() {
 								$toolkit.editor.isHtmlBuffer(view)) {
 
 								// Some built-in snippets have different contents depending on the buffer DOCTYPE
-								var isXHtml = $toolkit.htmlUtils.isXHtmlDoctype($toolkit.editor.guessDoctype(view)),
-									doctypeSwitch = (isXHtml ? '-xhtml' : '-html');
-
-								[doctypeSwitch, ''].forEach(function(suffix) {
+								[(isXHtmlView ? '-xhtml' : '-html'), ''].forEach(function(suffix) {
 
 									if ( ! abbrevSnippet)
 										abbrevSnippet = $toolkit.library.getTagSnippet(tagName + suffix) ||
@@ -120,7 +118,11 @@ $self.controller = function() {
 							(isDocLanguage || $toolkit.editor.isHtmlBuffer(view)) &&
 							$toolkit.htmlUtils.isEmptyTag(tagNameLower)) {
 
-							tagComplete = ($toolkit.regexp.matchWhitespace(lineBuffer, null, '$') ? '' : ' ') + '/';
+							if (isXHtmlView)
+								tagComplete = ($toolkit.regexp.matchWhitespace(lineBuffer, null, '$') ? '' : ' ') + '/';
+							else
+								tagComplete = '';
+
 							tagPosition = editorPosition;
 							isTagEmpty = true;
 						}

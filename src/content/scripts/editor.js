@@ -15,6 +15,9 @@ const EDITOR_NEW_LINE_DEFAULT = '\n;'
 // Set default DOCTYPE for markup documents
 const EDITOR_DOCTYPE_DEFAULT = '-//W3C//DTD XHTML 1.0 Transitional//EN';
 
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+
 $self.isHtmlBuffer = function(view) {
 
 	return ([view.document.subLanguage, view.document.language].indexOf('HTML') >= 0);
@@ -297,9 +300,27 @@ $self.guessDoctype = function(view) {
 		}
 	}
 
-	// Attempt to match DOCTYPE in buffer
-	if ($toolkit.regexp.matchDoctypeDeclaration(view.scimoz.text))
+	// NOTE: This might break PHP files where the <?php block comes first
+	var doctypeText = view.scimoz.text.substr(0, 1024);
+
+	// Check for presence of <?xml header in the first few lines
+	if ($toolkit.regexp.matchXmlDeclaration(doctypeText))
+		return 'implied XHTML';
+	// Attempt to match long DOCTYPE in buffer
+	else if ($toolkit.regexp.matchDoctypeDeclaration(doctypeText))
 		return $toolkit.regexp.lastMatches[3];
+	// Attempt to match short HTML 5 DOCTYPE in buffer
+	else if ($toolkit.regexp.matchHtml5DoctypeDeclaration(doctypeText, null, null, 'i'))
+		return 'implied HTML';
+
+	// Attempt to fetch the default HTML DOCTYPE from Komodo's preferences
+	if ('HTML' === viewLanguage) {
+
+		var preferencesService = Cc['@activestate.com/koPrefService;1'].getService(Ci.koIPrefService),
+			defaultDeclaration = preferencesService.prefs.getStringPref('defaultHTMLDecl');
+
+		return (defaultDeclaration || EDITOR_DOCTYPE_DEFAULT);
+	}
 
 	return EDITOR_DOCTYPE_DEFAULT;
 };
