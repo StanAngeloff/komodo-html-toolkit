@@ -352,7 +352,7 @@ $self.hasTabstops = function(view) {
 				return false;
 		}
 
-		return true;
+		return (tabstopsTable.length > 0);
 	}
 
 	return false;

@@ -5,7 +5,7 @@ $toolkit.include('library');
 $self.controller = function() {
 
 	// Call parent's constructor
-	$toolkit.command.language.controller.apply(this, ['newLine', ['Enter', 'Return'], 'HTML']);
+	$toolkit.command.language.controller.apply(this, ['newLine', ['Shift+Enter', 'Shift+Return'], 'HTML']);
 
 	this.trigger = function(e) {
 
