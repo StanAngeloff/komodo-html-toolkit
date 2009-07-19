@@ -4,6 +4,9 @@ $toolkit.include('htmlUtils');
 $toolkit.include('library');
 $toolkit.include('regexp');
 
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+
 $self.controller = function() {
 
 	// Call parent's constructor
@@ -99,7 +102,7 @@ $self.controller = function() {
 
 									if ( ! abbrevSnippet)
 										abbrevSnippet = $toolkit.library.getTagSnippet(tagName + suffix) ||
-														$toolkit.library.getTagSnippet(tagNameLower + suffix.toLowerCase());
+														$toolkit.library.getTagSnippet(tagNameLower + suffix);
 								});
 							}
 
@@ -109,7 +112,29 @@ $self.controller = function() {
 								tagComplete = abbrevSnippet;
 								isTagAbbreviation = true;
 
-								ko.statusBar.AddMessage($toolkit.l10n('command').formatStringFromName('tagComplete.snippetFound', [tagName, tagComplete.parent.name], 2), 'htmltoolkit', 2500, true);
+								// Give more detailed information about where the snippet was found
+								var parentName = null;
+
+								if ('*internal*' === tagComplete.parent.name)
+									parentName = $toolkit.l10n('command').GetStringFromName('tagComplete.builtIn');
+								else {
+
+									var tagParent = tagComplete.parent,
+										tagPath = [];
+
+									while (tagParent) {
+
+										tagPath.push(tagParent.name);
+										tagParent = tagParent.parent;
+									}
+
+									tagPath.pop();
+									tagPath.push($toolkit.l10n('command').GetStringFromName('tagComplete.toolbox'));
+
+									parentName = tagPath.reverse().join(' > ');
+								}
+
+								ko.statusBar.AddMessage($toolkit.l10n('command').formatStringFromName('tagComplete.snippetFound', [tagName, parentName], 2), 'htmltoolkit', 2500, true);
 							}
 						}
 

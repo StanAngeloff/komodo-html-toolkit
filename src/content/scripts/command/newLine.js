@@ -28,7 +28,11 @@ $self.controller = function() {
 		var newLineSnippet = $toolkit.library.getNewLineSnippet(tagBefore, tagAfter);
 		if (newLineSnippet) {
 
-			ko.statusBar.AddMessage($toolkit.l10n('command').GetStringFromName('newLine.triggered'), 'htmltoolkit', 1500, false);
+			var statusArguments = [tagBefore, tagAfter,
+								   $toolkit.l10n('command').GetStringFromName('newLine.builtIn')],
+				statusMessage = $toolkit.l10n('command').formatStringFromName('newLine.triggered', statusArguments, statusArguments.length);
+
+			ko.statusBar.AddMessage(statusMessage, 'htmltoolkit', 2500, true);
 
 			try {
 
