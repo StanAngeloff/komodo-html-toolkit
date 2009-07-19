@@ -54,8 +54,7 @@ $self.controller = function() {
 				// If we have indicators within the document, we can't undo
 				if (typeof ($toolkit.command.undo) === 'object') {
 
-					if (view.document.hasTabstopInsertionTable &&
-						view.document.getTabstopInsertionTable({}).length > 0 &&
+					if ($toolkit.editor.hasTabstops(view) &&
 						scimoz.currentPos !== scimoz.anchor)
 						$toolkit.command.undo.undoable = false;
 					else

@@ -335,3 +335,25 @@ $self.invalidate = function() {
 
 	ko.views.manager.currentView.scimoz.colourise(0, ko.views.manager.currentView.scimoz.length);
 };
+
+$self.hasTabstops = function(view) {
+
+	// Ensure we don't have tabstops remaining within the buffer
+	if (view.document.hasTabstopInsertionTable) {
+
+		var tabstopsTable = view.document.getTabstopInsertionTable({});
+
+		// If we have one tabstop remaining, skip it if it's Backref #0
+		if (tabstopsTable.length === 1) {
+
+			var lastTabstop = tabstopsTable[0];
+
+			if (lastTabstop.isBackref && lastTabstop.backrefNumber === 0)
+				return false;
+		}
+
+		return true;
+	}
+
+	return false;
+};

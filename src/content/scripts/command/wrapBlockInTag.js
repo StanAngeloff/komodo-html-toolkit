@@ -276,7 +276,7 @@ $self.controller = function() {
 		var clearLeftoversTimer = window.setInterval(function() {
 
 			// If there is at least one more tabstop within the document, leave marker
-			if (view.document.hasTabstopInsertionTable && view.document.getTabstopInsertionTable({}).length > 0)
+			if ($toolkit.editor.hasTabstops(view))
 				return false;
 
 			// There are no more tabstops within the buffer, clear marker

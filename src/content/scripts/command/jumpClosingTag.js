@@ -1,4 +1,5 @@
 $toolkit.include('command.language');
+$toolkit.include('editor');
 $toolkit.include('regexp');
 
 $self.controller = function(type, keys, direction) {
@@ -15,7 +16,7 @@ $self.controller = function(type, keys, direction) {
 
 		// Move caret if no selection and remaining tabstops
 		if (scimoz.anchor !== scimoz.currentPos ||
-			(view.document.hasTabstopInsertionTable && view.document.getTabstopInsertionTable({}).length > 0))
+			$toolkit.editor.hasTabstops(view))
 			return false;
 
 		// Going backwards i.e. jump before closing tag
