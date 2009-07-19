@@ -4,10 +4,8 @@ $toolkit.include('editor');
 
 $self.controller = function() {
 
-	var isMac = (navigator.platform.indexOf('Mac') >= 0);
-
 	// Call parent's constructor
-	$toolkit.command.language.controller.apply(this, ['tagWord', (isMac ? 'Meta' : 'Ctrl') + '+.', ['HTML', 'XML', '_PHPDoc'], true]);
+	$toolkit.command.language.controller.apply(this, ['tagWord', 'Ctrl+.', ['HTML', 'XML', '_PHPDoc'], true]);
 
 	this.trigger = function() {
 

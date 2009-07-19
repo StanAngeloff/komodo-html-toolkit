@@ -2,10 +2,8 @@ $toolkit.include('command');
 
 $self.controller = function() {
 
-	var isMac = (navigator.platform.indexOf('Mac') >= 0);
-
 	// Call parent's constructor
-	$toolkit.command.controller.apply(this, ['duplicateLineTemplate', [(isMac ? 'Meta' : 'Ctrl') + '+Alt+D'], true]);
+	$toolkit.command.controller.apply(this, ['duplicateLineTemplate', ['Ctrl+Alt+D'], true]);
 
 	this.trigger = function(e) {
 

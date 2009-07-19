@@ -1,5 +1,3 @@
-- Move all Mac/Meta checks to command.js i.e. replace Ctrl with Meta on Mac
-
 - Menu items for commands that can be re-assigned
 
 - Don't assign default key bindings if User has cleared all sequences
@@ -7,7 +5,5 @@
 - Clearing a key binding does not take effect until Komodo is restarted
 
 - Auto-complete quotes when = is pressed after an attribute name
-
-- yUML in a pop-up + preview, option to edit as well (select <img /> under cursor?)
 
 - Prompt if default Abbreviations folder exists (Samples x.x.x)

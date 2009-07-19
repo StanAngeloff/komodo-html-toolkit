@@ -5,11 +5,8 @@ $toolkit.include('regexp');
 
 $self.controller = function() {
 
-	var isMac = (navigator.platform.indexOf('Mac') >= 0),
-		modifier = (isMac ? 'Meta' : 'Ctrl');
-
 	// Call parent's constructor
-	$toolkit.command.language.controller.apply(this, ['breakingLine', [modifier + '+Enter', modifier + '+Return'], ['HTML']]);
+	$toolkit.command.language.controller.apply(this, ['breakingLine', ['Ctrl+Enter', 'Ctrl+Return'], ['HTML']]);
 
 	this.trigger = function(e) {
 

@@ -132,6 +132,13 @@ $self.controller = function(command, keys, allowChange) {
 	this.commandKey = 'key_' + this.commandName;
 
 	this.keys = (typeof (keys) === 'string' ? [keys] : keys);
+
+	// Ctrl is Meta on a Mac, update assigned keys to match
+	var isMac = (navigator.platform.indexOf('Mac') >= 0);
+	if (isMac && this.keys)
+		for (var i = 0; i < this.keys.length; i ++)
+			this.keys[i] = this.keys[i].replace('Ctrl', 'Meta', 'g');
+
 	this.allowChange = !! allowChange;
 
 	this.register = function() {

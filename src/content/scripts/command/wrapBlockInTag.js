@@ -110,10 +110,8 @@ $self.onViewOpened = function(e) {
 
 $self.controller = function() {
 
-	var isMac = (navigator.platform.indexOf('Mac') >= 0);
-
 	// Call parent's constructor
-	$toolkit.command.language.controller.apply(this, ['wrapBlockInTag', (isMac ? 'Meta' : 'Ctrl') + '+Alt+W', ['HTML', 'XML'], true]);
+	$toolkit.command.language.controller.apply(this, ['wrapBlockInTag', 'Ctrl+Alt+W', ['HTML', 'XML'], true]);
 
 	this.trigger = function() {
 

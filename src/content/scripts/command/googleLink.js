@@ -4,10 +4,8 @@ $toolkit.include('htmlUtils');
 
 $self.controller = function() {
 
-	var isMac = (navigator.platform.indexOf('Mac') >= 0);
-
 	// Call parent's constructor
-	$toolkit.command.language.controller.apply(this, ['googleLink', (isMac ? 'Meta' : 'Ctrl') + '+Alt+Shift+L', ['HTML'], true]);
+	$toolkit.command.language.controller.apply(this, ['googleLink', 'Ctrl+Alt+Shift+L', ['HTML'], true]);
 
 	this.trigger = function() {
 
