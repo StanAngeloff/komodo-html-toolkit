@@ -125,43 +125,63 @@ $self.controller = function() {
 			if (scimoz.indicatorValueAt(DECORATOR_WBIT_SELECTION, i))
 				return false;
 
+		var lineStart = scimoz.positionFromLine(scimoz.lineFromPosition(scimoz.anchor)),
+			lineEnd = scimoz.getLineEndPosition(scimoz.lineFromPosition(scimoz.currentPos));
+
 		// If no selection, select entire line
 		if (scimoz.anchor === scimoz.currentPos) {
 
-			scimoz.anchor = scimoz.positionFromLine(scimoz.lineFromPosition(scimoz.anchor));
-			scimoz.currentPos = scimoz.getLineEndPosition(scimoz.lineFromPosition(scimoz.currentPos));
+			scimoz.anchor = lineStart;
+			scimoz.currentPos = lineEnd;
 		}
 
-		// Unselect whitespace from beginning and end of selection
-		var rangeStart = Math.min(scimoz.anchor, scimoz.currentPos),
-			rangeEnd = Math.max(scimoz.anchor, scimoz.currentPos),
-			originalRangeStart = rangeStart,
-			originalRangeEnd = rangeEnd;
+		var wrapSnippet, restoreSelection;
 
-		while (rangeStart < rangeEnd &&
-			   $toolkit.regexp.matchWhitespace(scimoz.getTextRange(rangeStart, rangeStart + 1), '^', '$'))
-			rangeStart ++;
+		// If start and end position are on the same line and the entire line
+		// has not been selected, wrap on the same line
+		if (scimoz.lineFromPosition(scimoz.anchor) === scimoz.lineFromPosition(scimoz.currentPos) &&
+			(scimoz.anchor > lineStart || scimoz.currentPos < lineEnd)) {
 
-		while (rangeEnd > rangeStart &&
-			   $toolkit.regexp.matchWhitespace(scimoz.getTextRange(rangeEnd - 1, rangeEnd), '^', '$'))
-			rangeEnd --;
+			var strongTag = $toolkit.htmlUtils.fixTagCase('strong', $toolkit.editor.guessTagsCasing(scimoz));
 
-		if (rangeStart === rangeEnd) {
+			wrapSnippet = '<[[%tabstop1:' + strongTag + ']]>[[%s]][[%tabstop]]</[[%tabstop1]]>';
+			restoreSelection = false;
 
-			// Restore original anchor and position
-			scimoz.anchor = originalAnchor;
-			scimoz.currentPos = originalPosition;
+		} else {
 
-			ko.statusBar.AddMessage($toolkit.l10n('command').GetStringFromName('wrapBlockInTag.rangeEmpty'), 'htmltoolkit', 2500, true);
+			// Unselect whitespace from beginning and end of selection
+			var rangeStart = Math.min(scimoz.anchor, scimoz.currentPos),
+				rangeEnd = Math.max(scimoz.anchor, scimoz.currentPos),
+				originalRangeStart = rangeStart,
+				originalRangeEnd = rangeEnd;
 
-			return false;
-		}
+			while (rangeStart < rangeEnd &&
+				   $toolkit.regexp.matchWhitespace(scimoz.getTextRange(rangeStart, rangeStart + 1), '^', '$'))
+				rangeStart ++;
 
-		scimoz.anchor = rangeStart;
-		scimoz.currentPos = rangeEnd;
+			while (rangeEnd > rangeStart &&
+				   $toolkit.regexp.matchWhitespace(scimoz.getTextRange(rangeEnd - 1, rangeEnd), '^', '$'))
+				rangeEnd --;
 
-		var paragraphTag = $toolkit.htmlUtils.fixTagCase('p', $toolkit.editor.guessTagsCasing(scimoz)),
+			if (rangeStart === rangeEnd) {
+
+				// Restore original anchor and position
+				scimoz.anchor = originalAnchor;
+				scimoz.currentPos = originalPosition;
+
+				ko.statusBar.AddMessage($toolkit.l10n('command').GetStringFromName('wrapBlockInTag.rangeEmpty'), 'htmltoolkit', 2500, true);
+
+				return false;
+			}
+
+			scimoz.anchor = rangeStart;
+			scimoz.currentPos = rangeEnd;
+
+			var paragraphTag = $toolkit.htmlUtils.fixTagCase('p', $toolkit.editor.guessTagsCasing(scimoz));
+
 			wrapSnippet = '<[[%tabstop1:' + paragraphTag + ']]>\n[[%s]]\n[[%tabstop]]</[[%tabstop1]]>';
+			restoreSelection = true;
+		}
 
 		Snippet_insert($toolkit.library.createSnippet(wrapSnippet));
 		scimoz.scrollCaret();
@@ -192,17 +212,20 @@ $self.controller = function() {
 		markerEnd = Math.min(scimoz.getLineEndPosition(scimoz.lineFromPosition(markerEnd)) + 1, scimoz.length - 1);
 
 		// Make sure start point is not past end point as that's not acceptable
-		if (markerEnd <= markerStart)
+		if (restoreSelection && markerEnd <= markerStart)
 			return false;
 
 		$self.markerActive = true;
 
-		scimoz.indicatorCurrent = DECORATOR_WBIT_SELECTION;
-		scimoz.indicatorFillRange(markerStart, markerEnd - markerStart);
+		if (restoreSelection) {
+
+			scimoz.indicatorCurrent = DECORATOR_WBIT_SELECTION;
+			scimoz.indicatorFillRange(markerStart, markerEnd - markerStart);
+		}
 
 		var $instance = this,
 
-			clearMarker = function(selectOnClear) {
+			clearMarker = function(restoreSelection) {
 
 				// First find where marker starts and ends
 				for (i = 0; i < scimoz.length; i ++)
@@ -215,7 +238,7 @@ $self.controller = function() {
 						scimoz.indicatorClearRange(indicatorStart, indicatorEnd);
 
 						// Select marker, respect anchor position i.e. before or after the cursor
-						if (selectOnClear) {
+						if (restoreSelection) {
 
 							var selectionStart = Math[originalAnchor < originalPosition ? 'min' : 'max'](indicatorStart, indicatorEnd),
 								selectionEnd = Math[originalAnchor < originalPosition ? 'max' : 'min'](indicatorStart, indicatorEnd);
@@ -259,7 +282,7 @@ $self.controller = function() {
 						}
 
 						// Let Komodo handle the key first
-						window.setTimeout(function() { clearMarker(true); }, 1);
+						window.setTimeout(function() { clearMarker(restoreSelection); }, 1);
 					}
 					// If the selection marker is still within the document, wait for TAB key
 					else
