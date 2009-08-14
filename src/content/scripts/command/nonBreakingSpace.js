@@ -36,15 +36,17 @@ $self.controller = function() {
 			this.onKeyEvent('up', function() { $instance.stop(); });
 		}
 
+		var htmlEntity = '&nbsp;';
+
 		// If no selection, insert after current position
 		if (scimoz.anchor === scimoz.currentPos) {
 
-			scimoz.insertText(scimoz.currentPos, '&nbsp;');
-			scimoz.anchor = scimoz.currentPos += 6;
+			scimoz.insertText(scimoz.currentPos, htmlEntity);
+			scimoz.anchor = scimoz.currentPos += htmlEntity.length;
 		}
 		// Otherwise if we have a selection, replace it
 		else
-			scimoz.replaceSel('&nbsp;');
+			scimoz.replaceSel(htmlEntity);
 
 		scimoz.scrollCaret();
 

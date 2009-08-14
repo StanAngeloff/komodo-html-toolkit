@@ -157,7 +157,7 @@ if (typeof (extensions) === 'undefined')
 
 				$toolkit.include(type + '.' + typeName);
 
-				if ($toolkit[type][typeName].registerAll)
+				if ('registerAll' in $toolkit[type][typeName])
 					$toolkit[type][typeName].registerAll();
 			});
 	};

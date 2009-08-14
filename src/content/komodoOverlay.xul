@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<?xml-stylesheet href="chrome://htmltoolkit/skin/htmltoolkit.css" type="text/css" ?>
+<?xml-stylesheet href="chrome://htmltoolkit/skin/hyperlink/cssimagepreview.css" type="text/css" ?>
+
+<!DOCTYPE overlay SYSTEM "chrome://htmltoolkit/locale/komodoOverlay.dtd">
+
+<overlay id="htmltoolkit" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+	<script type="application/x-javascript" src="chrome://htmltoolkit/content/htmltoolkit.js" />
+
+</overlay>

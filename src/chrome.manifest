@@ -2,5 +2,5 @@ content  htmltoolkit  content/
 locale   htmltoolkit  en-US  locale/en-US/
 skin     htmltoolkit  classic/1.0  skin/classic/
 
-overlay  chrome://komodo/content/komodo.xul  chrome://htmltoolkit/content/htmltoolkit.xul
+overlay  chrome://komodo/content/komodo.xul  chrome://htmltoolkit/content/komodoOverlay.xul
 overlay  chrome://komodo/content/pref/pref-html.xul  chrome://htmltoolkit/content/pref/pref-htmlOverlay.xul

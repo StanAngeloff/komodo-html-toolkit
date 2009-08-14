@@ -6,22 +6,22 @@ $toolkit.include('io');
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 
+const XUL_NS = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul';
+
 const MARKDOWN_LANGUAGE = 'Markdown';
 const MARKDOWN_UPDATE_INTERVAL = 500;
-const MARKDOWN_ELEMENT_ID = 'markdownview-frame';
+const MARKDOWN_ALLOWED_LENGTH = 640 /* lines */ * 80 /* chars per column */;
 
 var MARKDOWN_TEMPLATES = {};
-var MARKDOWN_LAST_PREVIEW = null;
 
 $self.preview = function() {
 
 	this.hasLoaded = false;
-	this.lastView = null;
-	this.intervalId = null;
+	this.queueView = null;
 
 	this.converter = new $toolkit.external.showdown.Showdown.converter();
 
-	// Cache these as used every XX milliseconds
+	// Cache these as used every 0.5 seconds
 	this.osService = Cc['@activestate.com/koOs;1'].getService(Ci.koIOs);
 	this.pathService = Cc['@activestate.com/koOsPath;1'].getService(Ci.koIOsPath);
 
@@ -32,126 +32,147 @@ $self.preview = function() {
 		// Listen for buffer changes
 		window.addEventListener('current_view_changed', $instance.onViewChanged, true);
 		window.addEventListener('current_view_language_changed', $instance.onViewChanged, true);
-		window.addEventListener('view_opened', $instance.onViewOpened, true);
 		window.addEventListener('view_closed', $instance.onViewClosed, true);
 	};
 
 	this.unregister = function() {
 
+		$instance.uninstallAll();
+
 		// Unload all events on Komodo shutdown
 		window.removeEventListener('current_view_changed', $instance.onViewChanged, true);
 		window.removeEventListener('current_view_language_changed', $instance.onViewChanged, true);
-		window.removeEventListener('view_opened', $instance.onViewOpened, true);
 		window.removeEventListener('view_closed', $instance.onViewClosed, true);
 	};
 
 	this.onViewChanged = function(e) {
 
 		var view = e.originalTarget;
-		if (view && view.getAttribute('type') === 'editor' &&
-			view.document && view.scimoz) {
+		if (view &&
+			view.getAttribute('type') === 'editor' &&
+			view.document &&
+			view.scimoz) {
 
-			$instance.lastView = e.originalTarget;
-			// If we have loaded, we can display a preview, otherwise queue
 			if ($instance.hasLoaded)
-				$instance.update($instance.lastView);
+				$instance.checkAndInstall(view);
+			else
+				$instance.queueView = view;
 
 		} else {
 
-			$instance.lastView = null;
-
-			$instance.stopPeriodicalPreview();
-			$instance.clearPreview();
+			$instance.uninstallAll();
 		}
 	};
 
-	this.onViewOpened = function(e) {
+	this.onViewClosed = function(e) {
 
-		// This is to force Komodo to open *.md documents as Markdown
+		// Remove all custom XUL and timers before Komodo destroys the view
 		var view = e.originalTarget;
-		if (view && view.getAttribute('type') === 'editor') {
-
-			if ('Text' === view.document.language &&
-				'.md' === view.document.baseName.substring(view.document.baseName.length - 3).toLowerCase()) {
-
-				view.document.language = 'Markdown';
-			}
-		}
+		if (view && view.getAttribute('type') === 'editor')
+			$instance.uninstall(view);
 	};
 
-	this.onViewClosed = function() {
+	this.checkAndInstall = function(view) {
 
-		// Let Komodo close the view first
-		window.setTimeout(function() {
-
-			if (ko.views.manager._viewCount < 1) {
-
-				$instance.lastView = null;
-
-				$instance.stopPeriodicalPreview();
-				$instance.clearPreview();
-			}
-
-		}, 1);
-	};
-
-	$toolkit.events.onLoad(function() {
-
-		$instance.hasLoaded = true;
-		// If we have a view queued, display preview
-		if ($instance.lastView)
-			$instance.update($instance.lastView);
+		if (MARKDOWN_LANGUAGE === view.document.language)
+			$instance.install(view);
 		else
-			$instance.clearPreview();
-	});
+			$instance.uninstall(view);
+	};
 
-	this.update = function(view) {
+	this.install = function(view) {
 
-		// If the last buffer is a Markdown buffer, display preview
-		if (MARKDOWN_LANGUAGE === view.document.language) {
+		if ( ! view.__markdown_installed) {
 
-			// Preview immediately
-			this.displayPreview(this.lastView);
+			var splitterEl = document.createElementNS(XUL_NS, 'splitter'),
+				grippyEl = document.createElementNS(XUL_NS, 'grippy'),
+				boxEl = document.createElementNS(XUL_NS, 'vbox'),
+				frameEl = document.createElementNS(XUL_NS, 'iframe');
 
-			this.startPeriodicalPreview();
+			splitterEl.setAttribute('state', 'open');
+			splitterEl.setAttribute('collapse', 'after');
+			splitterEl.setAttribute('collapse', 'after');
 
-		// Not a Markdown, notify User preview unavailable
-		} else {
+			boxEl.setAttribute('flex', 1);
 
-			this.stopPeriodicalPreview();
+			frameEl.setAttribute('flex', 1);
+			frameEl.setAttribute('src', 'about:blank');
 
-			this.displayNotice(this.lastView);
+			splitterEl.appendChild(grippyEl);
+			boxEl.appendChild(frameEl);
+			view.parentNode.appendChild(splitterEl);
+			view.parentNode.appendChild(boxEl);
+
+			boxEl.__markdown_frame = frameEl;
+			view.__markdown_box = boxEl;
+			view.__markdown_splitter = splitterEl;
+			view.__markdown_text = null;
+			view.__markdown_installed = true;
+
+			this.beginPeriodicalPreview(view);
 		}
 	};
 
-	this.startPeriodicalPreview = function() {
+	this.uninstall = function(view) {
 
-		// Preview every XX milliseconds
-		if ( ! this.intervalId) {
+		if (view.__markdown_installed) {
+
+			this.endPeriodicalPreview(view);
+
+			view.__markdown_box.parentNode.removeChild(view.__markdown_splitter);
+			view.__markdown_box.parentNode.removeChild(view.__markdown_box);
+
+			delete view['__markdown_splitter'];
+			delete view['__markdown_box'];
+			delete view['__markdown_text'];
+			delete view['__markdown_installed'];
+		}
+	};
+
+	this.uninstallAll = function(view) {
+
+		var editorViews = ko.views.manager.topView.getViewsByType(true, 'editor');
+		for (var i = 0; i < editorViews.length; i ++)
+			$instance.uninstall(editorViews[i]);
+	};
+
+	this.beginPeriodicalPreview = function(view) {
+
+		// Preview every 0.5 seconds
+		if ( ! view.__markdown_intervalId) {
 
 			var $instance = this;
-			this.intervalId = window.setInterval(function() {
+			view.__markdown_intervalId = window.setInterval(function() {
 
-				if ($instance.lastView.scimoz.focus)
-					$instance.displayPreview($instance.lastView);
+				if (view.scimoz.focus)
+					$instance.displayPreview(view);
 
 			}, MARKDOWN_UPDATE_INTERVAL);
 		}
 	};
 
-	this.stopPeriodicalPreview = function() {
+	this.endPeriodicalPreview = function(view) {
 
-		if (this.intervalId) {
+		if (view.__markdown_intervalId) {
 
-			window.clearInterval(this.intervalId);
-			this.intervalId = null;
+			window.clearInterval(view.__markdown_intervalId);
+			delete view['__markdown_intervalId'];
 		}
 	};
 
 	this.displayPreview = function(view) {
 
-		if (MARKDOWN_LAST_PREVIEW === view.scimoz.text)
+		if (view.__markdown_text === view.scimoz.text)
 		 	return false;
+
+		if (view.scimoz.text.length > MARKDOWN_ALLOWED_LENGTH) {
+
+			this.renderTemplate(view, 'exception', { exception: $toolkit.l10n('module').formatStringFromName('markdown.overAllowedLength', [MARKDOWN_ALLOWED_LENGTH], 1) });
+
+			view.__markdown_text = view.scimoz.text
+
+			return false;
+		}
 
 		try {
 
@@ -164,34 +185,18 @@ $self.preview = function() {
 
 			var htmlCode = this.converter.makeHtml(view.scimoz.text);
 
-			this.renderTemplate('preview', { html: htmlCode,
-											 base: viewPath });
+			this.renderTemplate(view, 'preview', { html: htmlCode, base: viewPath });
 
-			MARKDOWN_LAST_PREVIEW = view.scimoz.text
+			view.__markdown_text = view.scimoz.text
 
 			return true;
 
 		} catch (e) {
 
-			this.renderTemplate('exception', { exception: e });
+			this.renderTemplate(view, 'exception', { exception: e });
 		}
 
 		return false;
-	};
-
-	this.clearPreview = function() {
-
-		MARKDOWN_LAST_PREVIEW = null;
-
-		this.renderTemplate('buffersEmpty', { markdownLanguage: MARKDOWN_LANGUAGE });
-	};
-
-	this.displayNotice = function(view) {
-
-		MARKDOWN_LAST_PREVIEW = null;
-
-		this.renderTemplate('unsupportedLanguage', { bufferLanguage: view.document.language,
-													 markdownLanguage: MARKDOWN_LANGUAGE });
 	};
 
 	this.getCachedTemplate = function(name) {
@@ -226,7 +231,7 @@ $self.preview = function() {
 		return MARKDOWN_TEMPLATES[templateKey];
 	};
 
-	this.renderTemplate = function(name, args) {
+	this.renderTemplate = function(view, name, args) {
 
 		var template = this.getCachedTemplate(name);
 
@@ -238,7 +243,7 @@ $self.preview = function() {
 									   .replace('${' + key + '}', $toolkit.htmlUtils.escape(args[key]), 'g');
 				}
 
-		var previewElement = document.getElementById(MARKDOWN_ELEMENT_ID);
+		var previewElement = view.__markdown_box.__markdown_frame;
 
 		var updateHTML = function(e) {
 
@@ -250,14 +255,26 @@ $self.preview = function() {
 		};
 
 		// If the User has navigated away, restore original location to prevent security errors
-		if (previewElement.contentWindow.location.href !== 'about:blank') {
+		if (previewElement.contentWindow.location.href === 'about:blank')
+			updateHTML();
+		else {
 
 			previewElement.addEventListener('load', updateHTML, true);
 			previewElement.contentWindow.location.replace('about:blank');
-
-		} else
-			updateHTML();
+		}
 	};
+
+	$toolkit.events.onLoad(function() {
+
+		$instance.hasLoaded = true;
+
+		// If we have a view queued, install after Komodo has initialized
+		if ($instance.queueView) {
+
+			$instance.checkAndInstall($instance.queueView);
+			$instance.queueView = null;
+		}
+	});
 
 	$toolkit.events.onUnload(this.unregister);
 
