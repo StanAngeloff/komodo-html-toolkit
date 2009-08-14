@@ -37,7 +37,8 @@ if (typeof (extensions) === 'undefined')
 		var loader = Cc['@mozilla.org/moz/jssubscript-loader;1'].getService(Ci.mozIJSSubScriptLoader);
 
 		// Split parent namespace and basename of package
-		var namespaceParts = namespace.split('.'),
+		var namespaceNormalized = namespace.replace('/', '.', 'g'),
+			namespaceParts = namespaceNormalized.split('.'),
 			scriptName = namespaceParts.pop(),
 			parentNamespace = namespaceParts;
 
@@ -66,7 +67,7 @@ if (typeof (extensions) === 'undefined')
 		} else {
 
 			// Set up references back to the toolkit and a circular reference to the namespace itself
-			scriptNamespace[scriptName] = { __namespace__: namespace.replace('/', '.', 'g') };
+			scriptNamespace[scriptName] = { __namespace__: namespaceNormalized };
 
 			scriptNamespace[scriptName]['$toolkit'] = $toolkit;
 			scriptNamespace[scriptName]['$log'] = $toolkit.log;
@@ -149,7 +150,9 @@ if (typeof (extensions) === 'undefined')
 
 		$toolkit.include('io');
 
-		var typeFiles = $toolkit.io.findFilesInURI('content/scripts/' + type, '*.js', true);
+		var typeNormalized = type.replace('/', '.', 'g'),
+			typeFiles = $toolkit.io.findFilesInURI('content/scripts/' + typeNormalized.replace('.', '/', 'g'), '*.js', true);
+
 		if (typeFiles)
 			typeFiles.forEach(function(typeEntry) {
 
@@ -157,8 +160,14 @@ if (typeof (extensions) === 'undefined')
 
 				$toolkit.include(type + '.' + typeName);
 
-				if ('registerAll' in $toolkit[type][typeName])
-					$toolkit[type][typeName].registerAll();
+				var typeNamespace = $toolkit,
+					typeParts = type.split('.');
+
+				for (var partIndex = 0; partIndex < typeParts.length; partIndex ++)
+					typeNamespace = typeNamespace[typeParts[partIndex]];
+
+				if ('registerAll' in typeNamespace[typeName])
+					typeNamespace[typeName].registerAll();
 			});
 	};
 
