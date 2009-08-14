@@ -4,10 +4,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title>Exception</title>
+	<title>Preview</title>
 	<style type="text/css" media="all">
 	/* <![CDATA[ */
-	html
+	body
 	{
 		background: Window;
 		color:      WindowText;
@@ -20,8 +20,6 @@
 	</style>
 </head>
 <body>
-	<strong><big style="color: Highlight;">Whoops!</big> HTML&nbsp;Toolkit encountered an exception:</strong>
-	<hr size="1" style="color: WindowFrame;" />
-	${exception}
+	${html:safe}
 </body>
 </html>

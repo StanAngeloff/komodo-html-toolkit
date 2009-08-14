@@ -66,7 +66,7 @@ if (typeof (extensions) === 'undefined')
 		} else {
 
 			// Set up references back to the toolkit and a circular reference to the namespace itself
-			scriptNamespace[scriptName] = { __namespace__: namespace };
+			scriptNamespace[scriptName] = { __namespace__: namespace.replace('/', '.', 'g') };
 
 			scriptNamespace[scriptName]['$toolkit'] = $toolkit;
 			scriptNamespace[scriptName]['$log'] = $toolkit.log;
