@@ -7,9 +7,8 @@ const Ci = Components.interfaces;
 
 const XUL_NS = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul';
 
-const MODULE_PREVIEW = __namespace__.replace('.', '/', 'g');
-
-var PREVIEW_TEMPLATES = {};
+var PREVIEW_TEMPLATES = {},
+	PREVIEW_OPTIONS = {};
 
 $self.destroy = function() {
 
@@ -143,6 +142,14 @@ $self.dispatcher = {
 
 			boxEl.setAttribute('flex', 1);
 
+			if (view.uid in PREVIEW_OPTIONS) {
+
+				splitterEl.setAttribute('state', PREVIEW_OPTIONS[view.uid].state);
+
+				if ('collapsed' !== PREVIEW_OPTIONS[view.uid].state)
+					boxEl.setAttribute('width', PREVIEW_OPTIONS[view.uid].width);
+			}
+
 			frameEl.setAttribute('flex', 1);
 			frameEl.setAttribute('src', 'about:blank');
 
@@ -174,6 +181,9 @@ $self.dispatcher = {
 	uninstall: function(view) {
 
 		if (view.__preview_installed) {
+
+			PREVIEW_OPTIONS[view.uid] = { state: view['__preview_splitter'].getAttribute('state'),
+										  width: view['__preview_box'].width };
 
 			$self.dispatcher.endPeriodicalPreview(view);
 
@@ -338,5 +348,5 @@ $self.controller = function(language, interval, allowedLength, callback) {
 
 $self.registerAll = function() {
 
-	$toolkit.registerAll(MODULE_PREVIEW);
+	$toolkit.registerAll(__namespace__);
 };
