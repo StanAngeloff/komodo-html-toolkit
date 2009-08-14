@@ -1,19 +1,29 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
+<?xml-stylesheet href="chrome://htmltoolkit/skin/pref/pref-html.css" type="text/css" ?>
+
 <!DOCTYPE overlay SYSTEM "chrome://htmltoolkit/locale/pref/pref-html.dtd">
 
 <overlay id="htmltoolkitPrefHtml" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
 	<script type="application/x-javascript" src="chrome://htmltoolkit/content/pref/pref-htmlOverlay.js" />
 
-	<!-- TODO:
 	<groupbox orient="vertical">
-		<caption label="&htmltoolkit.label;" />
-		<vbox flex="1">
-			<label value="Hello World!" />
+		<caption label="&addon.label;" />
+		<vbox>
+			<label id="htmltoolkitDescription">
+				<image src="chrome://htmltoolkit/skin/images/icon.png" align="left" width="32" height="32" />
+				&addon.description;
+			</label>
+			<separator height="10" />
+			<hbox pack="center">
+				<spacer flex="1" />
+				<button id="htmltoolkitOptions">&addon.options;</button>
+				<spacer flex="1" />
+			</hbox>
+			<separator height="10" />
 		</vbox>
 	</groupbox>
 	<spacer flex="1" />
-	-->
 
 </overlay>
