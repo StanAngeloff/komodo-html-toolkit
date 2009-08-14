@@ -3,10 +3,10 @@ $toolkit.include('io');
 $toolkit.include('regexp');
 
 var LIBRARY_SNIPPETS_MAP = null,
-	LIBRARY_SNIPPETS_PATH = 'content/library/tagSnippets';
+	LIBRARY_SNIPPETS_PATH = 'content/library/snippets/tags';
 
 var LIBRARY_NEWLINE_MAP = null,
-	LIBRARY_NEWLINE_PATH = 'content/library/newlineSnippets';
+	LIBRARY_NEWLINE_PATH = 'content/library/snippets/newline';
 
 $self.createSnippet = function(value, name, parentName, setSelection, indentRelative) {
 
