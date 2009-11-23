@@ -20,7 +20,13 @@ const Ci = Components.interfaces;
 
 $self.isHtmlBuffer = function(view) {
 
-	return ([view.document.subLanguage, view.document.language].indexOf('HTML') >= 0);
+	var languagePair = [view.document.subLanguage, view.document.language];
+
+	return (languagePair.indexOf('HTML') >= 0 ||
+			// When starting a script or a style block within a server-side language e.g. PHP,
+			// the subLanguage changes; to fix this, check one character back
+			((languagePair.indexOf('JavaScript') >= 0 || languagePair.indexOf('CSS') >= 0) &&
+			 'HTML' === view.document.languageForPosition(Math.max(0, view.scimoz.currentPos - 1))));
 };
 
 $self.findTagBefore = function(position, scimoz) {
