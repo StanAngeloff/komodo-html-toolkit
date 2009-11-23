@@ -1,6 +1,7 @@
 <!ENTITY  options.title  "HTML Toolkit: Options">
-<!ENTITY  options.componentsTitle  "Components">
-<!ENTITY  options.componentsDescription  "Select which features of HTML Toolkit should be enabled:">
-<!ENTITY  options.commandsTitle  "Commands:">
-<!ENTITY  options.previewModulesTitle  "Preview Modules:">
-<!ENTITY  options.hyperlinksTitle  "Hyperlinks:">
+<!ENTITY  components.title  "Components">
+<!ENTITY  components.group  "Installed Components">
+<!ENTITY  components.description  "HTML Toolkit is made up of several commands. Check the ones you use in your code.">
+<!ENTITY  components.enabledColumn  "Enabled">
+<!ENTITY  components.typeColumn  "Type">
+<!ENTITY  components.nameColumn  "Name">

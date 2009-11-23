@@ -1,1 +1,1 @@
-pref('extensions.htmltoolkit.play', 'withMe!');
+// TODO: pref('extensions.htmltoolkit.play', 'withMe!');

@@ -1,49 +1,43 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
-<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://htmltoolkit/skin/pref/htmltoolkit.css" type="text/css" ?>
 
 <!DOCTYPE window SYSTEM "chrome://htmltoolkit/locale/pref/htmltoolkit.dtd">
 
-<prefwindow id="htmltoolkit-options"
+<prefwindow id="htmltoolkitOptions"
 			xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-			title="&options.title;">
+			title="&options.title;"
+			persist="screenX, screenY">
 
 	<script type="application/x-javascript" src="chrome://htmltoolkit/content/pref/htmltoolkit.js" />
 
-	<prefpane id="components" label="&options.componentsTitle;">
-		<!--
-		<preferences>
-			<preference id="pref_play" name="extensions.htmltoolkit.play" type="string" />
-		</preferences>
-		-->
+	<prefpane id="components" label="&components.title;" image="chrome://htmltoolkit/skin/images/gear.png">
+
+		<preferences id="components-preferences" />
 
 		<vbox flex="1">
-			<label>&options.componentsDescription;</label>
-			<groupbox>
-				<caption>&options.commandsTitle;</caption>
-				<listbox id="commands-list" height="50" />
-			</groupbox>
-			<groupbox>
-				<caption>&options.previewModulesTitle;</caption>
-				<listbox id="previewModules-list" height="50" />
-			</groupbox>
-			<groupbox>
-				<caption>&options.hyperlinksTitle;</caption>
-				<listbox id="previewModules-list" height="50" />
+			<groupbox id="components-group" orient="vertical">
+				<caption>&components.group;</caption>
+				<description>&components.description;</description>
+				<separator class="thin" />
+				<tree id="components-tree" flex="1" class="no-border"
+					  editable="true" seltype="multiple" hidecolumnpicker="true"
+					  rows="6">
+					<treecols>
+						<treecol type="checkbox" fixed="true" class="treecol-image" editable="true" tooltiptext="&components.enabledColumn;" />
+						<splitter class="tree-splitter" />
+						<treecol flex="1" class="treecol-name" label="&components.nameColumn;" persist="width" />
+						<splitter class="tree-splitter" />
+						<treecol class="treecol-type" label="&components.typeColumn;" persist="width" />
+					</treecols>
+					<treechildren id="components-group-body" flex="1" alternatingbackground="true" />
+				</tree>
+				<separator class="thin" />
 			</groupbox>
 		</vbox>
 
-		<!--
-		<hbox align="center">
-			<label control="symbol" value="Stock to watch: " />
-			<textbox preference="pref_play" id="symbol" maxlength="4" />
-		</hbox>
-		-->
 	</prefpane>
 
-	<prefpane id="pref-2" label="TODO: Settings 2">
-		<preferences />
-		<spacer />
-	</prefpane>
+	<prefpane />
 
 </prefwindow>

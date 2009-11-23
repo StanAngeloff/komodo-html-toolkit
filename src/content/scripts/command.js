@@ -173,7 +173,7 @@ $self.controller = function(command, keys, allowChange) {
 		broadcasterEl.setAttribute('key', this.commandKey);
 		broadcasterEl.setAttribute('oncommand', 'ko.commands.doCommandAsync("' + this.commandName + '", event);');
 
-		broadcasterEl.setAttribute('desc', $toolkit.l10n('command').GetStringFromName(this.command));
+		broadcasterEl.setAttribute('desc', $toolkit.l10n('command').GetStringFromName(this.command + '.binding'));
 
 		globalSet.appendChild(broadcasterEl);
 
