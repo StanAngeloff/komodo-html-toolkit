@@ -1,0 +1,8 @@
+@import url(chrome://global/skin/);
+
+#components-group .treecol-type { width: 10em; }
+
+#components-group treechildren::-moz-tree-checkbox { list-style-image: none; }
+
+#components-group treecol.treecol-image,
+#components-group treechildren::-moz-tree-checkbox(checked) { list-style-image: url(chrome://htmltoolkit/skin/images/bullet_tick.png); }
