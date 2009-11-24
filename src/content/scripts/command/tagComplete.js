@@ -10,13 +10,20 @@ const Ci = Components.interfaces;
 $self.controller = function() {
 
 	// Call parent's constructor
-	$toolkit.command.language.controller.apply(this, ['tagComplete', '>', ['HTML', 'XML', '_PHPDoc']]);
+	$toolkit.command.language.controller.apply(this, ['tagComplete', '>', ['HTML', 'XML', 'PHP', '_PHPDoc']]);
 
 	this.trigger = function(e) {
 
 		var view = ko.views.manager.currentView,
 			scimoz = view.scimoz,
-			editorPosition = Math.min(scimoz.anchor, scimoz.currentPos),
+			languagePair = [view.document.subLanguage, view.document.language];
+
+		// If we are working in a PHP buffer, check one position back to make sure we have HTML
+		if (languagePair.indexOf('PHP') >= 0 &&
+			'HTML' !== view.document.languageForPosition(Math.max(0, Math.max(scimoz.anchor, scimoz.currentPos) - 1)))
+			return false;
+
+		var editorPosition = Math.min(scimoz.anchor, scimoz.currentPos),
 			positionStyle = scimoz.getStyleAt(editorPosition),
 			startTagCharCode = '<'.charCodeAt(0);
 
