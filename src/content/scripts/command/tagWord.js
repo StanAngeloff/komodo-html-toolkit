@@ -85,7 +85,7 @@ $self.controller = function() {
 							   preventDefault: function() {},
 							   stopPropagation: function() {} };
 
-				var $tagComplete = new $toolkit.command.tagComplete.controller()
+				var $tagComplete = new $toolkit.command.tagComplete.controller();
 
 				$tagComplete.languageMatch = this.languageMatch;
 				$tagComplete.trigger($event)
