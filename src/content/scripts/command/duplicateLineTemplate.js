@@ -1,4 +1,5 @@
 $toolkit.include('command');
+$toolkit.include('editor');
 
 $self.controller = function() {
 
@@ -18,28 +19,47 @@ $self.controller = function() {
 		if (scimoz.autoCActive())
 			scimoz.autoCCancel();
 
-		// Copy entire line
-		var lineStartPosition = scimoz.positionFromLine(scimoz.lineFromPosition(scimoz.currentPos)),
-			lineEndPosition = scimoz.getLineEndPosition(scimoz.lineFromPosition(scimoz.currentPos)),
-			lineRange = scimoz.getTextRange(lineStartPosition, lineEndPosition);
+		for (var line = scimoz.lineFromPosition(scimoz.currentPos); line >= 0; line --) {
 
-		var snippetValue = lineRange,
-			tabstopsLength = 0;
+			// Copy entire line
+			var lineStartPosition = scimoz.positionFromLine(line),
+				lineEndPosition = scimoz.getLineEndPosition(line),
+				lineRange = scimoz.getTextRange(lineStartPosition, lineEndPosition);
 
-		// Support for server-side languages; remove any escape characters and
-		// place tabstops inside quotes
-		snippetValue = snippetValue.replace(/\\"|\\'/g, '')
-								   .replace(/(["']{1}).*?\1/g, function(match, quoteStyle) { return quoteStyle + '[[%tabstop' + (++ tabstopsLength) + ']]' + quoteStyle; })
+			// Ignore lines with whitespace only
+			if ( ! (/^\s*$/.test(lineRange))) {
 
-		// Wrap final snippet
-		snippetValue = '\n' + snippetValue + '[[%tabstop0]]';
+				var snippetValue = lineRange,
+					tabstopsLength = 0;
 
-		// Move cursor at line end; this is where we insert the wrapped snippet
-		scimoz.anchor = scimoz.currentPos = lineEndPosition;
+				if ($toolkit.editor.isHtmlBuffer(view)) {
 
-		Snippet_insert($toolkit.library.createSnippet(snippetValue, null, null, 'false', 'false'));
+											   // Replace content within tags
+					snippetValue = snippetValue.replace(/>([^<]+)</g, function(match, innerText) { return '>[[%tabstop' + (++ tabstopsLength) + ':' + innerText + ']]<'; })
+											   // Replace content within arguments
+											   .replace(/(["']{1})([\s\S]*?)\1/g, function(match, quoteStyle, attributeValue) { return quoteStyle + '[[%tabstop' + (++ tabstopsLength) + ':' + attributeValue + ']]' + quoteStyle; })
 
-		scimoz.scrollCaret();
+				} else {
+
+					// Support for server-side languages; remove any escape characters and
+					// place tabstops inside quotes
+					snippetValue = snippetValue.replace(/\\"|\\'/g, '')
+											   .replace(/(["']{1}).*?\1/g, function(match, quoteStyle) { return quoteStyle + '[[%tabstop' + (++ tabstopsLength) + ']]' + quoteStyle; })
+				}
+
+				// Wrap final snippet
+				snippetValue = '\n' + snippetValue + '[[%tabstop0]]';
+
+				// Move cursor at line end; this is where we insert the wrapped snippet
+				scimoz.anchor = scimoz.currentPos = lineEndPosition;
+
+				Snippet_insert($toolkit.library.createSnippet(snippetValue, null, null, 'false', 'false'));
+
+				scimoz.scrollCaret();
+
+				break;
+			}
+		}
 
 		return true;
 	};
