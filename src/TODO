@@ -1,3 +1,5 @@
+- Check for column selection and complain when command does not support it
+
 - Menu items for commands that can be re-assigned
 
 - Don't assign default key bindings if User has cleared all sequences
