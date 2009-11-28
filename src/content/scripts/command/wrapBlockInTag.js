@@ -187,7 +187,7 @@ $self.controller = function() {
 		scimoz.scrollCaret();
 
 		// Highlight old selection with our custom marker
-		var markerStart = Math.max(scimoz.anchor, scimoz.currentPos) + 2,
+		var markerStart = Math.max(scimoz.anchor, scimoz.currentPos) + $toolkit.editor.guessNewLine(view.document).length + 1,
 			markerEnd = -1;
 
 		// Find where last tabstop is
