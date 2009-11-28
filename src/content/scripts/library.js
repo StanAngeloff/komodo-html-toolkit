@@ -17,7 +17,9 @@ $self.createSnippet = function(value, name, parentName, setSelection, indentRela
 			 indent_relative: (typeof (indentRelative) === 'undefined' ? 'true' : indentRelative),
 			 value: value,
 			 hasAttribute: function(name) { return (name in this); },
-			 getStringAttribute: function(name) { return ('' + this[name]); } };
+			 getStringAttribute: function(name) { return ('' + this[name]); },
+			 setStringAttribute: function(name, value) { this[name] = '' + value; },
+			 removeAttribute: function(name) { if (name in this) delete this[name]; } };
 };
 
 $self.getTagSnippet = function(tagName) {

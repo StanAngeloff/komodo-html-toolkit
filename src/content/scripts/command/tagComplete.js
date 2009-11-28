@@ -203,24 +203,14 @@ $self.controller = function() {
 									return false;
 							}
 
-							// We also know a few HTML block elements, but only when processing 'true' HTML buffers
+							// Don't autocomplete HTML tags we don't know about
 							if ($toolkit.editor.isHtmlBuffer(view) &&
-								$toolkit.htmlUtils.isBlockTag(tagNameLower)) {
+								tagName.indexOf(':') < 0 && // Allow tags in namespaces
+								! $toolkit.htmlUtils.isHtmlTag(tagNameLower))
+								return false;
 
-								tagComplete = '\n\t[[%tabstop0]]\n</' + tagName + '>';
-								tagPosition = editorPosition + 1;
-
-							} else {
-
-								// Don't autocomplete HTML tags we don't know about
-								if ($toolkit.editor.isHtmlBuffer(view) &&
-									tagName.indexOf(':') < 0 && // Allow tags in namespaces
-									! $toolkit.htmlUtils.isHtmlTag(tagNameLower))
-									return false;
-
-								tagComplete = '[[%tabstop0]]</' + tagName + '>';
-								tagPosition = editorPosition + 1;
-							}
+							tagComplete = '[[%tabstop0]]</' + tagName + '>';
+							tagPosition = editorPosition + 1;
 						}
 
 						if (typeof ($toolkit.command.undo) === 'object')

@@ -1,4 +1,5 @@
 $toolkit.include('command.language');
+$toolkit.include('library');
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -103,16 +104,16 @@ $self.manager = {
 	sortProviders: function() {
 
 		$self.manager.providers.sort(function(left, right) {
-			return (left < right ? -1 : (left > right ? +1 : 0));
+			return (left.ordering < right.ordering ? -1 : (left.ordering > right.ordering ? +1 : 0));
 		});
 	},
 
-	forProviders: function(callback) {
+	forViewProviders: function(view, callback) {
 
 		// Invoke callback for all providers that are enabled
 		$self.manager.providers.forEach(function(provider) {
 
-			if (provider.canExecute())
+			if (provider.canExecute(view))
 				callback(provider);
 		});
 	}
@@ -122,16 +123,10 @@ $toolkit.trapExceptions($self.manager);
 
 var PROVIDER_ORDERING = 9900;
 
-$self.provider = function(providerName, providerOrdering, supportedLanguages, unsupportedLanguages) {
-
-	var splatWithDefault = function(defaultValue, value) {
-		return (value ? (typeof (value) === 'object' ? Array.prototype.slice.call(value) : [value]) : defaultValue);
-	};
+$self.provider = function(providerName, providerOrdering) {
 
 	this.name = providerName;
 	this.ordering = (typeof (providerOrdering) === 'undefined' ? ++ PROVIDER_ORDERING : parseInt(providerOrdering));
-	this.supportedLanguages = splatWithDefault(true, supportedLanguages);
-	this.unsupportedLanguages = splatWithDefault(false, unsupportedLanguages);
 
 	this.register = function() { $self.manager.addProvider(this); };
 
@@ -141,10 +136,10 @@ $self.provider = function(providerName, providerOrdering, supportedLanguages, un
 	this.getAllowedCharacters = function() { return []; };
 
 	/** @abstract */
-	this.canExecute = function() { return true; };
+	this.canExecute = function(view) { return true; };
 
 	/** @abstract */
-	this.findSnippet = function() { return null; };
+	this.findSnippet = function(view, abbreviation) { return null; };
 };
 
 $self.controller = function() {
@@ -224,10 +219,17 @@ $self.controller = function() {
 
 		var snippet = null;
 
-		$self.manager.forProviders(function(provider) {
+		$self.manager.forViewProviders(view, function(provider) {
 
-			if ( ! snippet)
-				snippet = provider.findSnippet(view, abbreviation);
+			if ( ! snippet) {
+
+				// Compile allowed characters to a regular expression and check against abbreviation
+				var providerAllowedCharacters = provider.getAllowedCharacters(),
+					providerAllowedRegExp = new RegExp('^[' + providerAllowedCharacters.join('') + ']+$');
+
+				if (providerAllowedRegExp.test(abbreviation))
+					snippet = provider.findSnippet(view, abbreviation);
+			}
 		});
 
 		return snippet;
@@ -251,7 +253,8 @@ $self.controller = function() {
 				}
 			};
 
-		if (snippet instanceof Ci.koIPart_snippet) {
+		if ((snippet instanceof Ci.koIPart_snippet) ||
+			(typeof (snippet) === 'object' && 'snippet' === snippet.type)) {
 
 			// Allow Komodo and other extensions to process the key first
 			window.setTimeout(function() { insert(snippet); }, 1);
@@ -274,16 +277,11 @@ $self.controller = function() {
 
 			for (var i = 0; i < folderSnippets.value.length; i ++) {
 
-				var wrappedSnippet = { type: 'snippet',
-									   name: folderSnippets.value[i].name,
-									   parent: { name: folderSnippets.value[i].parent.name },
-									   set_selection: folderSnippets.value[i].getStringAttribute('set_selection'),
-									   indent_relative: folderSnippets.value[i].getStringAttribute('indent_relative'),
-									   value: folderSnippets.value[i].value,
-									   hasAttribute: function(name) { return (name in this); },
-									   getStringAttribute: function(name) { return ('' + this[name]); },
-									   setStringAttribute: function(name, value) { this[name] = '' + value; },
-									   removeAttribute: function(name) { if (name in this) delete this[name]; } };
+				var wrappedSnippet = $toolkit.library.createSnippet(folderSnippets.value[i].value,
+																	folderSnippets.value[i].name,
+																	folderSnippets.value[i].parent.name,
+																	folderSnippets.value[i].getStringAttribute('set_selection'),
+																	folderSnippets.value[i].getStringAttribute('indent_relative'));
 
 				if (wrappedSnippet.name === abbreviationSubname) {
 
@@ -378,7 +376,7 @@ $self.controller = function() {
 		var allowedCharacters = [],
 			providerAllowedCharacters;
 
-		$self.manager.forProviders(function(provider) {
+		$self.manager.forViewProviders(view, function(provider) {
 
 			providerAllowedCharacters = provider.getAllowedCharacters();
 			for (i = 0; i < providerAllowedCharacters.length; i ++)

@@ -6,11 +6,10 @@ const Ci = Components.interfaces;
 $self.provider = function() {
 
 	// Call parent's constructor
-	var providerName, supportedLanguages, unsupportedLanguages;
+	var providerName, providerOrdering;
 
 	$toolkit.command.abbreviation.provider.apply(this, [providerName = 'toolbox',
-														supportedLanguages = true,
-														unsupportedLanguages = false]);
+														providerOrdering = 5000]);
 
 	this.getAllowedCharacters = function() { return ['\\w', '\\.']; };
 
