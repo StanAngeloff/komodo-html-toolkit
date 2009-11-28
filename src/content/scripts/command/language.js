@@ -23,9 +23,15 @@ $self.controller = function() {
 			var view = ko.views.manager.currentView,
 				isSupportedLanguage = false;
 
-			// First check if the document is in a supported language
-			if (LANGUAGE_SUPPORTED_LIST.indexOf(view.document.language) >= 0 &&
-				this.supportedLanguages.indexOf(view.document.subLanguage) >= 0) {
+			// First check if the command supports all languages
+			if (this.supportedLanguages.indexOf('*') >= 0) {
+
+				isSupportedLanguage = true;
+				this.languageMatch = view.document.subLanguage;
+
+			// Check if the document is in a supported language
+			} if (LANGUAGE_SUPPORTED_LIST.indexOf(view.document.language) >= 0 &&
+				  this.supportedLanguages.indexOf(view.document.subLanguage) >= 0) {
 
 				isSupportedLanguage = true;
 				this.languageMatch = view.document.subLanguage;
