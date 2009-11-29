@@ -37,12 +37,39 @@ $self.provider = function() {
 			lipsumSnippet = $self.createLipsum((lipsumMatch[1] ? lipsumMatch[1][0] : null), parseInt(lipsumMatch[2] || '0'));
 			if (lipsumSnippet) {
 
-				// TODO: Reflow to margin
+				var scimoz = view.scimoz;
+
+				// Reflow generated content if the view has an edge
+				if (scimoz.edgeMode !== scimoz.EDGE_NONE) {
+
+					var availableWidth = scimoz.edgeColumn;
+
+					// Determine whitespace before abbreviation
+					var line = scimoz.lineFromPosition(scimoz.currentPos),
+						lineStartPosition = scimoz.positionFromLine(line),
+						lineEndPosition = scimoz.getLineEndPosition(line),
+						lineBuffer = scimoz.getTextRange(lineStartPosition, lineEndPosition);
+
+					if ($toolkit.regexp.matchWhitespace(lineBuffer, '^')) {
+
+						var lineWhitespace = $toolkit.regexp.lastMatches[0],
+							tabWhitespace = '';
+
+						// Replace tabs with their actual width
+						for (var i = 0; i < scimoz.tabWidth; i ++)
+							tabWhitespace += ' ';
+
+						lineWhitespace = lineWhitespace.replace(/\t/g, tabWhitespace);
+						availableWidth -= lineWhitespace.length;
+					}
+
+					lipsumSnippet = $self.wordwrap(lipsumSnippet, availableWidth);
+				}
 
 				if (lipsumSnippet.indexOf('\n\n') > 0) {
 
 					var isXHtmlView = $toolkit.htmlUtils.isXHtmlDoctype($toolkit.editor.guessDoctype(view)),
-						brTag = '<' + $toolkit.htmlUtils.fixTagCase('br', $toolkit.editor.guessTagsCasing(view.scimoz)) + (isXHtmlView ? ' /' : '') + '>';
+						brTag = '<' + $toolkit.htmlUtils.fixTagCase('br', $toolkit.editor.guessTagsCasing(scimoz)) + (isXHtmlView ? ' /' : '') + '>';
 
 					lipsumSnippet = lipsumSnippet.replace('\n\n', '\n' + brTag + '\n' + brTag + '\n', 'g');
 				}
@@ -114,6 +141,8 @@ $self.provider = function() {
         } else {
 
             length = length || 1;
+			if (length > 100 && ! $self.promptContinue())
+				return null;
 
             var outputList = [],
 				paragraphsLength = 0;
@@ -146,6 +175,30 @@ $self.provider = function() {
 
 		return (dialogResponse === 'Yes');
 	};
+
+	/** @author  http://phpjs.org/functions/wordwrap:581 */
+	$self.wordwrap = function(string, lineWidth, breakChars, cutWords) {
+
+		lineWidth = (arguments.length >= 2 ? arguments[1] : 78);
+		if (lineWidth < 1)
+			return string;
+
+		breakChars = (arguments.length >= 3 ? arguments[2] : '\n');
+		cutWords = (arguments.length >= 4 ? arguments[3] : false);
+
+		var i, j, l, s, r;
+
+		for (i = -1, l = (r = string.split(/\r\n|\r|\n/)).length; ++ i < l; r[i] += s)
+			for (s = r[i], r[i] = ''; s.length > lineWidth; r[i] += s.slice(0, j) + ((s = s.slice(j)).length ? breakChars : ''))
+				j = cutWords == 2 || (j = s.slice(0, lineWidth + 1).match(/\S*(\s)?$/))[1] ? lineWidth : j.input.length - j[0].length || cutWords == 1 && lineWidth || j.input.length + (j = s.slice(lineWidth).match(/^\S*/)).input.length;
+
+		r = r.join('\n')
+			 .split('\n')
+			 .map(function(l) { return l.replace(/^\s+|\s+$/g, ''); })
+			 .join('\n');
+
+		return r;
+	}
 };
 
 $self.registerAll = function() {

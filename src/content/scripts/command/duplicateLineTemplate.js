@@ -1,5 +1,6 @@
 $toolkit.include('command');
 $toolkit.include('editor');
+$toolkit.include('regexp');
 
 $self.controller = function() {
 
@@ -27,7 +28,7 @@ $self.controller = function() {
 				lineRange = scimoz.getTextRange(lineStartPosition, lineEndPosition);
 
 			// Ignore lines with whitespace only
-			if ( ! (/^\s*$/.test(lineRange))) {
+			if ( ! $toolkit.regexp.matchWhitespace(lineRange, '^', '$')) {
 
 				var snippetValue = lineRange,
 					tabstopsLength = 0;
