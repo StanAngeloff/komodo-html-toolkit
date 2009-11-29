@@ -7,8 +7,7 @@ const Ci = Components.interfaces;
 
 const XUL_NS = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul';
 
-var PREVIEW_TEMPLATES = {},
-	PREVIEW_OPTIONS = {};
+var PREVIEW_CACHED_TEMPLATES = {};
 
 $self.destroy = function() {
 
@@ -20,6 +19,107 @@ $self.initialize = function() {
 
 	$toolkit.events.onLoad($self.dispatcher.register);
 };
+
+$self.storage = new (function() {
+
+	// Open a connection to our database
+	var storageFile = Cc['@mozilla.org/file/directory_service;1'].getService(Ci.nsIProperties).get('ProfD', Ci.nsIFile),
+		storageService = Cc['@mozilla.org/storage/service;1'].getService(Ci.mozIStorageService);
+
+	storageFile.append('html_toolkit_preview.sqlite');
+
+	/** @type  Components.interfaces.mozIStorageConnection */
+	var dbConnection;
+
+	try { dbConnection = storageService.openDatabase(storageFile); }
+	catch (e) {
+
+		// If the database was corrupted, remove it and start over
+		if ('NS_ERROR_FILE_CORRUPTED' === e.name) {
+
+			storageFile.remove(false);
+			dbConnection = storageService.openDatabase(storageFile);
+
+		} else
+			throw e;
+	}
+
+	// Create tables if missing
+	if ( ! dbConnection.tableExists('preview_options'))
+		dbConnection.createTable('preview_options',
+								 'id INTEGER NOT NULL PRIMARY KEY,\n'
+							   + 'uri TEXT UNIQUE,\n'
+							   + 'json_options TEXT,\n'
+							   + 'timestamp INTEGER -- Unix time (local)\n');
+
+	// Housekeeping, remove all items older than two weeks
+	var timeNow = (function() { return Math.floor(new Date().getTime() / 1000); });
+
+	/** @type  Components.interfaces.mozIStorageStatement */
+	var cleanUpStatement = dbConnection.createStatement('DELETE FROM preview_options WHERE timestamp = ?1');
+
+	cleanUpStatement.bindInt32Parameter(0, timeNow() - (2 * 7 * 24 * 60 * 60));
+	cleanUpStatement.execute();
+	cleanUpStatement.reset();
+
+	/** @type  Components.interfaces.mozIStorageStatement */
+	var insertStatement = dbConnection.createStatement('REPLACE INTO preview_options (uri, json_options, timestamp) VALUES (?1, ?2, ?3)');
+
+	var cachedOptions = {},
+		nativeJSON = Cc['@mozilla.org/dom/json;1'].createInstance(Ci.nsIJSON);
+
+	// Restore options for database
+	var selectStatement = dbConnection.createStatement('SELECT uri, json_options FROM preview_options');
+
+	while (selectStatement.executeStep()) {
+
+		var viewUri = selectStatement.getUTF8String(0),
+			viewOptions = selectStatement.getUTF8String(1);
+
+		cachedOptions['uri:' + viewUri] = nativeJSON.decode(viewOptions);
+	}
+
+	selectStatement.finalize();
+
+	this.getViewUri = function(view) {
+
+		if (view.document.file)
+			return view.document.file.URI;
+
+		return view.uid;
+	};
+
+	this.getOptionsForView = function(view) {
+		return cachedOptions['uri:' + this.getViewUri(view)];
+	};
+
+	this.setOptionsForView = function(view, options) {
+
+		cachedOptions['uri:' + this.getViewUri(view)] = options;
+		this.saveOptionsForView(view, options);
+	};
+
+	this.saveOptionsForView = function(view, options) {
+
+		insertStatement.bindUTF8StringParameter(0, this.getViewUri(view));
+		insertStatement.bindUTF8StringParameter(1, nativeJSON.encode(options));
+		insertStatement.bindInt32Parameter(2, timeNow())
+
+		insertStatement.execute();
+		insertStatement.reset();
+	};
+
+	$toolkit.events.onUnload(function() {
+
+		// Finalize all statements
+		insertStatement.finalize();
+		cleanUpStatement.finalize();
+
+		// Explicitly close our connection to the database
+		dbConnection.close();
+	});
+
+})();
 
 $self.dispatcher = {
 
@@ -34,11 +134,11 @@ $self.dispatcher = {
 		// Listen for buffer changes
 		window.addEventListener('current_view_changed', $self.dispatcher.onViewChanged, true);
 		window.addEventListener('current_view_language_changed', $self.dispatcher.onViewChanged, true);
-		window.addEventListener('view_closed', $self.dispatcher.onViewClosed, true);
+		window.addEventListener('view_closing', $self.dispatcher.onViewClosing, true);
 
 		// Simulate 'view_changed' event on current view
 		if (ko.views.manager.currentView)
-			$self.dispatcher.onViewClosed({ originalTarget: ko.views.manager.currentView });
+			$self.dispatcher.onViewClosing({ originalTarget: ko.views.manager.currentView });
 	},
 
 	unregister: function() {
@@ -49,7 +149,7 @@ $self.dispatcher = {
 		// Unload all events on Komodo shutdown
 		window.removeEventListener('current_view_changed', $self.dispatcher.onViewChanged, true);
 		window.removeEventListener('current_view_language_changed', $self.dispatcher.onViewChanged, true);
-		window.removeEventListener('view_closed', $self.dispatcher.onViewClosed, true);
+		window.removeEventListener('view_closing', $self.dispatcher.onViewClosing, true);
 	},
 
 	addConverter: function(obj) {
@@ -98,7 +198,7 @@ $self.dispatcher = {
 			$self.dispatcher.uninstallAll();
 	},
 
-	onViewClosed: function(e) {
+	onViewClosing: function(e) {
 
 		// Remove all custom XUL and timers before Komodo destroys the view
 		var view = e.originalTarget;
@@ -142,16 +242,17 @@ $self.dispatcher = {
 
 			boxEl.setAttribute('flex', 1);
 
-			if (view.uid in PREVIEW_OPTIONS) {
-
-				splitterEl.setAttribute('state', PREVIEW_OPTIONS[view.uid].state);
-
-				if ('collapsed' !== PREVIEW_OPTIONS[view.uid].state)
-					boxEl.setAttribute('width', PREVIEW_OPTIONS[view.uid].width);
-			}
-
 			frameEl.setAttribute('flex', 1);
 			frameEl.setAttribute('src', 'about:blank');
+
+			var viewOptions = $self.storage.getOptionsForView(view);
+			if (viewOptions) {
+
+				boxEl.setAttribute('width', viewOptions.width);
+				boxEl.setAttribute('flex', 0);
+
+				splitterEl.setAttribute('state', viewOptions.state);
+			}
 
 			splitterEl.appendChild(grippyEl);
 			boxEl.appendChild(frameEl);
@@ -182,8 +283,8 @@ $self.dispatcher = {
 
 		if (view.__preview_installed) {
 
-			PREVIEW_OPTIONS[view.uid] = { state: view['__preview_splitter'].getAttribute('state'),
-										  width: view['__preview_box'].width };
+			$self.storage.setOptionsForView(view, { state: view['__preview_splitter'].getAttribute('state'),
+													width: view['__preview_box'].width });
 
 			$self.dispatcher.endPeriodicalPreview(view);
 
@@ -270,8 +371,8 @@ $self.dispatcher = {
 
 		var templateKey = '$tpl:' + name;
 
-		if (templateKey in PREVIEW_TEMPLATES)
-			return PREVIEW_TEMPLATES[templateKey];
+		if (templateKey in PREVIEW_CACHED_TEMPLATES)
+			return PREVIEW_CACHED_TEMPLATES[templateKey];
 
 		// Allow templates to be localised
 		var localeService = Cc['@mozilla.org/intl/nslocaleservice;1'].getService(Ci.nsILocaleService),
@@ -280,7 +381,7 @@ $self.dispatcher = {
 
 		templateLocales.forEach(function(locale) {
 
-			if (PREVIEW_TEMPLATES[templateKey])
+			if (PREVIEW_CACHED_TEMPLATES[templateKey])
 				return false;
 
 			try {
@@ -288,14 +389,14 @@ $self.dispatcher = {
 				var templatePath = 'content/library/templates/' + locale + '/preview/' + name + '.html',
 					templateFile = $toolkit.io.getRelativeURI(templatePath, true);
 
-				PREVIEW_TEMPLATES[templateKey] = $toolkit.io.readEntireFile(templateFile);
+				PREVIEW_CACHED_TEMPLATES[templateKey] = $toolkit.io.readEntireFile(templateFile);
 
 			} catch (e) {}
 
 			return true;
 		});
 
-		return PREVIEW_TEMPLATES[templateKey];
+		return PREVIEW_CACHED_TEMPLATES[templateKey];
 	},
 
 	renderTemplate: function(view, name, args) {
