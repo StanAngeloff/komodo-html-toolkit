@@ -146,6 +146,21 @@ if (typeof (extensions) === 'undefined')
 		}
 	};
 
+	$toolkit.checkCompatibility = function() {
+
+		if (window.extensions &&
+			window.extensions.tabAbbreviations) {
+
+			var notificationEl = document.getElementById('komodo-notificationbox');
+
+			var notificationText, notificationType, notificationIcon, notificationPriority;
+			notificationEl.appendNotification(notificationText = $toolkit.l10n('htmltoolkit').GetStringFromName('compatibility.tabAbbreviations'),
+											  notificationType = 'html-toolkit-compatibility',
+											  notificationIcon = 'chrome://htmltoolkit/skin/images/icon_exclamation_diamond.png',
+											  notificationPriority = notificationEl.PRIORITY_WARNING_LOW);
+		}
+	};
+
 	$toolkit.registerAll = function(type) {
 
 		$toolkit.include('io');
@@ -176,4 +191,13 @@ if (typeof (extensions) === 'undefined')
 	$toolkit.registerAll('module');
 	$toolkit.registerAll('command');
 	$toolkit.registerAll('hyperlink');
+
+	$toolkit.include('events');
+
+	$toolkit.events.onLoad(function() {
+		window.setTimeout(function() {
+			$toolkit.checkCompatibility();
+		}, 750);
+	});
+
 })();
