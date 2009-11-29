@@ -2,9 +2,6 @@ $toolkit.include('editor');
 $toolkit.include('htmlUtils');
 $toolkit.include('library');
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-
 var SUBLANGUAGE_SUPPORTED_LIST = ['HTML', 'XML', 'PHP'];
 
 $self.provider = function() {
