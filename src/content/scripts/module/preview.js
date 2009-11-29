@@ -248,8 +248,13 @@ $self.dispatcher = {
 			var viewOptions = $self.storage.getOptionsForView(view);
 			if (viewOptions) {
 
-				boxEl.setAttribute('width', viewOptions.width);
-				boxEl.setAttribute('flex', 0);
+				if (viewOptions.width.length > 0) {
+
+					boxEl.setAttribute('width', viewOptions.width);
+					boxEl.setAttribute('flex', 0);
+
+				} else
+					boxEl.setAttribute('flex', 1);
 
 				splitterEl.setAttribute('state', viewOptions.state);
 			}
