@@ -29,7 +29,7 @@ $self.getTagSnippet = function(tagName) {
 
 	var tagNameLower = '$snippet:' + tagName.toLowerCase();
 	if (tagNameLower in LIBRARY_SNIPPETS_MAP)
-		return $self.createSnippet(LIBRARY_SNIPPETS_MAP[tagNameLower](tagName));
+		return $self.createSnippet(LIBRARY_SNIPPETS_MAP[tagNameLower](tagName), tagNameLower);
 
 	return null;
 };

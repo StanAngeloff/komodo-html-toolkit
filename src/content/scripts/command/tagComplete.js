@@ -123,7 +123,7 @@ $self.controller = function() {
 								var parentName = null;
 
 								if ('*internal*' === tagComplete.parent.name)
-									parentName = $toolkit.l10n('command').GetStringFromName('tagComplete.builtIn');
+									parentName = $toolkit.l10n('command').GetStringFromName('abbreviation.builtIn');
 								else {
 
 									var tagParent = tagComplete.parent,
@@ -136,12 +136,12 @@ $self.controller = function() {
 									}
 
 									tagPath.pop();
-									tagPath.push($toolkit.l10n('command').GetStringFromName('tagComplete.toolbox'));
+									tagPath.push($toolkit.l10n('command').GetStringFromName('abbreviation.toolbox'));
 
 									parentName = tagPath.reverse().join(' > ');
 								}
 
-								ko.statusBar.AddMessage($toolkit.l10n('command').formatStringFromName('tagComplete.snippetFound', [tagName, parentName], 2), 'htmltoolkit', 2500, true);
+								ko.statusBar.AddMessage($toolkit.l10n('command').formatStringFromName('abbreviation.snippetFound', [tagName, parentName], 2), 'htmltoolkit', 2500, true);
 							}
 						}
 

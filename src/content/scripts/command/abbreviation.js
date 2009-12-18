@@ -435,8 +435,25 @@ $self.controller = function() {
 					var insertResult = $self.insertSnippet(view, abbreviation, snippet);
 					if (insertResult) {
 
-						var snippetName = (snippet.parent ? snippet.parent.name : snippet.name) || 'N/A';
+						// Give more detailed information about where the snippet was found
+						var snippetName = [];
 
+						if ('*internal*' === snippet.parent.name)
+							snippetName.push($toolkit.l10n('command').GetStringFromName('abbreviation.builtIn'));
+						else {
+
+							var snippetParent = snippet.parent;
+							while (snippetParent) {
+
+								snippetName.push(snippetParent.name);
+								snippetParent = snippetParent.parent;
+							}
+
+							snippetName.pop();
+							snippetName.push($toolkit.l10n('command').GetStringFromName('abbreviation.toolbox'));
+						}
+
+						snippetName = snippetName.reverse().join(' > ');
 						ko.statusBar.AddMessage($toolkit.l10n('command').formatStringFromName('abbreviation.snippetFound', [abbreviation, snippetName], 2), 'htmltoolkit', 2500, true);
 
 						return true;

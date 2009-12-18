@@ -45,9 +45,9 @@ $self.provider = function() {
 
 			// We know a few HTML empty elements, wrap those accordingly
 			if ($toolkit.htmlUtils.isEmptyTag(abbreviationLower))
-				snippet = $toolkit.library.createSnippet('<' + abbreviation + (isXHtmlView ? ' /' : '') + '>[[%tabstop0]]');
+				snippet = $toolkit.library.createSnippet('<' + abbreviation + (isXHtmlView ? ' /' : '') + '>[[%tabstop0]]', abbreviationLower);
 			else if ($toolkit.htmlUtils.isHtmlTag(abbreviationLower))
-				snippet = $toolkit.library.createSnippet('<' + abbreviation + '>[[%tabstop0]]</' + abbreviation + '>');
+				snippet = $toolkit.library.createSnippet('<' + abbreviation + '>[[%tabstop0]]</' + abbreviation + '>', abbreviationLower);
 		}
 
 		return snippet;
