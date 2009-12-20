@@ -6,7 +6,11 @@ $toolkit.include('command');
 $self.controller = function() {
 
 	// Call parent's constructor
-	$toolkit.command.controller.apply(this, ['undo', 'Backspace']);
+	var command, triggerKeys, canChangeTriggerKeys;
+
+	$toolkit.command.controller.apply(this, [command = 'undo',
+											 triggerKeys = 'Backspace',
+											 canChangeTriggerKeys = false]);
 
 	this.canExecuteBase = this.canExecute;
 

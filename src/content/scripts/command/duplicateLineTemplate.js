@@ -5,7 +5,11 @@ $toolkit.include('regexp');
 $self.controller = function() {
 
 	// Call parent's constructor
-	$toolkit.command.controller.apply(this, ['duplicateLineTemplate', ['Ctrl+Alt+D'], true]);
+	var command, triggerKeys, canChangeTriggerKeys;
+
+	$toolkit.command.controller.apply(this, [command = 'duplicateLineTemplate',
+											 triggerKeys = ['Ctrl+Alt+D'],
+											 canChangeTriggerKeys = true]);
 
 	this.trigger = function(e) {
 

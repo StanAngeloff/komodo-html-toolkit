@@ -9,7 +9,12 @@ $self.controller = function() {
 	this.languageMatch = null;
 
 	// Call parent's constructor
-	$toolkit.command.controller.apply(this, [arguments[0], arguments[1], arguments[3]]);
+	var command, triggerKeys, canChangeTriggerKeys, commandOrdering;
+
+	$toolkit.command.controller.apply(this, [command = arguments[0],
+											 triggerKeys = arguments[1],
+											 canChangeTriggerKeys = arguments[3],
+											 commandOrdering = arguments[4]]);
 
 	this.canExecuteBase = this.canExecute;
 

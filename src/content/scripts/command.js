@@ -79,6 +79,8 @@ $self.dispatcher = {
 		if (index < 0) {
 
 			$self.dispatcher.commands.push(obj);
+			$self.dispatcher.sortCommands();
+
 			return $self.dispatcher.commands.length;
 		}
 
@@ -88,8 +90,14 @@ $self.dispatcher = {
 	removeCommand: function(obj) {
 
 		var index = $self.dispatcher.indexOfCommand(obj);
-		if (index >= 0)
-			return $self.dispatcher.commands.splice(index, 1);
+		if (index >= 0) {
+
+			var command = $self.dispatcher.commands.splice(index, 1);
+
+			$self.dispatcher.sortCommands();
+
+			return command;
+		}
 
 		return null;
 	},
@@ -101,6 +109,13 @@ $self.dispatcher = {
 				return index;
 
 		return -1;
+	},
+
+	sortCommands: function() {
+
+		$self.dispatcher.commands.sort(function(left, right) {
+			return (left.ordering < right.ordering ? -1 : (left.ordering > right.ordering ? +1 : 0));
+		});
 	},
 
 	onKeyPress: function(e) {
@@ -115,35 +130,64 @@ $self.dispatcher = {
 
 	process: function(key, e) {
 
+		var eventWrapped = false;
+
 		for (var i = 0; i < $self.dispatcher.commands.length; i ++)
-			if ($self.dispatcher.commands[i].keys.indexOf(key) >= 0)
-				if ($self.dispatcher.commands[i].canExecute(e))
+			if ($self.dispatcher.commands[i].triggerKeys.indexOf(key) >= 0)
+				if ($self.dispatcher.commands[i].canExecute(e)) {
+
+					if ( ! eventWrapped) {
+
+						e.stopPropagation__command = e.stopPropagation;
+						e.cancelled__command = false;
+						e.stopPropagation = function() {
+
+							e.cancelled__command = true;
+							e.stopPropagation__command();
+						};
+
+						eventWrapped = true;
+					}
+
 					$self.dispatcher.commands[i].trigger(e);
+					if (e.cancelled__command)
+						break;
+				}
+
+		if (eventWrapped) {
+
+			e.stopPropagation = e.stopPropagation__command;
+			delete e['stopPropagation__command'];
+		}
 	}
 };
 
 $toolkit.trapExceptions($self.dispatcher);
 
-$self.controller = function(command, keys, allowChange) {
+var COMMAND_ORDERING = 9900;
+
+$self.controller = function(command, triggerKeys, canChangeTriggerKeys, commandOrdering) {
 
 	this.command = command;
 
 	this.commandName = 'cmd_htmlToolkit_' + this.command;
 	this.commandKey = 'key_' + this.commandName;
 
-	this.keys = (typeof (keys) === 'string' ? [keys] : keys);
+	this.triggerKeys = (typeof (triggerKeys) === 'string' ? [triggerKeys] : triggerKeys);
 
-	// Ctrl is Meta on a Mac, update assigned keys to match
+	// Ctrl is Meta on a Mac, update assigned triggers keys to match
 	var isMac = (navigator.platform.indexOf('Mac') >= 0);
-	if (isMac && this.keys)
-		for (var i = 0; i < this.keys.length; i ++)
-			this.keys[i] = this.keys[i].replace('Ctrl', 'Meta', 'g');
+	if (isMac && this.triggerKeys)
+		for (var i = 0; i < this.triggerKeys.length; i ++)
+			this.triggerKeys[i] = this.triggerKeys[i].replace('Ctrl', 'Meta', 'g');
 
-	this.allowChange = !! allowChange;
+	this.canChangeTriggerKeys = !! canChangeTriggerKeys;
+
+	this.ordering = (typeof (commandOrdering) === 'undefined' ? ++ COMMAND_ORDERING : parseInt(commandOrdering));
 
 	this.register = function() {
 
-		if (this.allowChange) {
+		if (this.canChangeTriggerKeys) {
 
 			var $instance = this;
 			$toolkit.events.onLoad(function() {
@@ -183,7 +227,7 @@ $self.controller = function(command, keys, allowChange) {
 
 			var defaultKeyBindings = {};
 
-			defaultKeyBindings[this.commandName] = this.keys;
+			defaultKeyBindings[this.commandName] = this.triggerKeys;
 			gKeybindingMgr._add_keybinding_sequences(defaultKeyBindings);
 		}
 
@@ -192,7 +236,7 @@ $self.controller = function(command, keys, allowChange) {
 
 	this.unregister = function() {
 
-		if (this.allowChange) {
+		if (this.canChangeTriggerKeys) {
 
 			var $instance = this;
 			$toolkit.events.onUnload(function() { window.controllers.removeController($instance); });

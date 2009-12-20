@@ -10,7 +10,12 @@ const Ci = Components.interfaces;
 $self.controller = function() {
 
 	// Call parent's constructor
-	$toolkit.command.language.controller.apply(this, ['tagComplete', '>', ['HTML', 'XML', 'PHP', '_PHPDoc']]);
+	var command, triggerKeys, supportedLanguages, canChangeTriggerKeys;
+
+	$toolkit.command.language.controller.apply(this, [command = 'tagComplete',
+													  triggerKeys = '>',
+													  supportedLanguages = ['HTML', 'XML', 'PHP', '_PHPDoc'],
+													  canChangeTriggerKeys = false]);
 
 	this.trigger = function(e) {
 

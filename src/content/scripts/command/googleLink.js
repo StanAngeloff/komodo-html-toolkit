@@ -5,7 +5,12 @@ $toolkit.include('htmlUtils');
 $self.controller = function() {
 
 	// Call parent's constructor
-	$toolkit.command.language.controller.apply(this, ['googleLink', 'Ctrl+Alt+Shift+L', ['HTML'], true]);
+	var command, triggerKeys, supportedLanguages, canChangeTriggerKeys;
+
+	$toolkit.command.language.controller.apply(this, [command = 'googleLink',
+													  triggerKeys = 'Ctrl+Alt+Shift+L',
+													  supportedLanguages = ['HTML'],
+													  canChangeTriggerKeys = true]);
 
 	this.trigger = function() {
 

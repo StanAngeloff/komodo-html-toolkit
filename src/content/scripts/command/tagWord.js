@@ -5,7 +5,12 @@ $toolkit.include('editor');
 $self.controller = function() {
 
 	// Call parent's constructor
-	$toolkit.command.language.controller.apply(this, ['tagWord', 'Ctrl+.', ['HTML', 'XML', '_PHPDoc'], true]);
+	var command, triggerKeys, supportedLanguages, canChangeTriggerKeys;
+
+	$toolkit.command.language.controller.apply(this, [command = 'tagWord',
+													  triggerKeys = 'Ctrl+.',
+													  supportedLanguages = ['HTML', 'XML', '_PHPDoc'],
+													  canChangeTriggerKeys = true]);
 
 	this.trigger = function() {
 

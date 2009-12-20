@@ -145,12 +145,13 @@ $self.provider = function(providerName, providerOrdering) {
 $self.controller = function() {
 
 	// Call parent's constructor
-	var commandName, commandKey, supportedLanguages, allowChange;
+	var command, triggerKeys, supportedLanguages, canChangeTriggerKeys, commandOrdering;
 
-	$toolkit.command.language.controller.apply(this, [commandName = 'abbreviation',
-													  commandKey = 'Tab',
+	$toolkit.command.language.controller.apply(this, [command = 'abbreviation',
+													  triggerKeys = 'Tab',
 													  supportedLanguages = '*',
-													  allowChange = false]);
+													  canChangeTriggerKeys = false,
+													  commandOrdering = 5100]);
 
 	this._command_register = this.register;
 	this.register = function() {

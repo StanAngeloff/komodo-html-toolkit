@@ -5,7 +5,12 @@ $toolkit.include('library');
 $self.controller = function() {
 
 	// Call parent's constructor
-	$toolkit.command.language.controller.apply(this, ['newLine', ['Shift+Enter', 'Shift+Return'], 'HTML']);
+	var command, triggerKeys, supportedLanguages, canChangeTriggerKeys;
+
+	$toolkit.command.language.controller.apply(this, [command = 'newLine',
+													  triggerKeys = ['Shift+Enter', 'Shift+Return'],
+													  supportedLanguages = 'HTML',
+													  canChangeTriggerKeys = false]);
 
 	this.trigger = function(e) {
 

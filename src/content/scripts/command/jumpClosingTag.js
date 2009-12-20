@@ -5,7 +5,13 @@ $toolkit.include('regexp');
 $self.controller = function(type, keys, direction) {
 
 	// Call parent's constructor
-	$toolkit.command.language.controller.apply(this, ['jumpClosingTag.' + type, keys, ['HTML', 'XML', '_PHPDoc']]);
+	var command, triggerKeys, supportedLanguages, canChangeTriggerKeys, commandOrdering;
+
+	$toolkit.command.language.controller.apply(this, [command = 'jumpClosingTag.' + type,
+													  triggerKeys = keys,
+													  supportedLanguages = ['HTML', 'XML', '_PHPDoc'],
+													  canChangeTriggerKeys = false,
+													  commandOrdering = 5000]);
 
 	this.direction = direction;
 

@@ -3,7 +3,12 @@ $toolkit.include('command.language');
 $self.controller = function() {
 
 	// Call parent's constructor
-	$toolkit.command.language.controller.apply(this, ['nonBreakingSpace', 'Shift+Space', ['HTML']]);
+	var command, triggerKeys, supportedLanguages, canChangeTriggerKeys;
+
+	$toolkit.command.language.controller.apply(this, [command = 'nonBreakingSpace',
+													  triggerKeys = 'Shift+Space',
+													  supportedLanguages = ['HTML'],
+													  canChangeTriggerKeys = false]);
 
 	this.trigger = function(e) {
 

@@ -111,7 +111,12 @@ $self.onViewOpened = function(e) {
 $self.controller = function() {
 
 	// Call parent's constructor
-	$toolkit.command.language.controller.apply(this, ['wrapBlockInTag', 'Ctrl+Alt+W', ['HTML', 'XML'], true]);
+	var command, triggerKeys, supportedLanguages, canChangeTriggerKeys;
+
+	$toolkit.command.language.controller.apply(this, [command = 'wrapBlockInTag',
+													  triggerKeys = 'Ctrl+Alt+W',
+													  supportedLanguages = ['HTML', 'XML'],
+													  canChangeTriggerKeys = true]);
 
 	this.trigger = function() {
 

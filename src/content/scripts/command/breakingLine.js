@@ -6,7 +6,12 @@ $toolkit.include('regexp');
 $self.controller = function() {
 
 	// Call parent's constructor
-	$toolkit.command.language.controller.apply(this, ['breakingLine', ['Ctrl+Enter', 'Ctrl+Return'], ['HTML']]);
+	var command, triggerKeys, supportedLanguages, canChangeTriggerKeys;
+
+	$toolkit.command.language.controller.apply(this, [command = 'breakingLine',
+													  triggerKeys = ['Ctrl+Enter', 'Ctrl+Return'],
+													  supportedLanguages = ['HTML'],
+													  canChangeTriggerKeys = false]);
 
 	this.trigger = function(e) {
 
