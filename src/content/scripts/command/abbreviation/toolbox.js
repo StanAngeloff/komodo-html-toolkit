@@ -23,9 +23,6 @@ $self.provider = function() {
 		if (view.document.language && viewLanguages.indexOf(view.document.language) < 0)
 			viewLanguages.push(view.document.language);
 
-		if (viewLanguages.indexOf('General') < 0)
-			viewLanguages.push('General');
-
 		// Special cases
 		if (viewLanguages.indexOf('HTML') < 0) {
 
@@ -37,23 +34,67 @@ $self.provider = function() {
 				viewLanguages.push('HTML');
 		}
 
+		if (viewLanguages.indexOf('General') < 0)
+			viewLanguages.push('General');
+
 		var partService = Cc['@activestate.com/koPartService;1'].getService(Ci.koIPartService),
 			abbreviationsFolders = partService.getParts('folder', 'name', 'Abbreviations', '*', partService.currentProject, {}),
-			abbreviationName = abbreviation.split('.').shift();
+			abbreviationName = abbreviation.split('.').shift(),
+			languageContainers, languageSnippetsContainer, languageSnippets;
 
 		for (var i = 0; i < abbreviationsFolders.length; i ++)
 			for (var j = 0; j < viewLanguages.length; j ++) {
 
-				var languageFolder = abbreviationsFolders[i].getChildWithTypeAndStringAttribute('folder', 'name', viewLanguages[j], false);
-				if (languageFolder) {
+				// Find all sub-folders at top level
+				languageContainers = {};
+				abbreviationsFolders[i].getChildrenByType('folder', false, languageContainers, {});
+				if (languageContainers.value) {
 
-					var snippet = languageFolder.getChildWithTypeAndStringAttribute('snippet', 'name', abbreviationName, false);
-					if (snippet)
-						return snippet;
+					languageContainers = languageContainers.value;
 
-					var folder = languageFolder.getChildWithTypeAndStringAttribute('folder', 'name', abbreviationName, true);
-					if (folder)
-						return folder;
+					// Match the view language against the name of each folder
+					languageSnippetsContainer = null;
+					for (var k = 0; k < languageContainers.length; k ++)
+						if (viewLanguages[j].toLowerCase() === languageContainers[k].name.toLowerCase()) {
+
+							languageSnippetsContainer = languageContainers[k];
+							break;
+						}
+
+					// If we have found a folder matching our view language, look for a snippet inside
+					if (languageSnippetsContainer) {
+
+						languageSnippets = {};
+						// Find all snippets (incl. nested folders) inside the view language folder
+						languageSnippetsContainer.getChildrenByType('snippet', true, languageSnippets, {});
+						if (languageSnippets.value) {
+
+							languageSnippets = languageSnippets.value;
+							for (k = 0; k < languageSnippets.length; k ++) {
+
+								// Attempt a full-name match
+								if (languageSnippets[k].name == abbreviationName)
+									return languageSnippets[k];
+								// Attempt to match first word-part of the snippet name
+								else if (languageSnippets[k].name.split(/[\W\.]+/).shift() == abbreviationName)
+									return languageSnippets[k];
+							}
+						}
+
+						languageSnippets = {};
+						// Find all folders (incl. nested folders) inside the view language folder
+						languageSnippetsContainer.getChildrenByType('folder', true, languageSnippets, {});
+						if (languageSnippets.value) {
+
+							languageSnippets = languageSnippets.value;
+							for (k = 0; k < languageSnippets.length; k ++) {
+
+								// Attempt a full-name match
+								if (languageSnippets[k].name == abbreviationName)
+									return languageSnippets[k];
+							}
+						}
+					}
 				}
 			}
 
