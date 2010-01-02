@@ -9,7 +9,7 @@ $self.controller = function(type, keys, direction) {
 
 	$toolkit.command.language.controller.apply(this, [command = 'jumpClosingTag.' + type,
 													  triggerKeys = keys,
-													  supportedLanguages = ['HTML', 'XML', '_PHPDoc'],
+													  supportedLanguages = ['HTML', 'XML', 'XBL', '_PHPDoc'],
 													  canChangeTriggerKeys = false,
 													  commandOrdering = 5000]);
 

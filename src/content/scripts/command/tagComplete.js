@@ -14,7 +14,7 @@ $self.controller = function() {
 
 	$toolkit.command.language.controller.apply(this, [command = 'tagComplete',
 													  triggerKeys = '>',
-													  supportedLanguages = ['HTML', 'XML', 'PHP', '_PHPDoc'],
+													  supportedLanguages = ['HTML', 'XML', 'XBL', 'PHP', '_PHPDoc'],
 													  canChangeTriggerKeys = false]);
 
 	this.trigger = function(e) {

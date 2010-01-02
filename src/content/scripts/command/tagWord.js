@@ -9,7 +9,7 @@ $self.controller = function() {
 
 	$toolkit.command.language.controller.apply(this, [command = 'tagWord',
 													  triggerKeys = 'Ctrl+.',
-													  supportedLanguages = ['HTML', 'XML', '_PHPDoc'],
+													  supportedLanguages = ['HTML', 'XML', 'XBL', '_PHPDoc'],
 													  canChangeTriggerKeys = true]);
 
 	this.trigger = function() {

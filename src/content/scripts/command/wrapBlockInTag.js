@@ -115,7 +115,7 @@ $self.controller = function() {
 
 	$toolkit.command.language.controller.apply(this, [command = 'wrapBlockInTag',
 													  triggerKeys = 'Ctrl+Alt+W',
-													  supportedLanguages = ['HTML', 'XML'],
+													  supportedLanguages = ['HTML', 'XML', 'XBL'],
 													  canChangeTriggerKeys = true]);
 
 	this.trigger = function() {
