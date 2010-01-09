@@ -1,10 +1,10 @@
 // Store existing event handler
-var OnPreferencePageInitalizeBase = (typeof (OnPreferencePageInitalize) === 'function' ? OnPreferencePageInitalize : function() {});
+var OnPreferencePageInitalize__htmlOverlay = (typeof (OnPreferencePageInitalize) === 'function' ? OnPreferencePageInitalize : function() {});
 
 OnPreferencePageInitalize = function(prefset) {
 
 	// Call previous event handler
-	OnPreferencePageInitalizeBase(prefset);
+	OnPreferencePageInitalize__htmlOverlay(prefset);
 
 	// We need to remove Komodo's spacer at document end
 	var spacerEl = document.getElementsByTagName('spacer')[0];
@@ -15,8 +15,6 @@ OnPreferencePageInitalize = function(prefset) {
 
 	// Bring up Options dialogue on button click
 	document.getElementById('htmltoolkitOptions').addEventListener('click', function() {
-
-		window.openDialog('chrome://htmltoolkit/content/pref/htmltoolkit.xul');
-
+		window.openDialog('chrome://htmltoolkit/content/pref/htmltoolkit.xul', 'htmltoolkitPrefWindow', 'chrome,titlebar,toolbar,dialog,modal,centerscreen');
 	}, false);
 };

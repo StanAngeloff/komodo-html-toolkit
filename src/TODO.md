@@ -14,6 +14,9 @@
 - Auto-complete quotes when '=' pressed after an attribute name or upon
   pressing ENTER to auto-complete an attribute
 
+- Option to select CSS file in preview modules (or option to leave the
+  default)
+
 ---
 
 - Don't assign default key bindings if User has cleared all sequences

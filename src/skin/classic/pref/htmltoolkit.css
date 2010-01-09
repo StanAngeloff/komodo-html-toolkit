@@ -1,8 +1,10 @@
 @import url(chrome://global/skin/);
 
-#components-group .treecol-type { width: 10em; }
+#tag-complete-group treechildren::-moz-tree-checkbox { list-style-image: none; }
 
-#components-group treechildren::-moz-tree-checkbox { list-style-image: none; }
+#tag-complete-group treecol.treecol-image,
+#tag-complete-group treechildren::-moz-tree-checkbox(checked) { list-style-image: url(chrome://htmltoolkit/skin/images/bullet_tick.png); }
 
-#components-group treecol.treecol-image,
-#components-group treechildren::-moz-tree-checkbox(checked) { list-style-image: url(chrome://htmltoolkit/skin/images/bullet_tick.png); }
+.note { text-align: right; }
+
+iframe { border: 1px solid ThreeDShadow; }

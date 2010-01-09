@@ -1,141 +1,97 @@
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-
-const XUL_NS = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul';
-
-var top = window;
-while (top.opener)
-	top = top.opener;
-
-var $toolkit = top.extensions.htmlToolkit,
-	prefs = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefService)
-				.getBranch('extensions.htmltoolkit.');
-
-var eventsBag = {};
-
-eventsBag.onLoad = function() {
-
-	prefs.QueryInterface(Ci.nsIPrefBranch2);
-
-	var allCommands = $toolkit.command.dispatcher.commands,
-		commandName, commandId, commandKey, commandLabel,
-		preferencesEl = document.getElementById('components-preferences'),
-		treeEl = document.getElementById('components-group'),
-		bodyEl = document.getElementById('components-group-body'),
-		itemEl, rowEl, cellsEl, preferenceEl;
-
-	for (var i = 0; i < allCommands.length; i ++) {
-
-		commandName = allCommands[i].command;
-		commandId = 'pref_cmd_' + commandName.replace('.', '_', 'g');
-		commandKey = 'command.' + commandName + '.enabled';
-
-		// Check if the command can be turned on/off by looking for a label
-		try { commandLabel = $toolkit.l10n('command').GetStringFromName(commandName); }
-		catch (e) { continue; }
-
-		preferenceEl = document.createElementNS(XUL_NS, 'preference');
-
-		preferenceEl.setAttribute('id', commandId)
-		preferenceEl.setAttribute('type', 'bool');
-		preferenceEl.setAttribute('name', prefs.root + commandKey);
-
-		preferencesEl.appendChild(preferenceEl);
-
-		itemEl = document.createElementNS(XUL_NS, 'treeitem');
-		rowEl = document.createElementNS(XUL_NS, 'treerow');
-
-		cellsEl = [];
-		cellsEl[0] = document.createElementNS(XUL_NS, 'treecell');
-		cellsEl[1] = document.createElementNS(XUL_NS, 'treecell');
-		cellsEl[2] = document.createElementNS(XUL_NS, 'treecell');
-
-		cellsEl[0].setAttribute('preference-editable', true);
-		cellsEl[0].setAttribute('preference', commandId);
-
-		try { cellsEl[0].setAttribute('value', prefs.getBoolPref(prefs.root + commandKey)); }
-		catch (e) { cellsEl[0].setAttribute('value', true); }
-
-		cellsEl[1].setAttribute('label', commandLabel);
-		cellsEl[1].setAttribute('editable', false);
-
-		cellsEl[2].setAttribute('label', $toolkit.l10n('command').GetStringFromName('command.type'));
-		cellsEl[2].setAttribute('editable', false);
-
-		rowEl.appendChild(cellsEl[0]);
-		rowEl.appendChild(cellsEl[1]);
-		rowEl.appendChild(cellsEl[2]);
-		itemEl.appendChild(rowEl);
-		bodyEl.appendChild(itemEl);
-	}
-
-	treeEl.addEventListener('keypress', eventsBag.onComponentsKeyPress, false);
-
-	window.setTimeout(function() {
-		window.centerWindowOnScreen();
-		bodyEl.focus();
-	}, 1)
-};
-
-eventsBag.onAccept = function() {
-
-	var bodyEl = document.getElementById('components-group-body'),
-		cellEls = bodyEl.getElementsByTagName('treecell'),
-		commandKey, commandName,
-		preferenceEl;
-
-	for (var i = 0; i < cellEls.length; i ++) {
-
-		commandId = cellEls[i].getAttribute('preference');
-		if (commandId !== null && commandId.length) {
-
-			preferenceEl = document.getElementById(commandId);
-			if (preferenceEl) {
-
-				commandName = preferenceEl.getAttribute('name');
-				prefs.setBoolPref(commandName, ('true' === cellEls[i].getAttribute('value') ? true : false));
-			}
-		}
-	}
-};
-
-eventsBag.onComponentsKeyPress = function(e) {
-
-	if (e.charCode === 32 && ! e.altKey) {
-
-		var treeEl = document.getElementById('components-tree'),
-			selection = treeEl.view.selection,
-			selectionLength = selection.getRangeCount();
-
-		if (selectionLength < 1)
-			return false;
-
-		var selectedRows = [],
-			rangeStart = {}, rangeEnd = {};
-
-		for (var i = 0; i < selectionLength; i ++) {
-			selection.getRangeAt(i, rangeStart, rangeEnd);
-			for (var j = rangeStart.value; j <= rangeEnd.value; j ++) {
-				if (j >= 0) {
-					selectedRows.push(j);
-				}
-			}
-		}
-
-		var groupedState = true;
-		for (i = 0; groupedState && i < selectedRows.length; i ++)
-			groupedState &= ('true' === treeEl.view.getCellValue(selectedRows[i], {}) ? true : false);
-
-		for (var i = 0; i < selectedRows.length; i ++)
-			treeEl.view.setCellValue(selectedRows[i], {}, (groupedState ? 'false' : 'true'));
-
-		return false;
-	}
-
-    return true;
-};
-
-$toolkit.trapExceptions(eventsBag);
-
-window.addEventListener('load', eventsBag.onLoad, false);
-window.addEventListener('dialogaccept', eventsBag.onAccept, false);
+(function(){
+  var $toolkit, eventsBag, prefsBranch, prefsService, recentKomodoWindow, windowManagerService;
+  const Cc = Components.classes;
+  const Ci = Components.interfaces;
+  const XUL_NS = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul';
+  // Find the most recent Komodo window and grab a reference to the HTML Toolkit extension
+  windowManagerService = Cc['@mozilla.org/appshell/window-mediator;1'].getService(Ci.nsIWindowMediator);
+  recentKomodoWindow = windowManagerService.getMostRecentWindow('Komodo');
+  $toolkit = recentKomodoWindow.extensions.htmlToolkit;
+  // Grab the preferences branch for HTML Toolkit
+  prefsService = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefService);
+  prefsBranch = prefsService.getBranch('extensions.htmltoolkit.');
+  eventsBag = {
+    onLoad: function onLoad() {
+      var centerWindow, tagCompleteGroup;
+      prefsService.QueryInterface(Ci.nsIPrefBranch2);
+      tagCompleteGroup = document.getElementById('tag-complete-group');
+      tagCompleteGroup.addEventListener('keypress', eventsBag.onTagCompleteGroupKeyPress, false);
+      return window.setTimeout((centerWindow = function centerWindow() {
+        return window.centerWindowOnScreen();
+      }), 1);
+    },
+    onTagCompleteGroupKeyPress: function onTagCompleteGroupKeyPress(e) {
+      var __a, __b, __c, __d, __e, __f, __g, __h, __i, __j, __k, __l, __m, __n, __o, __p, __q, __r, __s, __t, groupedState, i, j, rangeEnd, rangeStart, selectedRows, selection, selectionLength, tree;
+      if (e.charCode === 32 && !e.altKey) {
+        tree = document.getElementById('tag-complete-tree');
+        selection = tree.view.selection;
+        selectionLength = selection.getRangeCount();
+        if (!(selectionLength)) {
+          return false;
+        }
+        selectedRows = [];
+        rangeStart = {
+        };
+        rangeEnd = {
+        };
+        __d = 0;
+        __e = selectionLength;
+        for (__c=0, i=__d; (__d <= __e ? i < __e : i > __e); (__d <= __e ? i += 1 : i -= 1), __c++) {
+          selection.getRangeAt(i, rangeStart, rangeEnd);
+          __i = rangeStart.value;
+          __j = rangeEnd.value + 1;
+          for (__h=0, j=__i; (__i <= __j ? j < __j : j > __j); (__i <= __j ? j += 1 : j -= 1), __h++) {
+            if (j >= 0) {
+              selectedRows.push(j);
+            }
+          }
+        }
+        groupedState = true;
+        __n = 0;
+        __o = selectedRows.length;
+        for (__m=0, i=__n; (__n <= __o ? i < __o : i > __o); (__n <= __o ? i += 1 : i -= 1), __m++) {
+          groupedState = groupedState && tree.view.getCellValue(selectedRows[i], {
+          }) === 'true';
+          if (!(groupedState)) {
+            break;
+          }
+        }
+        __s = 0;
+        __t = selectedRows.length;
+        for (__r=0, i=__s; (__s <= __t ? i < __t : i > __t); (__s <= __t ? i += 1 : i -= 1), __r++) {
+          tree.view.setCellValue(selectedRows[i], {
+          }, groupedState ? 'false' : 'true');
+        }
+        return false;
+      }
+      return true;
+    },
+    onAccept: function onAccept() {
+      var __a, __b, __c, __d, cell, prefEl, prefId, preferenceName, tagCompleteCells, tagCompleteTree;
+      tagCompleteTree = document.getElementById('tag-complete-tree');
+      tagCompleteCells = tagCompleteTree.getElementsByTagName('treecell');
+      __a = tagCompleteCells;
+      __c = [];
+      for (__b in __a) {
+        if (__a.hasOwnProperty(__b)) {
+          cell = __a[__b];
+          __d = (function() {
+            prefId = cell.getAttribute('preference');
+            if ((prefId.length)) {
+              prefEl = document.getElementById(prefId);
+              if (((typeof prefEl !== "undefined" && prefEl !== null))) {
+                preferenceName = prefEl.getAttribute('name');
+                return prefsService.setCharPref(preferenceName, cell.getAttribute('value'));
+              }
+            }
+          })();
+          __c.push(__d);
+        }
+      }
+      return __c;
+    }
+  };
+  $toolkit.trapExceptions(eventsBag);
+  window.addEventListener('load', eventsBag.onLoad, false);
+  window.addEventListener('dialogaccept', eventsBag.onAccept, false);
+})();

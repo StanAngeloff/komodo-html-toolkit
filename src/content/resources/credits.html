@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+					  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>HTML Toolkit Credits</title>
+	<style type="text/css" media="all">
+	/* <![CDATA[ */
+	html { background-color: white; }
+
+	* { cursor: default; -moz-user-select: none; margin: 0; padding: 0; font: menu; }
+
+	strong, strong * { font-weight: bold; }
+	em, em * { font-style: italic; }
+	hr { border: none; margin-top: 8em; }
+
+	#credits { position: absolute; top: 0; right: 0; bottom: 0; left: 0; overflow: hidden; text-align: center; }
+	#credits p { margin: 72px 0 48px 0; }
+	/* ]]> */
+	</style>
+</head>
+<body>
+
+<div id="credits">
+<p><pre><strong><em>HTML Toolkit</em></strong>
+<hr />
+<strong>DEVELOPERS</strong>
+___________
+
+Stan Angeloff
+http://blog.angeloff.name/
+
+Florent Verschelde
+http://fvsch.com/
+
+
+<strong>LIBRARIES</strong>
+__________
+
+showdown.js -- a javascript port of Markdown
+Copyright (c) 2007 John Fraser.
+Original Markdown Copyright (c) 2004-2005 John Gruber
+http://daringfireball.net/projects/markdown/
+
+Tripoli -- a generic CSS standard for HTML rendering
+Copyright (C) 2007 David Hellsing
+http://devkick.com/lab/tripoli/
+
+TiddlyWiki -- a reusable non-linear personal web notebook
+Copyright (c) UnaMesa Association 2004-2009
+http://www.tiddlywiki.com/
+
+Lorem Ipsum Generator
+Will Munslow, Code/idea stolen from Captain Cursor and Travis Spencer
+http://subterrane.com/files/loremipsum.html
+
+JavaScript wordwrap
+Jonas Raoni Soares Silva (original revised)
+Nick Callen (improved)
+Kevin van Zonneveld (improved)
+Sakimori (improved)
+Michael Grier (bugfixed)
+http://phpjs.org/functions/wordwrap:581
+
+
+<strong>RESOURCES</strong>
+__________
+
+Fugue Icons
+Creative Commons Attribution 3.0 license
+http://www.pinvoke.com/
+
+</pre></p>
+</div>
+
+<script type="text/javascript">
+// <![CDATA[
+(function() {
+
+var shadowEl;
+
+for (var i = 0; i < 20; i ++) {
+
+	shadowEl = document.createElement('div');
+
+	shadowEl.style.position = 'absolute';
+	shadowEl.style.top = i + 'px';
+	shadowEl.style.left = 0;
+	shadowEl.style.right = 0;
+	shadowEl.style.height = '1px';
+	shadowEl.style.backgroundColor = 'rgba(255, 255, 255, ' + ((20 - i) / 20) + ')';
+
+	document.body.appendChild(shadowEl);
+}
+
+for (var i = 0; i < 10; i ++) {
+
+	shadowEl = document.createElement('div');
+
+	shadowEl.style.position = 'absolute';
+	shadowEl.style.bottom = i + 'px';
+	shadowEl.style.left = 0;
+	shadowEl.style.right = 0;
+	shadowEl.style.height = '1px';
+	shadowEl.style.backgroundColor = 'rgba(255, 255, 255, ' + ((10 - i) / 10) + ')';
+
+	document.body.appendChild(shadowEl);
+}
+
+var creditsEl = document.getElementById('credits'),
+	scrollOffset = 1;
+
+creditsEl.addEventListener('click', function() {
+
+	if (scrollOffset > 0)
+		scrollOffset = 0;
+	else
+		scrollOffset = 1;
+
+}, false);
+
+creditsEl.addEventListener('dblclick', function() {
+	creditsEl.scrollTop = 0;
+}, false);
+
+window.setTimeout(function runCredits() {
+
+	creditsEl.scrollTop = 0;
+
+	var creditsInterval = window.setInterval(function scrollCredits() {
+
+		var lastScrollTop = creditsEl.scrollTop;
+
+		creditsEl.scrollTop += scrollOffset;
+		if (lastScrollTop == creditsEl.scrollTop && scrollOffset > 0) {
+
+			window.clearInterval(creditsInterval);
+			window.setTimeout(runCredits, 5000);
+		}
+
+	}, 35);
+
+}, 3000);
+
+})();
+// ]]>
+</script>
+
+</body>
+</html>

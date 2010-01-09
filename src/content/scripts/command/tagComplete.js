@@ -103,10 +103,15 @@ $self.controller = function() {
 							// Check in toolbox first
 							var abbrevSnippet = null;
 
-							abbrevSnippet = ko.abbrev.findAbbrevSnippet(tagName) ||
-											ko.abbrev.findAbbrevSnippet(tagNameLower);
+							if ('true' === $toolkit.pref('tagComplete.toolboxEnabled')) {
+
+								abbrevSnippet = ko.abbrev.findAbbrevSnippet(tagName) ||
+												ko.abbrev.findAbbrevSnippet(tagNameLower);
+							}
+
 							// Check in pre-defined HTML snippets next if no match
 							if ( ! abbrevSnippet &&
+								'true' === $toolkit.pref('tagComplete.libraryEnabled') &&
 								$toolkit.editor.isHtmlBuffer(view)) {
 
 								// Some built-in snippets have different contents depending on the buffer DOCTYPE
@@ -149,6 +154,12 @@ $self.controller = function() {
 								ko.statusBar.AddMessage($toolkit.l10n('command').formatStringFromName('abbreviation.snippetFound', [tagName, parentName], 2), 'htmltoolkit', 2500, true);
 							}
 						}
+
+						// Don't proceed any further if we don't have a snippet and
+						// the default auto-complete has been turned off
+						if ( ! isTagAbbreviation &&
+							'false' === $toolkit.pref('tagComplete.defaultEnabled'))
+							return false;
 
 						// We know a few HTML empty elements, process those accordingly
 						if ( ! isTagAbbreviation &&

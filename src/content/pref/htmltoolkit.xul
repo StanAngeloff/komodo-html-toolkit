@@ -7,37 +7,63 @@
 <prefwindow id="htmltoolkitOptions"
 			xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 			title="&options.title;"
-			persist="screenX, screenY">
+			width="640">
 
 	<script type="application/x-javascript" src="chrome://htmltoolkit/content/pref/htmltoolkit.js" />
 
-	<prefpane id="components" label="&components.title;" image="chrome://htmltoolkit/skin/images/gear.png">
+	<prefpane id="components" label="&components.title;" selected="true" image="chrome://htmltoolkit/skin/images/gear.png">
 
-		<preferences id="components-preferences" />
+		<preferences id="components-preferences">
+			<preference id="tag-complete-toolbox-pref" name="extensions.htmltoolkit.tagComplete.toolboxEnabled" type="string" />
+			<preference id="tag-complete-library-pref" name="extensions.htmltoolkit.tagComplete.libraryEnabled" type="string" />
+			<preference id="tag-complete-default-pref" name="extensions.htmltoolkit.tagComplete.defaultEnabled" type="string" />
+		</preferences>
 
 		<vbox flex="1">
-			<groupbox id="components-group" orient="vertical">
-				<caption>&components.group;</caption>
-				<description>&components.description;</description>
+			<groupbox id="tag-complete-group" orient="vertical">
+				<caption>&tagComplete.group;</caption>
+				<description>&tagComplete.description;</description>
 				<separator class="thin" />
-				<tree id="components-tree" flex="1" class="no-border"
-					  editable="true" seltype="multiple" hidecolumnpicker="true"
-					  rows="6">
+
+				<tree id="tag-complete-tree" flex="1" editable="true" seltype="multiple" rows="3" hidecolumnpicker="true">
 					<treecols>
 						<treecol type="checkbox" fixed="true" class="treecol-image" editable="true" tooltiptext="&components.enabledColumn;" />
 						<splitter class="tree-splitter" />
 						<treecol flex="1" class="treecol-name" label="&components.nameColumn;" persist="width" />
-						<splitter class="tree-splitter" />
-						<treecol class="treecol-type" label="&components.typeColumn;" persist="width" />
 					</treecols>
-					<treechildren id="components-group-body" flex="1" alternatingbackground="true" />
+					<treechildren flex="1" alternatingbackground="true">
+						<treeitem>
+							<treerow>
+								<treecell preference-editable="true" preference="tag-complete-toolbox-pref" />
+								<treecell label="&tagComplete.toolbox;" />
+							</treerow>
+						</treeitem>
+						<treeitem>
+							<treerow>
+								<treecell preference-editable="true" preference="tag-complete-library-pref" />
+								<treecell label="&tagComplete.library;" />
+							</treerow>
+						</treeitem>
+						<treeitem>
+							<treerow>
+								<treecell preference-editable="true" preference="tag-complete-default-pref" />
+								<treecell label="&tagComplete.default;" />
+							</treerow>
+						</treeitem>
+					</treechildren>
 				</tree>
+
 				<separator class="thin" />
+				<label class="note">&tagComplete.ordering;</label>
 			</groupbox>
 		</vbox>
 
 	</prefpane>
 
-	<prefpane />
+	<prefpane id="about" label="&about.title;" image="chrome://htmltoolkit/skin/images/information.png">
+		<vbox flex="1">
+			<iframe src="chrome://htmltoolkit/content/resources/credits.html" flex="1" />
+		</vbox>
+	</prefpane>
 
 </prefwindow>

@@ -30,6 +30,11 @@ if (typeof (extensions) === 'undefined')
 	const Cc = Components.classes;
 	const Ci = Components.interfaces;
 
+	var prefsService = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefService),
+		prefsBranch = prefsService.getBranch('extensions.htmltoolkit.');
+
+	var consoleService = Cc['@mozilla.org/consoleservice;1'].getService(Ci.nsIConsoleService);
+
 	var $toolkit = extensions.htmlToolkit || (extensions.htmlToolkit = {});
 
 	$toolkit.include = function(namespace, includeOnce) {
@@ -104,10 +109,11 @@ if (typeof (extensions) === 'undefined')
 	};
 
 	$toolkit.log = function(message) {
-
-		var consoleService = Cc['@mozilla.org/consoleservice;1'].getService(Ci.nsIConsoleService);
-
 		consoleService.logStringMessage(message);
+	};
+
+	$toolkit.pref = function(key) {
+		return prefsBranch.getCharPref(key);
 	};
 
 	$toolkit.trapExceptions = function(obj, bound) {
