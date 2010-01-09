@@ -391,7 +391,7 @@ $self.dispatcher = {
 
 			try {
 
-				var templatePath = 'content/library/templates/' + locale + '/preview/' + name + '.html',
+				var templatePath = 'locale/' + locale + '/command/preview/' + name + '.html',
 					templateFile = $toolkit.io.getRelativeURI(templatePath, true);
 
 				PREVIEW_CACHED_TEMPLATES[templateKey] = $toolkit.io.readEntireFile(templateFile);
