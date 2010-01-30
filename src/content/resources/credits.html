@@ -13,15 +13,27 @@
 
 	strong, strong * { font-weight: bold; }
 	em, em * { font-style: italic; }
-	hr { border: none; margin-top: 8em; }
+	a, a * { cursor: pointer; color: #00f; text-decoration: none; }
+	hr { border: none; margin-top: 100px; }
 
 	#credits { position: absolute; top: 0; right: 0; bottom: 0; left: 0; overflow: hidden; text-align: center; }
-	#credits p { margin: 72px 0 48px 0; }
+	#credits p { margin: 100px 0 48px 0; }
 	/* ]]> */
 	</style>
 </head>
 <body>
 
+<script type="text/javascript">
+// <![CDATA[
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+
+var windowManagerService = Cc['@mozilla.org/appshell/window-mediator;1'].getService(Ci.nsIWindowMediator);
+var recentKomodoWindow = windowManagerService.getMostRecentWindow('Komodo');
+
+var ko = recentKomodoWindow.ko;
+// ]]>
+</script>
 <div id="credits">
 <p><pre><strong><em>HTML Toolkit</em></strong>
 <hr />
@@ -29,31 +41,35 @@
 ___________
 
 Stan Angeloff
-http://blog.angeloff.name/
+<a href="http://blog.angeloff.name/" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">http://blog.angeloff.name/</a>
 
 Florent Verschelde
-http://fvsch.com/
+<a href="http://fvsch.com/" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">http://fvsch.com/</a>
 
 
 <strong>LIBRARIES</strong>
 __________
 
+CoffeeScript
+Copyright (c) 2010 Jeremy Ashkenas
+<a href="http://jashkenas.github.com/coffee-script/" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">http://jashkenas.github.com/coffee-script/</a>
+
 showdown.js -- a javascript port of Markdown
 Copyright (c) 2007 John Fraser.
 Original Markdown Copyright (c) 2004-2005 John Gruber
-http://daringfireball.net/projects/markdown/
+<a href="http://daringfireball.net/projects/markdown/" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">http://daringfireball.net/projects/markdown/</a>
 
 Tripoli -- a generic CSS standard for HTML rendering
 Copyright (C) 2007 David Hellsing
-http://devkick.com/lab/tripoli/
+<a href="http://devkick.com/lab/tripoli/" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">http://devkick.com/lab/tripoli/</a>
 
 TiddlyWiki -- a reusable non-linear personal web notebook
 Copyright (c) UnaMesa Association 2004-2009
-http://www.tiddlywiki.com/
+<a href="http://www.tiddlywiki.com/" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">http://www.tiddlywiki.com/</a>
 
 Lorem Ipsum Generator
 Will Munslow, Code/idea stolen from Captain Cursor and Travis Spencer
-http://subterrane.com/files/loremipsum.html
+<a href="http://subterrane.com/files/loremipsum.html" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">http://subterrane.com/files/loremipsum.html</a>
 
 JavaScript wordwrap
 Jonas Raoni Soares Silva (original revised)
@@ -61,7 +77,7 @@ Nick Callen (improved)
 Kevin van Zonneveld (improved)
 Sakimori (improved)
 Michael Grier (bugfixed)
-http://phpjs.org/functions/wordwrap:581
+<a href="http://phpjs.org/functions/wordwrap:581" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">http://phpjs.org/functions/wordwrap:581</a>
 
 
 <strong>RESOURCES</strong>
@@ -69,7 +85,7 @@ __________
 
 Fugue Icons
 Creative Commons Attribution 3.0 license
-http://www.pinvoke.com/
+<a href="http://www.pinvoke.com/" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">http://www.pinvoke.com/</a>
 
 </pre></p>
 </div>

@@ -16,12 +16,12 @@
       prefsService.QueryInterface(Ci.nsIPrefBranch2);
       tagCompleteGroup = document.getElementById('tag-complete-group');
       tagCompleteGroup.addEventListener('keypress', eventsBag.onTagCompleteGroupKeyPress, false);
-      return window.setTimeout((centerWindow = function centerWindow() {
+      return window.setTimeout(((centerWindow = function centerWindow() {
         return window.centerWindowOnScreen();
-      }), 1);
+      })), 1);
     },
     onTagCompleteGroupKeyPress: function onTagCompleteGroupKeyPress(e) {
-      var __a, __b, __c, __d, __e, __f, __g, __h, __i, __j, __k, __l, __m, __n, __o, __p, __q, __r, __s, __t, groupedState, i, j, rangeEnd, rangeStart, selectedRows, selection, selectionLength, tree;
+      var __a, __b, __c, __d, __e, __f, __g, __h, __i, __j, __k, __l, __m, __n, __o, __p, groupedState, i, j, rangeEnd, rangeStart, selectedRows, selection, selectionLength, tree;
       if (e.charCode === 32 && !e.altKey) {
         tree = document.getElementById('tag-complete-tree');
         selection = tree.view.selection;
@@ -34,31 +34,27 @@
         };
         rangeEnd = {
         };
-        __d = 0;
-        __e = selectionLength;
-        for (__c=0, i=__d; (__d <= __e ? i < __e : i > __e); (__d <= __e ? i += 1 : i -= 1), __c++) {
+        __c = 0; __d = selectionLength;
+        for (__b=0, i=__c; (__c <= __d ? i < __d : i > __d); (__c <= __d ? i += 1 : i -= 1), __b++) {
           selection.getRangeAt(i, rangeStart, rangeEnd);
-          __i = rangeStart.value;
-          __j = rangeEnd.value + 1;
-          for (__h=0, j=__i; (__i <= __j ? j < __j : j > __j); (__i <= __j ? j += 1 : j -= 1), __h++) {
+          __g = rangeStart.value; __h = rangeEnd.value;
+          for (__f=0, j=__g; (__g <= __h ? j <= __h : j >= __h); (__g <= __h ? j += 1 : j -= 1), __f++) {
             if (j >= 0) {
               selectedRows.push(j);
             }
           }
         }
         groupedState = true;
-        __n = 0;
-        __o = selectedRows.length;
-        for (__m=0, i=__n; (__n <= __o ? i < __o : i > __o); (__n <= __o ? i += 1 : i -= 1), __m++) {
+        __k = 0; __l = selectedRows.length;
+        for (__j=0, i=__k; (__k <= __l ? i < __l : i > __l); (__k <= __l ? i += 1 : i -= 1), __j++) {
           groupedState = groupedState && tree.view.getCellValue(selectedRows[i], {
           }) === 'true';
           if (!(groupedState)) {
             break;
           }
         }
-        __s = 0;
-        __t = selectedRows.length;
-        for (__r=0, i=__s; (__s <= __t ? i < __t : i > __t); (__s <= __t ? i += 1 : i -= 1), __r++) {
+        __o = 0; __p = selectedRows.length;
+        for (__n=0, i=__o; (__o <= __p ? i < __p : i > __p); (__o <= __p ? i += 1 : i -= 1), __n++) {
           tree.view.setCellValue(selectedRows[i], {
           }, groupedState ? 'false' : 'true');
         }
@@ -67,28 +63,24 @@
       return true;
     },
     onAccept: function onAccept() {
-      var __a, __b, __c, __d, cell, prefEl, prefId, preferenceName, tagCompleteCells, tagCompleteTree;
+      var __a, __b, __c, cell, prefEl, prefId, preferenceName, tagCompleteCells, tagCompleteTree;
       tagCompleteTree = document.getElementById('tag-complete-tree');
       tagCompleteCells = tagCompleteTree.getElementsByTagName('treecell');
-      __a = tagCompleteCells;
-      __c = [];
-      for (__b in __a) {
-        if (__a.hasOwnProperty(__b)) {
-          cell = __a[__b];
-          __d = (function() {
-            prefId = cell.getAttribute('preference');
-            if ((prefId.length)) {
-              prefEl = document.getElementById(prefId);
-              if (((typeof prefEl !== "undefined" && prefEl !== null))) {
-                preferenceName = prefEl.getAttribute('name');
-                return prefsService.setCharPref(preferenceName, cell.getAttribute('value'));
-              }
+      __a = []; __b = tagCompleteCells;
+      for (__c = 0; __c < __b.length; __c++) {
+        cell = __b[__c];
+        __a.push((function() {
+          prefId = cell.getAttribute('preference');
+          if ((prefId.length)) {
+            prefEl = document.getElementById(prefId);
+            if (((typeof prefEl !== "undefined" && prefEl !== null))) {
+              preferenceName = prefEl.getAttribute('name');
+              return prefsService.setCharPref(preferenceName, cell.getAttribute('value'));
             }
-          })();
-          __c.push(__d);
-        }
+          }
+        }).call(this));
       }
-      return __c;
+      return __a;
     }
   };
   $toolkit.trapExceptions(eventsBag);

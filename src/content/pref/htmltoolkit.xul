@@ -17,6 +17,7 @@
 			<preference id="tag-complete-toolbox-pref" name="extensions.htmltoolkit.tagComplete.toolboxEnabled" type="string" />
 			<preference id="tag-complete-library-pref" name="extensions.htmltoolkit.tagComplete.libraryEnabled" type="string" />
 			<preference id="tag-complete-default-pref" name="extensions.htmltoolkit.tagComplete.defaultEnabled" type="string" />
+			<preference id="css-fillup-stopper-pref" name="extensions.htmltoolkit.cssFillUpStopper.enabled" type="string" />
 		</preferences>
 
 		<vbox flex="1">
@@ -55,6 +56,13 @@
 
 				<separator class="thin" />
 				<label class="note">&tagComplete.ordering;</label>
+			</groupbox>
+
+			<groupbox id="css-fillup-stopper-group" orient="vertical">
+				<caption>&cssFillUpStopper.group;</caption>
+				<separator class="thin" />
+				<checkbox preference="css-fillup-stopper-pref" label="&cssFillUpStopper.description;" />
+				<separator class="thin" />
 			</groupbox>
 		</vbox>
 

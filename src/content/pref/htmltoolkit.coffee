@@ -14,17 +14,17 @@ prefsBranch: prefsService.getBranch('extensions.htmltoolkit.')
 
 eventsBag: {
 
-	onLoad: =>
+	onLoad: ->
 		prefsService.QueryInterface(Ci.nsIPrefBranch2)
 
 		tagCompleteGroup: document.getElementById('tag-complete-group')
 		tagCompleteGroup.addEventListener('keypress', eventsBag.onTagCompleteGroupKeyPress, false)
 
-		window.setTimeout((centerWindow: =>
+		window.setTimeout((centerWindow: ->
 			window.centerWindowOnScreen()
 		), 1)
 
-	onTagCompleteGroupKeyPress: e =>
+	onTagCompleteGroupKeyPress: (e) ->
 		if e.charCode is 32 and not e.altKey
 			tree: document.getElementById('tag-complete-tree')
 			selection: tree.view.selection
@@ -38,7 +38,7 @@ eventsBag: {
 
 			for i in [0...selectionLength]
 				selection.getRangeAt(i, rangeStart, rangeEnd)
-				for j in [rangeStart.value...rangeEnd.value + 1]
+				for j in [rangeStart.value..rangeEnd.value]
 					selectedRows.push(j) if j >= 0
 
 			groupedState: true
@@ -52,7 +52,7 @@ eventsBag: {
 
 		return true
 
-	onAccept: =>
+	onAccept: ->
 		tagCompleteTree: document.getElementById('tag-complete-tree')
 		tagCompleteCells: tagCompleteTree.getElementsByTagName('treecell')
 
