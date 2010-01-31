@@ -171,8 +171,31 @@ $self.controller: ->
 
 	this.onMenuShowing: ->
 		topMenuEl: document.getElementById('menu_selectionTools')
-		if topMenuEl
-			topMenuEl.setAttribute('disabled', if this.canExecute(false) then 'false' else 'true')
+		topMenuEl.setAttribute('disabled', if this.canExecute(false) then 'false' else 'true')
+
+	this.moveBuiltInMenuItems: ->
+		popupEl: document.getElementById('popup_selectionTools')
+
+		convertLowerCaseEl: document.getElementById('menu_convertLowerCase')
+		popupEl.insertBefore(convertLowerCaseEl.nextSibling, popupEl.firstChild)
+		popupEl.insertBefore(convertLowerCaseEl, popupEl.firstChild)
+
+		convertUpperCaseEl: document.getElementById('menu_convertUpperCase')
+		popupEl.insertBefore(convertUpperCaseEl, popupEl.firstChild)
+
+	this.restoreBuiltInMenuItems: ->
+		referenceEl: document.getElementById('menu_selectionTools')
+		if referenceEl
+			referenceEl: referenceEl.nextSibling
+		else
+			referenceEl: document.getElementById('menu_marks')
+
+		convertLowerCaseEl: document.getElementById('menu_convertLowerCase')
+		referenceEl.parentNode.insertBefore(convertLowerCaseEl.nextSibling, referenceEl.nextSibling)
+		referenceEl.parentNode.insertBefore(convertLowerCaseEl, referenceEl.nextSibling)
+
+		convertUpperCaseEl: document.getElementById('menu_convertUpperCase')
+		referenceEl.parentNode.insertBefore(convertUpperCaseEl, referenceEl.nextSibling)
 
 	this.registerBase: this.register
 	this.register: ->
@@ -181,6 +204,8 @@ $self.controller: ->
 
 		root.events.onLoad( =>
 			this.rebuildEditMenu()
+
+			this.moveBuiltInMenuItems()
 
 			menuEl: document.getElementById('popup_sourcecode')
 			menuEl.addEventListener('popupshowing', this.onMenuShowing, false)
@@ -194,6 +219,8 @@ $self.controller: ->
 
 			menuEl: document.getElementById('popup_sourcecode')
 			menuEl.removeEventListener('popupshowing', this.onMenuShowing, false)
+
+			this.restoreBuiltInMenuItems()
 
 			window.controllers.removeController(this)
 		)

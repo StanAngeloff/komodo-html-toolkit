@@ -169,7 +169,26 @@
     this.onMenuShowing = function onMenuShowing() {
       var topMenuEl;
       topMenuEl = document.getElementById('menu_selectionTools');
-      return topMenuEl ? topMenuEl.setAttribute('disabled', this.canExecute(false) ? 'false' : 'true') : null;
+      return topMenuEl.setAttribute('disabled', this.canExecute(false) ? 'false' : 'true');
+    };
+    this.moveBuiltInMenuItems = function moveBuiltInMenuItems() {
+      var convertLowerCaseEl, convertUpperCaseEl, popupEl;
+      popupEl = document.getElementById('popup_selectionTools');
+      convertLowerCaseEl = document.getElementById('menu_convertLowerCase');
+      popupEl.insertBefore(convertLowerCaseEl.nextSibling, popupEl.firstChild);
+      popupEl.insertBefore(convertLowerCaseEl, popupEl.firstChild);
+      convertUpperCaseEl = document.getElementById('menu_convertUpperCase');
+      return popupEl.insertBefore(convertUpperCaseEl, popupEl.firstChild);
+    };
+    this.restoreBuiltInMenuItems = function restoreBuiltInMenuItems() {
+      var convertLowerCaseEl, convertUpperCaseEl, referenceEl;
+      referenceEl = document.getElementById('menu_selectionTools');
+      referenceEl ? (referenceEl = referenceEl.nextSibling) : (referenceEl = document.getElementById('menu_marks'));
+      convertLowerCaseEl = document.getElementById('menu_convertLowerCase');
+      referenceEl.parentNode.insertBefore(convertLowerCaseEl.nextSibling, referenceEl.nextSibling);
+      referenceEl.parentNode.insertBefore(convertLowerCaseEl, referenceEl.nextSibling);
+      convertUpperCaseEl = document.getElementById('menu_convertUpperCase');
+      return referenceEl.parentNode.insertBefore(convertUpperCaseEl, referenceEl.nextSibling);
     };
     this.registerBase = this.register;
     this.register = function register() {
@@ -185,6 +204,7 @@
         var __func = function() {
           var menuEl;
           this.rebuildEditMenu();
+          this.moveBuiltInMenuItems();
           menuEl = document.getElementById('popup_sourcecode');
           menuEl.addEventListener('popupshowing', this.onMenuShowing, false);
           return window.controllers.appendController(this);
@@ -201,6 +221,7 @@
           var menuEl;
           menuEl = document.getElementById('popup_sourcecode');
           menuEl.removeEventListener('popupshowing', this.onMenuShowing, false);
+          this.restoreBuiltInMenuItems();
           return window.controllers.removeController(this);
         };
         return (function() {
