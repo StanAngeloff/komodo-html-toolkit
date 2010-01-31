@@ -1,6 +1,8 @@
 (function(){
-  var TOOL_COMMANDS_GROUP, TOOL_ORDERING, root;
+  var TOOL_COMMANDS_GROUP, TOOL_ORDERING, encodingService, root;
   root = (typeof $toolkit !== "undefined" && $toolkit !== null) ? $toolkit : this;
+  const Cc = Components.classes;
+  const Ci = Components.interfaces;
   const XUL_NS = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul';
   $self.destroy = function destroy() {
     if ((typeof $self.manager !== "undefined" && $self.manager !== null)) {
@@ -84,6 +86,7 @@
     // This is to instruct CoffeeScript to return this instead of this.getSupportedTransformers
     return this;
   };
+  encodingService = Cc['@activestate.com/koEncodingServices;1'].getService(Ci.koIEncodingServices);
   $self.controller = function controller() {
     var canChangeTriggerKeys, command, triggerKeys;
     // Call parent's constructor
@@ -117,9 +120,9 @@
         tool.getSupportedTransformers().forEach(function(transformer) {
           var broadcasterEl, commandAccessKey, commandDescription, commandLabel, commandName, defaultKeyBindings, existingKeyBindings, menuEl;
           commandName = TOOL_COMMANDS_GROUP + tool.name + '_' + transformer;
-          commandDescription = root.l10n('command').formatStringFromName('selectionTools.binding', [commandLabel], 1);
           commandLabel = root.l10n('command').GetStringFromName('selectionTools.' + tool.name + '.' + transformer + '.menuLabel');
           commandAccessKey = root.l10n('command').GetStringFromName('selectionTools.' + tool.name + '.' + transformer + '.menuAccessKey');
+          commandDescription = root.l10n('command').formatStringFromName('selectionTools.binding', [commandLabel], 1);
           // Register command as new broadcaster
           broadcasterEl = document.createElementNS(XUL_NS, 'broadcaster');
           broadcasterEl.setAttribute('id', commandName);
@@ -248,20 +251,23 @@
         toolName = __a[0];
         transformer = __a[1];
         return $self.manager.tools.forEach(function(tool) {
-          var inputString, outputString, scimoz, selectionDirection;
+          var commandLabel, inputString, outputString, scimoz, selectionDirection;
           if (tool.name === toolName) {
-            inputString = ko.views.manager.currentView.scimoz.selText;
+            scimoz = ko.views.manager.currentView.scimoz;
+            inputString = scimoz.selText;
             outputString = tool.trigger(transformer, inputString);
             if (typeof outputString === 'string' && outputString.length) {
-              scimoz = ko.views.manager.currentView.scimoz;
               selectionDirection = scimoz.currentPos > scimoz.anchor;
               scimoz.beginUndoAction();
               try {
                 scimoz.replaceSel(outputString);
-                return selectionDirection ? scimoz.setSel(scimoz.currentPos - outputString.length, scimoz.currentPos) : scimoz.setSel(scimoz.currentPos, scimoz.currentPos - outputString.length);
+                return selectionDirection ? scimoz.setSel(scimoz.currentPos - ko.stringutils.bytelength(outputString), scimoz.currentPos) : scimoz.setSel(scimoz.currentPos, scimoz.currentPos - ko.stringutils.bytelength(outputString));
               } finally {
                 scimoz.endUndoAction();
               }
+            } else {
+              commandLabel = root.l10n('command').GetStringFromName('selectionTools.' + tool.name + '.' + transformer + '.menuLabel');
+              return ko.statusBar.AddMessage(root.l10n('command').formatStringFromName('selectionTools.invalidSelection', [commandLabel], 1), 'htmltoolkit', 2500, true);
             }
           }
         });

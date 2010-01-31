@@ -4,7 +4,7 @@ $self.tool: ->
 
 	# Call parent's constructor
 	root.command.selectionTools.tool.apply(this, [toolName: 'general',
-												  toolOrdering: 5000])
+												  toolOrdering: 5900])
 
 	this.getSupportedTransformers: ( -> ['capitalise', 'hyphenise', 'underscorise'])
 

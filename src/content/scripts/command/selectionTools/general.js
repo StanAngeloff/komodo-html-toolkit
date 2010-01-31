@@ -4,7 +4,7 @@
   $self.tool = function tool() {
     var toolName, toolOrdering;
     // Call parent's constructor
-    root.command.selectionTools.tool.apply(this, [(toolName = 'general'), (toolOrdering = 5000)]);
+    root.command.selectionTools.tool.apply(this, [(toolName = 'general'), (toolOrdering = 5900)]);
     this.getSupportedTransformers = (function() {
       return ['capitalise', 'hyphenise', 'underscorise'];
     });

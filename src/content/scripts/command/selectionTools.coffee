@@ -1,5 +1,8 @@
 root = $toolkit ? this
 
+`const Cc = Components.classes`
+`const Ci = Components.interfaces`
+
 `const XUL_NS = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul'`
 
 $self.destroy: ->
@@ -81,6 +84,8 @@ $self.tool: (toolName, toolOrdering) ->
 	# This is to instruct CoffeeScript to return this instead of this.getSupportedTransformers
 	this
 
+encodingService = Cc['@activestate.com/koEncodingServices;1'].getService(Ci.koIEncodingServices)
+
 $self.controller: ->
 
 	# Call parent's constructor
@@ -123,9 +128,9 @@ $self.controller: ->
 			tool.getSupportedTransformers().forEach (transformer) ->
 
 				commandName: TOOL_COMMANDS_GROUP + tool.name + '_' + transformer
-				commandDescription: root.l10n('command').formatStringFromName('selectionTools.binding', [commandLabel], 1)
 				commandLabel: root.l10n('command').GetStringFromName('selectionTools.' + tool.name + '.' + transformer + '.menuLabel')
 				commandAccessKey: root.l10n('command').GetStringFromName('selectionTools.' + tool.name + '.' + transformer + '.menuAccessKey')
+				commandDescription: root.l10n('command').formatStringFromName('selectionTools.binding', [commandLabel], 1)
 
 				# Register command as new broadcaster
 				broadcasterEl: document.createElementNS(XUL_NS, 'broadcaster')
@@ -238,20 +243,23 @@ $self.controller: ->
 			[toolName, transformer] = command.substr(TOOL_COMMANDS_GROUP.length).split('_')
 			$self.manager.tools.forEach (tool) ->
 				if tool.name is toolName
-					inputString: ko.views.manager.currentView.scimoz.selText
+					scimoz: ko.views.manager.currentView.scimoz
+					inputString: scimoz.selText
 					outputString: tool.trigger(transformer, inputString)
 					if typeof outputString is 'string' and outputString.length
-						scimoz: ko.views.manager.currentView.scimoz
 						selectionDirection: scimoz.currentPos > scimoz.anchor
 						scimoz.beginUndoAction()
 						try
 							scimoz.replaceSel(outputString)
 							if selectionDirection
-								scimoz.setSel(scimoz.currentPos - outputString.length, scimoz.currentPos)
+								scimoz.setSel(scimoz.currentPos - ko.stringutils.bytelength(outputString), scimoz.currentPos)
 							else
-								scimoz.setSel(scimoz.currentPos, scimoz.currentPos - outputString.length)
+								scimoz.setSel(scimoz.currentPos, scimoz.currentPos - ko.stringutils.bytelength(outputString))
 						finally
 							scimoz.endUndoAction()
+					else
+						commandLabel: root.l10n('command').GetStringFromName('selectionTools.' + tool.name + '.' + transformer + '.menuLabel')
+						ko.statusBar.AddMessage(root.l10n('command').formatStringFromName('selectionTools.invalidSelection', [commandLabel], 1), 'htmltoolkit', 2500, true)
 
 	root.trapExceptions(this)
 
