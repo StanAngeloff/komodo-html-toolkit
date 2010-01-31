@@ -218,6 +218,8 @@ $self.controller: ->
 			window.controllers.appendController(this)
 		)
 
+		this.registerBase()
+
 	this.unregisterBase: this.unregister
 	this.unregister: ->
 		root.events.onUnload( =>
@@ -229,6 +231,8 @@ $self.controller: ->
 
 			window.controllers.removeController(this)
 		)
+
+		this.unregisterBase()
 
 	this.supportsCommand: (command) ->
 		return true if command.indexOf(TOOL_COMMANDS_GROUP) is 0

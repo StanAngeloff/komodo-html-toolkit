@@ -203,7 +203,7 @@
           return __func.apply(__this, arguments);
         });
       })(this));
-      return root.events.onLoad((function(__this) {
+      root.events.onLoad((function(__this) {
         var __func = function() {
           var menuEl;
           this.rebuildEditMenu();
@@ -216,10 +216,11 @@
           return __func.apply(__this, arguments);
         });
       })(this));
+      return this.registerBase();
     };
     this.unregisterBase = this.unregister;
     this.unregister = function unregister() {
-      return root.events.onUnload((function(__this) {
+      root.events.onUnload((function(__this) {
         var __func = function() {
           var menuEl;
           menuEl = document.getElementById('popup_sourcecode');
@@ -231,6 +232,7 @@
           return __func.apply(__this, arguments);
         });
       })(this));
+      return this.unregisterBase();
     };
     this.supportsCommand = function supportsCommand(command) {
       if (command.indexOf(TOOL_COMMANDS_GROUP) === 0) {
