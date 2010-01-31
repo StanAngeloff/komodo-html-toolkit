@@ -166,6 +166,11 @@
       referenceEl = document.getElementById('menu_marks');
       return referenceEl.parentNode.insertBefore(topMenuEl, referenceEl.nextSibling);
     };
+    this.onMenuShowing = function onMenuShowing() {
+      var topMenuEl;
+      topMenuEl = document.getElementById('menu_selectionTools');
+      return topMenuEl ? topMenuEl.setAttribute('disabled', this.canExecute(false) ? 'false' : 'true') : null;
+    };
     this.registerBase = this.register;
     this.register = function register() {
       $self.manager.onChahge((function(__this) {
@@ -178,7 +183,10 @@
       })(this));
       return root.events.onLoad((function(__this) {
         var __func = function() {
+          var menuEl;
           this.rebuildEditMenu();
+          menuEl = document.getElementById('popup_sourcecode');
+          menuEl.addEventListener('popupshowing', this.onMenuShowing, false);
           return window.controllers.appendController(this);
         };
         return (function() {
@@ -190,6 +198,9 @@
     this.unregister = function unregister() {
       return root.events.onUnload((function(__this) {
         var __func = function() {
+          var menuEl;
+          menuEl = document.getElementById('popup_sourcecode');
+          menuEl.removeEventListener('popupshowing', this.onMenuShowing, false);
           return window.controllers.removeController(this);
         };
         return (function() {

@@ -100,7 +100,7 @@ $self.controller: ->
 	this.rebuildEditMenu: ->
 		globalSet: document.getElementById('broadcasterset_global')
 		if not globalSet?
-			throw "FATAL: Cannot find Komodo's global broadcaster set.";
+			throw "FATAL: Cannot find Komodo's global broadcaster set."
 
 		Array::slice(globalSet.childNodes).forEach (broadcasterEl) ->
 			if broadcasterEl.id?.indexOf(TOOL_COMMANDS_GROUP) is 0
@@ -131,8 +131,8 @@ $self.controller: ->
 				broadcasterEl: document.createElementNS(XUL_NS, 'broadcaster')
 				broadcasterEl.setAttribute('id', commandName)
 				broadcasterEl.setAttribute('key', 'key_' + commandName)
-				broadcasterEl.setAttribute('oncommand', 'ko.commands.doCommandAsync("' + commandName + '", event);');
-				broadcasterEl.setAttribute('desc', commandDescription);
+				broadcasterEl.setAttribute('oncommand', 'ko.commands.doCommandAsync("' + commandName + '", event);')
+				broadcasterEl.setAttribute('desc', commandDescription)
 
 				globalSet.appendChild(broadcasterEl)
 
@@ -169,6 +169,11 @@ $self.controller: ->
 		referenceEl: document.getElementById('menu_marks')
 		referenceEl.parentNode.insertBefore(topMenuEl, referenceEl.nextSibling)
 
+	this.onMenuShowing: ->
+		topMenuEl: document.getElementById('menu_selectionTools')
+		if topMenuEl
+			topMenuEl.setAttribute('disabled', if this.canExecute(false) then 'false' else 'true')
+
 	this.registerBase: this.register
 	this.register: ->
 		$self.manager.onChahge =>
@@ -176,12 +181,20 @@ $self.controller: ->
 
 		root.events.onLoad( =>
 			this.rebuildEditMenu()
-			window.controllers.appendController(this);
+
+			menuEl: document.getElementById('popup_sourcecode')
+			menuEl.addEventListener('popupshowing', this.onMenuShowing, false)
+
+			window.controllers.appendController(this)
 		)
 
 	this.unregisterBase: this.unregister
 	this.unregister: ->
 		root.events.onUnload( =>
+
+			menuEl: document.getElementById('popup_sourcecode')
+			menuEl.removeEventListener('popupshowing', this.onMenuShowing, false)
+
 			window.controllers.removeController(this)
 		)
 
