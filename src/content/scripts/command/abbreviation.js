@@ -1,54 +1,11 @@
 $toolkit.include('command.language');
 $toolkit.include('library');
+$toolkit.include('strings');
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 
 const XUL_NS = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul';
-
-/**
- * Compare two Strings using natural (human) sorting.
- *
- * @argument  string  {String}  The String to compare to.
- * @returns  {Integer}  <code>-1</code> if this string is less than the given one, <code>1</code> otherwise and <code>0</code> if Strings are equal.
- */
-String.prototype.naturalCompare = function(string, sensitive) {
-
-	var left = this,
-		right = ('' + string);
-
-	if ( ! sensitive) {
-
-		right = right.toLowerCase();
-		left = left.toLowerCase();
-	}
-
-	var chunkify = function (string) {
-
-		return string.replace(/(\d+)/g, '\u0000$1\u0000')
-					 .replace(/^\u0000|\u0000$/g, '')
-					 .split('\u0000')
-					 .map(function(chunk) { return (isNaN(parseInt(chunk)) ? chunk : parseInt(chunk)); });
-	};
-
-	var leftChunks = chunkify(left),
-		rightChunks = chunkify(right);
-
-	for (var maxLength = Math.max(leftChunks.length, rightChunks.length), i = 0; i < maxLength; i ++) {
-
-		if (i >= leftChunks.length)
-			return -1;
-		if (i >= rightChunks.length)
-			return 1;
-
-		if (leftChunks[i] < rightChunks[i])
-			return -1;
-		if (leftChunks[i] > rightChunks[i])
-			return 1;
-	}
-
-	return 0;
-};
 
 $self.destroy = function() {
 
@@ -298,8 +255,7 @@ $self.controller = function() {
 				return ('' + left.name).naturalCompare(right.name);
 			});
 
-			var menuEl,
-				menuAccessKeys = [];
+			var menuEl;
 
 			menuEl = document.getElementById('htmltoolkit_abbreviations_menu');
 			if (menuEl)
@@ -313,20 +269,19 @@ $self.controller = function() {
 			for (i = 0; i < availableSnippets.length; i ++) {
 
 				var itemEl = document.createElementNS(XUL_NS, 'menuitem'),
-					itemAccessKey = (i + 1);
+					itemAccessKey;
 
-				for (var j = 0; j < availableSnippets[i].name.length; j ++) {
+				if (i < 9)
+					itemAccessKey = i + 1;
+				else if (i === 9)
+					itemAccessKey = 0;
+				else
+					itemAccessKey = String.fromCharCode('A'.charCodeAt(0) + (i - 9));
 
-					var currentKey = availableSnippets[i].name.charAt(j);
-					if (menuAccessKeys.indexOf(currentKey) < 0) {
-
-						itemAccessKey = currentKey.toUpperCase();
-						menuAccessKeys.push(currentKey);
-						break;
-					}
-				}
-
-				itemEl.setAttribute('label', itemAccessKey + '    ' + availableSnippets[i].name);
+				itemEl.setAttribute('class', 'menuitem-iconic');
+				itemEl.setAttribute('image', 'chrome://htmltoolkit/skin/images/icon_snippet.png');
+				itemEl.setAttribute('label', availableSnippets[i].name);
+				itemEl.setAttribute('acceltext', itemAccessKey);
 				itemEl.setAttribute('accesskey', itemAccessKey);
 
 				itemEl.addEventListener('command', (function(view, snippet) {
@@ -346,18 +301,13 @@ $self.controller = function() {
 
 			menuEl = document.getElementById('htmltoolkit_abbreviations_menu');
 
-			var menuPosition = Math.max(scimoz.anchor, scimoz.currentPos),
-				isContextMenu,
-				attributesOverride;
+			var menuAnchor = Math.min(scimoz.anchor, scimoz.currentPos),
+				menuPosition = Math.max(scimoz.anchor, scimoz.currentPos),
+				isContextMenu;
 
-			menuEl.openPopup(view.scintilla,
-							 'before_start',
-							 view.boxObject.x + scimoz.pointXFromPosition(menuPosition),
-							 view.boxObject.y + scimoz.pointYFromPosition(menuPosition) + scimoz.textHeight(scimoz.lineFromPosition(menuPosition)),
-							 isContextMenu = true,
-							 attributesOverride = false);
-
-			menuEl.focus();
+			menuEl.openPopupAtScreen(view.boxObject.screenX + scimoz.pointXFromPosition(menuAnchor) - 1,
+									 view.boxObject.screenY + scimoz.pointYFromPosition(menuPosition) + scimoz.textHeight(scimoz.lineFromPosition(menuPosition) - 1),
+									 isContextMenu = true);
 
 			return true;
 		}
