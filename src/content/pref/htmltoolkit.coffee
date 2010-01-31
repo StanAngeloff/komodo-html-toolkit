@@ -20,9 +20,7 @@ eventsBag: {
 		tagCompleteGroup: document.getElementById('tag-complete-group')
 		tagCompleteGroup.addEventListener('keypress', eventsBag.onTagCompleteGroupKeyPress, false)
 
-		window.setTimeout((centerWindow: ->
-			window.centerWindowOnScreen()
-		), 1)
+		window.setTimeout(( -> window.centerWindowOnScreen()), 1)
 
 	onTagCompleteGroupKeyPress: (e) ->
 		if e.charCode is 32 and not e.altKey

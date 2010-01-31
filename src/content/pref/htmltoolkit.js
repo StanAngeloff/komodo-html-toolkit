@@ -12,13 +12,13 @@
   prefsBranch = prefsService.getBranch('extensions.htmltoolkit.');
   eventsBag = {
     onLoad: function onLoad() {
-      var centerWindow, tagCompleteGroup;
+      var tagCompleteGroup;
       prefsService.QueryInterface(Ci.nsIPrefBranch2);
       tagCompleteGroup = document.getElementById('tag-complete-group');
       tagCompleteGroup.addEventListener('keypress', eventsBag.onTagCompleteGroupKeyPress, false);
-      return window.setTimeout(((centerWindow = function centerWindow() {
+      return window.setTimeout((function() {
         return window.centerWindowOnScreen();
-      })), 1);
+      }), 1);
     },
     onTagCompleteGroupKeyPress: function onTagCompleteGroupKeyPress(e) {
       var __a, __b, __c, __d, __e, __f, __g, __h, __i, __j, __k, __l, __m, __n, __o, __p, groupedState, i, j, rangeEnd, rangeStart, selectedRows, selection, selectionLength, tree;
