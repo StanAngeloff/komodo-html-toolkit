@@ -61,7 +61,7 @@
 			<groupbox id="css-fillup-stopper-group" orient="vertical">
 				<caption>&cssFillUpStopper.group;</caption>
 				<separator class="thin" />
-				<checkbox preference="css-fillup-stopper-pref" label="&cssFillUpStopper.description;" />
+				<checkbox id="css-fillup-stopper-control" preference="css-fillup-stopper-pref" label="&cssFillUpStopper.description;" />
 				<separator class="thin" />
 			</groupbox>
 		</vbox>

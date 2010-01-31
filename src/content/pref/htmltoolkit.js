@@ -12,8 +12,12 @@
   prefsBranch = prefsService.getBranch('extensions.htmltoolkit.');
   eventsBag = {
     onLoad: function onLoad() {
-      var tagCompleteGroup;
+      var cssFillUpStopperControlEl, cssFillUpStopperPrefEl, tagCompleteGroup;
       prefsService.QueryInterface(Ci.nsIPrefBranch2);
+      // String to bool conversion for checkboxes
+      cssFillUpStopperControlEl = document.getElementById('css-fillup-stopper-control');
+      cssFillUpStopperPrefEl = document.getElementById(cssFillUpStopperControlEl.getAttribute('preference'));
+      cssFillUpStopperControlEl.setAttribute('checked', prefsService.getCharPref(cssFillUpStopperPrefEl.getAttribute('name')) === 'true' ? true : false);
       tagCompleteGroup = document.getElementById('tag-complete-group');
       tagCompleteGroup.addEventListener('keypress', eventsBag.onTagCompleteGroupKeyPress, false);
       return window.setTimeout((function() {

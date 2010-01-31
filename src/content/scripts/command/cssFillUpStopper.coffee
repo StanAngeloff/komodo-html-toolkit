@@ -9,8 +9,9 @@ $self.controller: ->
 												  canChangeTriggerKeys: false])
 
 	this.trigger: (e) ->
-		scimoz: ko.views.manager.currentView.scimoz
-		scimoz.autoCCancel() if scimoz.autoCActive()
+		if root.pref('cssFillUpStopper.enabled') is 'true'
+			scimoz: ko.views.manager.currentView.scimoz
+			scimoz.autoCCancel() if scimoz.autoCActive()
 
 	# This is to instruct CoffeeScript to return $self instead of $self.trigger
 	this

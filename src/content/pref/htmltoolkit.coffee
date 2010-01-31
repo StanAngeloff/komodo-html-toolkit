@@ -17,6 +17,11 @@ eventsBag: {
 	onLoad: ->
 		prefsService.QueryInterface(Ci.nsIPrefBranch2)
 
+		# String to bool conversion for checkboxes
+		cssFillUpStopperControlEl: document.getElementById('css-fillup-stopper-control')
+		cssFillUpStopperPrefEl: document.getElementById(cssFillUpStopperControlEl.getAttribute('preference'))
+		cssFillUpStopperControlEl.setAttribute('checked', if prefsService.getCharPref(cssFillUpStopperPrefEl.getAttribute('name')) is 'true' then true else false)
+
 		tagCompleteGroup: document.getElementById('tag-complete-group')
 		tagCompleteGroup.addEventListener('keypress', eventsBag.onTagCompleteGroupKeyPress, false)
 
