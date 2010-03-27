@@ -1,7 +1,3 @@
-- Fix preview mode in 6.0.0alpha2
-
-- Integrate with commit 4686
-
 - Handle column-mode
   http://svn.openkomodo.com/openkomodo/view/openkomodo/trunk/src/chrome/komodo/content/bindings/scintilla.p.xml
 
