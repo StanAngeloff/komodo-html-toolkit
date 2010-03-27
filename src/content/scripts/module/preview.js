@@ -138,7 +138,7 @@ $self.dispatcher = {
 
 		// Simulate 'view_changed' event on current view
 		if (ko.views.manager.currentView)
-			$self.dispatcher.onViewClosing({ originalTarget: ko.views.manager.currentView });
+			$self.dispatcher.onViewChanged({ originalTarget: ko.views.manager.currentView });
 	},
 
 	unregister: function() {
@@ -318,7 +318,7 @@ $self.dispatcher = {
 			// Preview every 0.5 seconds
 			view.__preview_intervalId = window.setInterval(function() {
 
-				if (view.scimoz.focus)
+				if (view.scimoz.isFocused || view.scimoz.focus)
 					$self.dispatcher.displayPreview(view);
 
 			}, view.__preview_conveter.interval);
@@ -343,7 +343,7 @@ $self.dispatcher = {
 		if (view.scimoz.text.length > allowedLength) {
 
 			$self.dispatcher.renderTemplate(view, 'exception', { exception: $toolkit.l10n('module').formatStringFromName('preview.overAllowedLength', [allowedLength], 1) });
-			view.__preview_text = view.scimoz.text
+			view.__preview_text = view.scimoz.text;
 
 			return false;
 		}
@@ -360,7 +360,7 @@ $self.dispatcher = {
 			var htmlCode = view.__preview_conveter.callback(view.scimoz.text);
 
 			$self.dispatcher.renderTemplate(view, 'page', { html: htmlCode, base: viewPath });
-			view.__preview_text = view.scimoz.text
+			view.__preview_text = view.scimoz.text;
 
 			return true;
 
