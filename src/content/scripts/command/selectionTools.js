@@ -1,5 +1,5 @@
 (function(){
-  var TOOL_COMMANDS_GROUP, TOOL_ORDERING, encodingService, root;
+  var TOOL_COMMANDS_GROUP, TOOL_NATIVE_MENU_ID, TOOL_ORDERING, encodingService, root;
   root = (typeof $toolkit !== "undefined" && $toolkit !== null) ? $toolkit : this;
   const Cc = Components.classes;
   const Ci = Components.interfaces;
@@ -73,6 +73,7 @@
   root.trapExceptions($self.manager);
   TOOL_ORDERING = 9900;
   TOOL_COMMANDS_GROUP = 'cmd_htmlToolkit_selectionTools_';
+  TOOL_NATIVE_MENU_ID = 'codeConvert_menu';
   $self.tool = function tool(toolName, toolOrdering) {
     this.name = toolName;
     this.ordering = (typeof toolOrdering !== "undefined" && toolOrdering !== null) ? toolOrdering : (++TOOL_ORDERING);
@@ -92,13 +93,14 @@
   };
   encodingService = Cc['@activestate.com/koEncodingServices;1'].getService(Ci.koIEncodingServices);
   $self.controller = function controller() {
-    var canChangeTriggerKeys, command, triggerKeys;
+    var _a, canChangeTriggerKeys, command, triggerKeys;
     root.command.controller.apply(this, [(command = 'selectionTools'), (triggerKeys = 'None'), (canChangeTriggerKeys = false)]);
+    this.hasNative = (typeof (_a = document.getElementById(TOOL_NATIVE_MENU_ID)) !== "undefined" && _a !== null);
     this.canExecute = function canExecute(e) {
       return ko.views.manager && ko.views.manager.currentView && ko.views.manager.currentView.getAttribute('type') === 'editor' && ko.views.manager.currentView.document && ko.views.manager.currentView.scimoz && ko.views.manager.currentView.scimoz.currentPos !== ko.views.manager.currentView.scimoz.anchor;
     };
     this.rebuildEditMenu = function rebuildEditMenu() {
-      var globalSet, isMac, popupEl, referenceEl, topMenuEl;
+      var globalSet, isMac, popupEl, referenceEl, separatorEl, topMenuEl;
       globalSet = document.getElementById('broadcasterset_global');
       if (!(typeof globalSet !== "undefined" && globalSet !== null)) {
         throw "FATAL: Cannot find Komodo's global broadcaster set.";
@@ -107,19 +109,31 @@
         broadcasterEl.id == undefined ? undefined : broadcasterEl.id.indexOf(TOOL_COMMANDS_GROUP) === 0 ? globalSet.removeChild(broadcasterEl) : null;
         return null;
       });
-      topMenuEl = document.getElementById('menu_selectionTools');
-      if ((typeof topMenuEl !== "undefined" && topMenuEl !== null)) {
-        topMenuEl.parentNode.removeChild(topMenuEl);
+      if (this.hasNative) {
+        topMenuEl = document.getElementById(TOOL_NATIVE_MENU_ID);
+        popupEl = document.getElementById("" + (TOOL_NATIVE_MENU_ID) + "popup");
+        Array.prototype.slice(popupEl.childNodes).forEach(function(menuEl) {
+          menuEl.id == undefined ? undefined : menuEl.id.indexOf('menu_selectionTools') === 0 ? popupEl.removeChild(menuEl) : null;
+          return null;
+        });
+        if ((popupEl.childNodes[popupEl.childNodes.length - 1] == undefined ? undefined : popupEl.childNodes[popupEl.childNodes.length - 1].localName) !== 'menuseparator') {
+          separatorEl = document.createElementNS(XUL_NS, 'menuseparator');
+          popupEl.appendChild(separatorEl);
+        }
+      } else {
+        topMenuEl = document.getElementById('menu_selectionTools');
+        if ((typeof topMenuEl !== "undefined" && topMenuEl !== null)) {
+          topMenuEl.parentNode.removeChild(topMenuEl);
+        }
+        topMenuEl = document.createElementNS(XUL_NS, 'menu');
+        topMenuEl.setAttribute('id', 'menu_selectionTools');
+        topMenuEl.setAttribute('label', root.l10n('command').GetStringFromName('selectionTools.menuLabel'));
+        topMenuEl.setAttribute('accesskey', root.l10n('command').GetStringFromName('selectionTools.menuAccessKey'));
+        popupEl = document.createElementNS(XUL_NS, 'menupopup');
+        popupEl.setAttribute('id', 'popup_selectionTools');
       }
-      topMenuEl = document.createElementNS(XUL_NS, 'menu');
-      topMenuEl.setAttribute('id', 'menu_selectionTools');
-      topMenuEl.setAttribute('label', root.l10n('command').GetStringFromName('selectionTools.menuLabel'));
-      topMenuEl.setAttribute('accesskey', root.l10n('command').GetStringFromName('selectionTools.menuAccessKey'));
-      popupEl = document.createElementNS(XUL_NS, 'menupopup');
-      popupEl.setAttribute('id', 'popup_selectionTools');
       isMac = navigator.platform.indexOf('Mac') >= 0;
       $self.manager.tools.forEach(function(tool) {
-        var separatorEl;
         tool.getSupportedTransformers().forEach(function(transformer) {
           var broadcasterEl, commandAccessKey, commandDescription, commandLabel, commandName, defaultKeyBindings, existingKeyBindings, menuEl;
           commandName = "" + TOOL_COMMANDS_GROUP + (tool.name) + "_" + transformer;
@@ -155,7 +169,7 @@
           }
           menuEl = document.createElementNS(XUL_NS, 'menuitem');
           menuEl.setAttribute('label', commandLabel);
-          menuEl.setAttribute('id', "menu_" + (tool.name) + "_" + transformer);
+          menuEl.setAttribute('id', "menu_selectionTools_" + (tool.name) + "_" + transformer);
           menuEl.setAttribute('accesskey', commandAccessKey);
           menuEl.setAttribute('observes', commandName);
           return popupEl.appendChild(menuEl);
@@ -167,13 +181,16 @@
       if (popupEl.childNodes.length) {
         popupEl.removeChild(popupEl.childNodes[popupEl.childNodes.length - 1]);
       }
-      topMenuEl.appendChild(popupEl);
-      referenceEl = document.getElementById('menu_marks');
-      return referenceEl.parentNode.insertBefore(topMenuEl, referenceEl.nextSibling);
+      if (!this.hasNative) {
+        topMenuEl.appendChild(popupEl);
+        referenceEl = document.getElementById('menu_marks');
+        referenceEl.parentNode.insertBefore(topMenuEl, referenceEl.nextSibling);
+      }
+      return null;
     };
     this.onMenuShowing = function onMenuShowing() {
       var topMenuEl;
-      topMenuEl = document.getElementById('menu_selectionTools');
+      topMenuEl = document.getElementById(this.hasNative ? TOOL_NATIVE_MENU_ID : 'menu_selectionTools');
       return topMenuEl.setAttribute('disabled', this.canExecute(false) ? 'false' : 'true');
     };
     this.moveBuiltInMenuItems = function moveBuiltInMenuItems() {
@@ -209,7 +226,9 @@
         var __func = function() {
           var menuEl;
           this.rebuildEditMenu();
-          this.moveBuiltInMenuItems();
+          if (!this.hasNative) {
+            this.moveBuiltInMenuItems();
+          }
           menuEl = document.getElementById('popup_sourcecode');
           menuEl.addEventListener('popupshowing', this.onMenuShowing, false);
           return window.controllers.appendController(this);
@@ -227,7 +246,9 @@
           var menuEl;
           menuEl = document.getElementById('popup_sourcecode');
           menuEl.removeEventListener('popupshowing', this.onMenuShowing, false);
-          this.restoreBuiltInMenuItems();
+          if (!this.hasNative) {
+            this.restoreBuiltInMenuItems();
+          }
           return window.controllers.removeController(this);
         };
         return (function() {
@@ -249,11 +270,11 @@
       return false;
     };
     this.doCommand = function doCommand(command) {
-      var _a, toolName, transformer;
+      var _b, toolName, transformer;
       if (this.isCommandEnabled(command)) {
-        _a = command.substr(TOOL_COMMANDS_GROUP.length).split('_');
-        toolName = _a[0];
-        transformer = _a[1];
+        _b = command.substr(TOOL_COMMANDS_GROUP.length).split('_');
+        toolName = _b[0];
+        transformer = _b[1];
         $self.manager.tools.forEach(function(tool) {
           var commandLabel, inputString, outputString, scimoz, selectionDirection;
           if (tool.name === toolName) {

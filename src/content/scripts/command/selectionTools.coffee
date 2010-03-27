@@ -59,6 +59,7 @@ root.trapExceptions $self.manager
 
 TOOL_ORDERING: 9900
 TOOL_COMMANDS_GROUP: 'cmd_htmlToolkit_selectionTools_'
+TOOL_NATIVE_MENU_ID: 'codeConvert_menu'
 
 $self.tool: (toolName, toolOrdering) ->
   @name: toolName
@@ -80,6 +81,8 @@ $self.controller: ->
                                     triggerKeys: 'None',
                                     canChangeTriggerKeys: false]
 
+  @hasNative: document.getElementById(TOOL_NATIVE_MENU_ID)?
+
   @canExecute: (e) ->
     return ko.views.manager and
            ko.views.manager.currentView and
@@ -98,16 +101,29 @@ $self.controller: ->
         globalSet.removeChild broadcasterEl
       null
 
-    topMenuEl: document.getElementById 'menu_selectionTools'
-    topMenuEl.parentNode.removeChild topMenuEl if topMenuEl?
+    if @hasNative
+      topMenuEl: document.getElementById TOOL_NATIVE_MENU_ID
+      popupEl: document.getElementById "${TOOL_NATIVE_MENU_ID}popup"
 
-    topMenuEl: document.createElementNS XUL_NS, 'menu'
-    topMenuEl.setAttribute 'id', 'menu_selectionTools'
-    topMenuEl.setAttribute 'label', root.l10n('command').GetStringFromName 'selectionTools.menuLabel'
-    topMenuEl.setAttribute 'accesskey', root.l10n('command').GetStringFromName 'selectionTools.menuAccessKey'
+      Array::slice(popupEl.childNodes).forEach (menuEl) ->
+        if menuEl.id?.indexOf('menu_selectionTools') is 0
+          popupEl.removeChild menuEl
+        null
 
-    popupEl: document.createElementNS XUL_NS, 'menupopup'
-    popupEl.setAttribute 'id', 'popup_selectionTools'
+      if popupEl.childNodes[popupEl.childNodes.length - 1]?.localName isnt 'menuseparator'
+        separatorEl: document.createElementNS XUL_NS, 'menuseparator'
+        popupEl.appendChild separatorEl
+    else
+      topMenuEl: document.getElementById 'menu_selectionTools'
+      topMenuEl.parentNode.removeChild topMenuEl if topMenuEl?
+
+      topMenuEl: document.createElementNS XUL_NS, 'menu'
+      topMenuEl.setAttribute 'id', 'menu_selectionTools'
+      topMenuEl.setAttribute 'label', root.l10n('command').GetStringFromName 'selectionTools.menuLabel'
+      topMenuEl.setAttribute 'accesskey', root.l10n('command').GetStringFromName 'selectionTools.menuAccessKey'
+
+      popupEl: document.createElementNS XUL_NS, 'menupopup'
+      popupEl.setAttribute 'id', 'popup_selectionTools'
 
     isMac: navigator.platform.indexOf('Mac') >= 0
 
@@ -145,7 +161,7 @@ $self.controller: ->
 
         menuEl: document.createElementNS XUL_NS, 'menuitem'
         menuEl.setAttribute 'label', commandLabel
-        menuEl.setAttribute 'id', "menu_${tool.name}_$transformer"
+        menuEl.setAttribute 'id', "menu_selectionTools_${tool.name}_$transformer"
         menuEl.setAttribute 'accesskey', commandAccessKey
         menuEl.setAttribute 'observes', commandName
         popupEl.appendChild menuEl
@@ -156,13 +172,16 @@ $self.controller: ->
     # Remova last separator
     popupEl.removeChild popupEl.childNodes[popupEl.childNodes.length - 1] if popupEl.childNodes.length
 
-    topMenuEl.appendChild popupEl
+    if not @hasNative
+      topMenuEl.appendChild popupEl
 
-    referenceEl: document.getElementById 'menu_marks'
-    referenceEl.parentNode.insertBefore topMenuEl, referenceEl.nextSibling
+      referenceEl: document.getElementById 'menu_marks'
+      referenceEl.parentNode.insertBefore topMenuEl, referenceEl.nextSibling
+
+    null
 
   @onMenuShowing: ->
-    topMenuEl: document.getElementById 'menu_selectionTools'
+    topMenuEl: document.getElementById(if @hasNative then TOOL_NATIVE_MENU_ID else 'menu_selectionTools')
     topMenuEl.setAttribute('disabled', if @canExecute false then 'false' else 'true')
 
   @moveBuiltInMenuItems: ->
@@ -196,7 +215,7 @@ $self.controller: ->
 
     root.events.onLoad =>
       @rebuildEditMenu()
-      @moveBuiltInMenuItems()
+      @moveBuiltInMenuItems() if not @hasNative
 
       menuEl: document.getElementById 'popup_sourcecode'
       menuEl.addEventListener 'popupshowing', @onMenuShowing, false
@@ -211,7 +230,7 @@ $self.controller: ->
       menuEl: document.getElementById 'popup_sourcecode'
       menuEl.removeEventListener 'popupshowing', @onMenuShowing, false
 
-      @restoreBuiltInMenuItems()
+      @restoreBuiltInMenuItems() if not @hasNative
 
       window.controllers.removeController @
 
