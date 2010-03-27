@@ -122,7 +122,7 @@ if (typeof (extensions) === 'undefined')
 
 			for (var key in obj) {
 
-				if (typeof (obj[key]) === 'function' && ! obj[key].__trapped__) {
+				if (obj.hasOwnProperty(key) && typeof (obj[key]) === 'function' && ! obj[key].__trapped__) {
 
 					(function(fn) {
 

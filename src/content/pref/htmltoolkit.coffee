@@ -4,71 +4,71 @@
 `const XUL_NS = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul'`
 
 # Find the most recent Komodo window and grab a reference to the HTML Toolkit extension
-windowManagerService: Cc['@mozilla.org/appshell/window-mediator;1'].getService(Ci.nsIWindowMediator)
-recentKomodoWindow: windowManagerService.getMostRecentWindow('Komodo')
+windowManagerService: Cc['@mozilla.org/appshell/window-mediator;1'].getService Ci.nsIWindowMediator
+recentKomodoWindow: windowManagerService.getMostRecentWindow 'Komodo'
 $toolkit: recentKomodoWindow.extensions.htmlToolkit
 
 # Grab the preferences branch for HTML Toolkit
-prefsService: Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefService)
-prefsBranch: prefsService.getBranch('extensions.htmltoolkit.')
+prefsService: Cc['@mozilla.org/preferences-service;1'].getService Ci.nsIPrefService
+prefsBranch: prefsService.getBranch 'extensions.htmltoolkit.'
 
 eventsBag: {
 
-	onLoad: ->
-		prefsService.QueryInterface(Ci.nsIPrefBranch2)
+  onLoad: ->
+    prefsService.QueryInterface Ci.nsIPrefBranch2
 
-		# String to bool conversion for checkboxes
-		cssFillUpStopperControlEl: document.getElementById('css-fillup-stopper-control')
-		cssFillUpStopperPrefEl: document.getElementById(cssFillUpStopperControlEl.getAttribute('preference'))
-		cssFillUpStopperControlEl.setAttribute('checked', if prefsService.getCharPref(cssFillUpStopperPrefEl.getAttribute('name')) is 'true' then true else false)
+    # String to bool conversion for checkboxes
+    cssFillUpStopperControlEl: document.getElementById 'css-fillup-stopper-control'
+    cssFillUpStopperPrefEl: document.getElementById cssFillUpStopperControlEl.getAttribute 'preference'
+    cssFillUpStopperControlEl.setAttribute('checked', if prefsService.getCharPref(cssFillUpStopperPrefEl.getAttribute('name')) is 'true' then true else false)
 
-		tagCompleteGroup: document.getElementById('tag-complete-group')
-		tagCompleteGroup.addEventListener('keypress', eventsBag.onTagCompleteGroupKeyPress, false)
+    tagCompleteGroup: document.getElementById 'tag-complete-group'
+    tagCompleteGroup.addEventListener 'keypress', eventsBag.onTagCompleteGroupKeyPress, false
 
-		window.setTimeout(( -> window.centerWindowOnScreen()), 1)
+    window.setTimeout(( -> window.centerWindowOnScreen()), 1)
 
-	onTagCompleteGroupKeyPress: (e) ->
-		if e.charCode is 32 and not e.altKey
-			tree: document.getElementById('tag-complete-tree')
-			selection: tree.view.selection
-			selectionLength: selection.getRangeCount()
+  onTagCompleteGroupKeyPress: (e) ->
+    if e.charCode is 32 and not e.altKey
+      tree: document.getElementById 'tag-complete-tree'
+      selection: tree.view.selection
+      selectionLength: selection.getRangeCount()
 
-			return false unless selectionLength
+      return false unless selectionLength
 
-			selectedRows: []
-			rangeStart: {}
-			rangeEnd: {}
+      selectedRows: []
+      rangeStart: {}
+      rangeEnd: {}
 
-			for i in [0...selectionLength]
-				selection.getRangeAt(i, rangeStart, rangeEnd)
-				for j in [rangeStart.value..rangeEnd.value]
-					selectedRows.push(j) if j >= 0
+      for i in [0...selectionLength]
+        selection.getRangeAt i, rangeStart, rangeEnd
+        for j in [rangeStart.value..rangeEnd.value]
+          selectedRows.push j if j >= 0
 
-			groupedState: true
-			for i in [0...selectedRows.length]
-				groupedState &&= tree.view.getCellValue(selectedRows[i], {}) is 'true'
-				break unless groupedState
+      groupedState: true
+      for i in [0...selectedRows.length]
+        groupedState: and tree.view.getCellValue(selectedRows[i], {}) is 'true'
+        break unless groupedState
 
-			tree.view.setCellValue(selectedRows[i], {}, if groupedState then 'false' else 'true') for i in [0...selectedRows.length]
+      tree.view.setCellValue(selectedRows[i], {}, if groupedState then 'false' else 'true') for i in [0...selectedRows.length]
 
-			return false
+      return false
 
-		return true
+    true
 
-	onAccept: ->
-		tagCompleteTree: document.getElementById('tag-complete-tree')
-		tagCompleteCells: tagCompleteTree.getElementsByTagName('treecell')
+  onAccept: ->
+    tagCompleteTree: document.getElementById 'tag-complete-tree'
+    tagCompleteCells: tagCompleteTree.getElementsByTagName 'treecell'
 
-		for cell in tagCompleteCells
-			prefId = cell.getAttribute('preference')
-			if (prefId.length)
-				prefEl = document.getElementById(prefId)
-				if (prefEl?)
-					preferenceName = prefEl.getAttribute('name')
-					prefsService.setCharPref(preferenceName, cell.getAttribute('value'))
+    for cell in tagCompleteCells
+      prefId: cell.getAttribute 'preference'
+      if prefId.length
+        prefEl: document.getElementById prefId
+        if prefEl?
+          preferenceName: prefEl.getAttribute 'name'
+          prefsService.setCharPref preferenceName, cell.getAttribute 'value'
 }
 
-$toolkit.trapExceptions(eventsBag)
+$toolkit.trapExceptions eventsBag
 
-window.addEventListener('load', eventsBag.onLoad, false)
-window.addEventListener('dialogaccept', eventsBag.onAccept, false)
+window.addEventListener 'load', eventsBag.onLoad, false
+window.addEventListener 'dialogaccept', eventsBag.onAccept, false

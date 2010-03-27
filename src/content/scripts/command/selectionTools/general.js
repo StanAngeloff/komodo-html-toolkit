@@ -3,11 +3,10 @@
   root = (typeof $toolkit !== "undefined" && $toolkit !== null) ? $toolkit : this;
   $self.tool = function tool() {
     var toolName, toolOrdering;
-    // Call parent's constructor
     root.command.selectionTools.tool.apply(this, [(toolName = 'general'), (toolOrdering = 5900)]);
-    this.getSupportedTransformers = (function() {
+    this.getSupportedTransformers = function getSupportedTransformers() {
       return ['capitalise', 'hyphenise', 'underscorise'];
-    });
+    };
     this.trigger = function trigger(transformer, string) {
       if (transformer === 'capitalise') {
         return string.replace(/[\-_]\D/g, function(match) {
@@ -24,7 +23,6 @@
       }
       return null;
     };
-    // This is to instruct CoffeeScript to return this instead of this.getSupportedTransformers
     return this;
   };
   $self.registerAll = function registerAll() {

@@ -1,29 +1,26 @@
-root = $toolkit ? this
+root: $toolkit ? this
 
 $self.tool: ->
+  root.command.selectionTools.tool.apply @, [toolName: 'base64',
+                                             toolOrdering: 5800]
 
-	# Call parent's constructor
-	root.command.selectionTools.tool.apply(this, [toolName: 'base64',
-												  toolOrdering: 5800])
+  @getSupportedTransformers: -> ['encode', 'decode']
 
-	this.getSupportedTransformers: ( -> ['encode', 'decode'])
+  @trigger: (transformer, string) ->
+    switch transformer
+      when 'encode'
+        try
+          return window.btoa string
+        catch e
+          # ignore
+      when 'decode'
+        try
+          return window.atob string
+        catch e
+          # ignore
+    null
 
-	this.trigger: (transformer, string) ->
-		switch transformer
-			when 'encode'
-				try
-					return window.btoa(string)
-				catch e
-					return null
-			when 'decode'
-				try
-					return window.atob(string)
-				catch e
-					return null
-		return null
-
-	# This is to instruct CoffeeScript to return this instead of this.getSupportedTransformers
-	this
+  this
 
 $self.registerAll: ->
-	new $self.tool().register()
+  new $self.tool().register()

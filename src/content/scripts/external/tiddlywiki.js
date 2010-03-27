@@ -873,10 +873,6 @@ function glyph(name)
 	return g.codes[name][b];
 }
 
-if(!window.console) {
-	console = {tiddlywiki:true,log:function(message) {displayMessage(message);}};
-}
-
 //--
 //-- Formatter helpers
 //--

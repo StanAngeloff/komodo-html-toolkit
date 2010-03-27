@@ -27,6 +27,8 @@ $self.onUnload = function(callback) {
 
 $self.callLoadChain = function() {
 
+    var callback;
+
 	EVENTS_HAS_LOADED = true;
 
 	while ((callback = EVENTS_LOAD_CHAIN.pop()))
