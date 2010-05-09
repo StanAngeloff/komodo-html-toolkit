@@ -17,7 +17,7 @@
 	hr { border: none; margin-top: 100px; }
 
 	#credits { position: absolute; top: 0; right: 0; bottom: 0; left: 0; overflow: hidden; text-align: center; }
-	#credits p { margin: 100px 0 48px 0; }
+	#credits pre { margin: 128px 0 256px 0; }
 	/* ]]> */
 	</style>
 </head>
@@ -156,12 +156,12 @@ window.setTimeout(function runCredits() {
 		if (lastScrollTop == creditsEl.scrollTop && scrollOffset > 0) {
 
 			window.clearInterval(creditsInterval);
-			window.setTimeout(runCredits, 5000);
+			window.setTimeout(runCredits, 3500);
 		}
 
 	}, 35);
 
-}, 3000);
+}, 2500);
 
 })();
 // ]]>
