@@ -285,7 +285,7 @@
             } else {
               return parseInt(entity.substr(1));
             }
-          }).call(this));
+          })());
         });
       }
       return null;

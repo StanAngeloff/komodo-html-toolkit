@@ -1,5 +1,10 @@
 (function(){
   var TOOL_COMMANDS_GROUP, TOOL_NATIVE_MENU_ID, TOOL_ORDERING, encodingService, root;
+  var __to_array = Array.prototype.slice, __bind = function(func, obj, args) {
+    return function() {
+      return func.apply(obj || {}, args ? args.concat(__to_array.call(arguments, 0)) : arguments);
+    };
+  };
   root = (typeof $toolkit !== "undefined" && $toolkit !== null) ? $toolkit : this;
   const Cc = Components.classes;
   const Ci = Components.interfaces;
@@ -39,9 +44,9 @@
       return null;
     },
     indexOfTool: function indexOfTool(obj) {
-      var _a, _b, _c, _d, index;
-      _c = 0; _d = $self.manager.tools.length;
-      for (_b = 0, index = _c; (_c <= _d ? index < _d : index > _d); (_c <= _d ? index += 1 : index -= 1), _b++) {
+      var _a, _b, index;
+      _a = 0; _b = $self.manager.tools.length;
+      for (index = _a; (_a <= _b ? index < _b : index > _b); (_a <= _b ? index += 1 : index -= 1)) {
         if ($self.manager.tools[index] === obj) {
           return index;
         }
@@ -111,7 +116,7 @@
       });
       if (this.hasNative) {
         topMenuEl = document.getElementById(TOOL_NATIVE_MENU_ID);
-        popupEl = document.getElementById("" + (TOOL_NATIVE_MENU_ID) + "popup");
+        popupEl = document.getElementById(("" + (TOOL_NATIVE_MENU_ID) + "popup"));
         Array.prototype.slice(popupEl.childNodes).forEach(function(menuEl) {
           menuEl.id == undefined ? undefined : menuEl.id.indexOf('menu_selectionTools') === 0 ? popupEl.removeChild(menuEl) : null;
           return null;
@@ -136,15 +141,15 @@
       $self.manager.tools.forEach(function(tool) {
         tool.getSupportedTransformers().forEach(function(transformer) {
           var broadcasterEl, commandAccessKey, commandDescription, commandLabel, commandName, defaultKeyBindings, existingKeyBindings, menuEl;
-          commandName = "" + TOOL_COMMANDS_GROUP + (tool.name) + "_" + transformer;
-          commandLabel = root.l10n('command').GetStringFromName("selectionTools." + (tool.name) + "." + (transformer) + ".menuLabel");
-          commandAccessKey = root.l10n('command').GetStringFromName("selectionTools." + (tool.name) + "." + (transformer) + ".menuAccessKey");
+          commandName = ("" + TOOL_COMMANDS_GROUP + (tool.name) + "_" + transformer);
+          commandLabel = root.l10n('command').GetStringFromName(("selectionTools." + (tool.name) + "." + (transformer) + ".menuLabel"));
+          commandAccessKey = root.l10n('command').GetStringFromName(("selectionTools." + (tool.name) + "." + (transformer) + ".menuAccessKey"));
           commandDescription = root.l10n('command').formatStringFromName('selectionTools.binding', [commandLabel], 1);
           // Register command as new broadcaster
           broadcasterEl = document.createElementNS(XUL_NS, 'broadcaster');
           broadcasterEl.setAttribute('id', commandName);
-          broadcasterEl.setAttribute('key', "key_" + commandName);
-          broadcasterEl.setAttribute('oncommand', "ko.commands.doCommandAsync('" + commandName + "', event);");
+          broadcasterEl.setAttribute('key', ("key_" + commandName));
+          broadcasterEl.setAttribute('oncommand', ("ko.commands.doCommandAsync('" + commandName + "', event);"));
           broadcasterEl.setAttribute('desc', commandDescription);
           globalSet.appendChild(broadcasterEl);
           // Set default key binding, if specified
@@ -152,7 +157,7 @@
             // Make sure the User has not overridden the default key bindings
             existingKeyBindings = gKeybindingMgr.command2keysequences(commandName);
             if (!existingKeyBindings.length) {
-              triggerKeys = root.l10n('command').GetStringFromName("selectionTools." + (tool.name) + "." + (transformer) + ".triggerKeys");
+              triggerKeys = root.l10n('command').GetStringFromName(("selectionTools." + (tool.name) + "." + (transformer) + ".triggerKeys"));
               // Ctrl is Meta on a Mac, update assigned triggers keys to match
               if (isMac) {
                 triggerKeys = triggerKeys.replace('Ctrl', 'Meta', 'g');
@@ -169,7 +174,7 @@
           }
           menuEl = document.createElementNS(XUL_NS, 'menuitem');
           menuEl.setAttribute('label', commandLabel);
-          menuEl.setAttribute('id', "menu_selectionTools_" + (tool.name) + "_" + transformer);
+          menuEl.setAttribute('id', ("menu_selectionTools_" + (tool.name) + "_" + transformer));
           menuEl.setAttribute('accesskey', commandAccessKey);
           menuEl.setAttribute('observes', commandName);
           return popupEl.appendChild(menuEl);
@@ -214,16 +219,10 @@
     };
     this.registerBase = this.register;
     this.register = function register() {
-      $self.manager.onChange((function(__this) {
-        var __func = function() {
+      $self.manager.onChange(__bind(function() {
           return this.rebuildEditMenu();
-        };
-        return (function() {
-          return __func.apply(__this, arguments);
-        });
-      })(this));
-      root.events.onLoad((function(__this) {
-        var __func = function() {
+        }, this));
+      root.events.onLoad(__bind(function() {
           var menuEl;
           this.rebuildEditMenu();
           if (!this.hasNative) {
@@ -232,17 +231,12 @@
           menuEl = document.getElementById('popup_sourcecode');
           menuEl.addEventListener('popupshowing', this.onMenuShowing, false);
           return window.controllers.appendController(this);
-        };
-        return (function() {
-          return __func.apply(__this, arguments);
-        });
-      })(this));
+        }, this));
       return this.registerBase();
     };
     this.unregisterBase = this.unregister;
     this.unregister = function unregister() {
-      root.events.onUnload((function(__this) {
-        var __func = function() {
+      root.events.onUnload(__bind(function() {
           var menuEl;
           menuEl = document.getElementById('popup_sourcecode');
           menuEl.removeEventListener('popupshowing', this.onMenuShowing, false);
@@ -250,11 +244,7 @@
             this.restoreBuiltInMenuItems();
           }
           return window.controllers.removeController(this);
-        };
-        return (function() {
-          return __func.apply(__this, arguments);
-        });
-      })(this));
+        }, this));
       return this.unregisterBase();
     };
     this.supportsCommand = function supportsCommand(command) {
@@ -291,7 +281,7 @@
                 scimoz.endUndoAction();
               }
             } else {
-              commandLabel = root.l10n('command').GetStringFromName("selectionTools." + (tool.name) + "." + (transformer) + ".menuLabel");
+              commandLabel = root.l10n('command').GetStringFromName(("selectionTools." + (tool.name) + "." + (transformer) + ".menuLabel"));
               ko.statusBar.AddMessage(root.l10n('command').formatStringFromName('selectionTools.invalidSelection', [commandLabel], 1), 'htmltoolkit', 2500, true);
             }
           }

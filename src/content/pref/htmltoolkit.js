@@ -25,7 +25,7 @@
       }), 1);
     },
     onTagCompleteGroupKeyPress: function onTagCompleteGroupKeyPress(e) {
-      var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, groupedState, i, j, rangeEnd, rangeStart, selectedRows, selection, selectionLength, tree;
+      var _a, _b, _c, _d, _e, _f, _g, _h, groupedState, i, j, rangeEnd, rangeStart, selectedRows, selection, selectionLength, tree;
       if (e.charCode === 32 && !e.altKey) {
         tree = document.getElementById('tag-complete-tree');
         selection = tree.view.selection;
@@ -36,26 +36,26 @@
         selectedRows = [];
         rangeStart = {};
         rangeEnd = {};
-        _c = 0; _d = selectionLength;
-        for (_b = 0, i = _c; (_c <= _d ? i < _d : i > _d); (_c <= _d ? i += 1 : i -= 1), _b++) {
+        _a = 0; _b = selectionLength;
+        for (i = _a; (_a <= _b ? i < _b : i > _b); (_a <= _b ? i += 1 : i -= 1)) {
           selection.getRangeAt(i, rangeStart, rangeEnd);
-          _g = rangeStart.value; _h = rangeEnd.value;
-          for (_f = 0, j = _g; (_g <= _h ? j <= _h : j >= _h); (_g <= _h ? j += 1 : j -= 1), _f++) {
+          _c = rangeStart.value; _d = rangeEnd.value;
+          for (j = _c; (_c <= _d ? j <= _d : j >= _d); (_c <= _d ? j += 1 : j -= 1)) {
             if (j >= 0) {
               selectedRows.push(j);
             }
           }
         }
         groupedState = true;
-        _k = 0; _l = selectedRows.length;
-        for (_j = 0, i = _k; (_k <= _l ? i < _l : i > _l); (_k <= _l ? i += 1 : i -= 1), _j++) {
+        _e = 0; _f = selectedRows.length;
+        for (i = _e; (_e <= _f ? i < _f : i > _f); (_e <= _f ? i += 1 : i -= 1)) {
           groupedState = groupedState && tree.view.getCellValue(selectedRows[i], {}) === 'true';
           if (!(groupedState)) {
             break;
           }
         }
-        _o = 0; _p = selectedRows.length;
-        for (_n = 0, i = _o; (_o <= _p ? i < _p : i > _p); (_o <= _p ? i += 1 : i -= 1), _n++) {
+        _g = 0; _h = selectedRows.length;
+        for (i = _g; (_g <= _h ? i < _h : i > _h); (_g <= _h ? i += 1 : i -= 1)) {
           tree.view.setCellValue(selectedRows[i], {}, groupedState ? 'false' : 'true');
         }
         return false;
@@ -66,9 +66,9 @@
       var _a, _b, _c, _d, cell, prefEl, prefId, preferenceName, tagCompleteCells, tagCompleteTree;
       tagCompleteTree = document.getElementById('tag-complete-tree');
       tagCompleteCells = tagCompleteTree.getElementsByTagName('treecell');
-      _a = []; _b = tagCompleteCells;
-      for (_c = 0, _d = _b.length; _c < _d; _c++) {
-        cell = _b[_c];
+      _a = []; _c = tagCompleteCells;
+      for (_b = 0, _d = _c.length; _b < _d; _b++) {
+        cell = _c[_b];
         _a.push((function() {
           prefId = cell.getAttribute('preference');
           if (prefId.length) {
@@ -78,7 +78,7 @@
               return prefsService.setCharPref(preferenceName, cell.getAttribute('value'));
             }
           }
-        }).call(this));
+        })());
       }
       return _a;
     }

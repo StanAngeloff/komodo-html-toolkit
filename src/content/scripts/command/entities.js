@@ -290,13 +290,13 @@
           lineStartPosition = scimoz.positionFromLine(scimoz.lineFromPosition(scimoz.currentPos));
           lineRange = scimoz.getTextRange(lineStartPosition, scimoz.currentPos);
           /[^&]&$/.test(lineRange) ? scimoz.autoCShow(1, (function() {
-            _a = []; _b = entities;
-            for (_c = 0, _d = _b.length; _c < _d; _c++) {
-              entity = _b[_c];
+            _a = []; _c = entities;
+            for (_b = 0, _d = _c.length; _b < _d; _b++) {
+              entity = _c[_b];
               _a.push('&' + entity + ';?' + ACIID_HTML_ENTITY);
             }
             return _a;
-          }).call(this).join(String.fromCharCode(scimoz.autoCSeparator))) : null;
+          })().join(String.fromCharCode(scimoz.autoCSeparator))) : null;
         }
         return true;
       });

@@ -182,7 +182,7 @@ $self.controller: ->
 
   @onMenuShowing: ->
     topMenuEl: document.getElementById(if @hasNative then TOOL_NATIVE_MENU_ID else 'menu_selectionTools')
-    topMenuEl.setAttribute('disabled', if @canExecute false then 'false' else 'true')
+    topMenuEl.setAttribute('disabled', if @canExecute(false) then 'false' else 'true')
 
   @moveBuiltInMenuItems: ->
     popupEl: document.getElementById 'popup_selectionTools'
