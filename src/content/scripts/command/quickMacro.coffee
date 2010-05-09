@@ -17,7 +17,7 @@ $self.controller: ->
     result: { part: null }
     wnd: window.openDialog 'chrome://htmltoolkit/content/scripts/command/quickMacro/quickMacro.xul',
                            'quickMacroWindow',
-                           'chrome=yes,modal=yes,centerscreen=yes,resizable=no,minimizable=no',
+                           'chrome=yes,modal=yes,centerscreen=yes,resizable=yes,minimizable=no',
                            @parts.length,
                            result
     wnd.focus()

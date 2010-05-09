@@ -20,7 +20,7 @@
       result = {
         part: null
       };
-      wnd = window.openDialog('chrome://htmltoolkit/content/scripts/command/quickMacro/quickMacro.xul', 'quickMacroWindow', 'chrome=yes,modal=yes,centerscreen=yes,resizable=no,minimizable=no', this.parts.length, result);
+      wnd = window.openDialog('chrome://htmltoolkit/content/scripts/command/quickMacro/quickMacro.xul', 'quickMacroWindow', 'chrome=yes,modal=yes,centerscreen=yes,resizable=yes,minimizable=no', this.parts.length, result);
       wnd.focus();
       // Restore focus to the editor
       scimoz = ko.views.manager.currentView.scimoz;

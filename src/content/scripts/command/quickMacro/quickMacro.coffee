@@ -43,6 +43,7 @@ originalUseTabs: null
     lastMacroLanguage: 'coffeescript'
   macroBufferEl.initWithBuffer lastMacroContents, 'JavaScript'
 
+  macroBufferEl.scimoz.scrollWidth: 1
   macroBufferEl.scimoz.gotoLine macroBufferEl.scimoz.lineCount - 1
   macroBufferEl.scimoz.anchor: 0
   macroBufferEl.scimoz.currentPos: macroBufferEl.scimoz.length
@@ -54,6 +55,8 @@ originalUseTabs: null
   languageEl: document.getElementById 'language'
   languageEl.selectedItem: document.getElementById "language-$lastMacroLanguage"
   switchLanguage lastMacroLanguage
+
+  macroBufferEl.scintilla.focus()
 
 @onDialogAccept: ->
   macroContents: macroBufferEl.scimoz.text

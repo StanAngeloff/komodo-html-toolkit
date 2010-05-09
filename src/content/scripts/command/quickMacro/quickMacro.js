@@ -36,6 +36,7 @@
       lastMacroLanguage = 'coffeescript';
     }
     macroBufferEl.initWithBuffer(lastMacroContents, 'JavaScript');
+    macroBufferEl.scimoz.scrollWidth = 1;
     macroBufferEl.scimoz.gotoLine(macroBufferEl.scimoz.lineCount - 1);
     macroBufferEl.scimoz.anchor = 0;
     macroBufferEl.scimoz.currentPos = macroBufferEl.scimoz.length;
@@ -44,7 +45,8 @@
     originalUseTabs = macroBufferEl.scimoz.useTabs;
     languageEl = document.getElementById('language');
     languageEl.selectedItem = document.getElementById(("language-" + lastMacroLanguage));
-    return switchLanguage(lastMacroLanguage);
+    switchLanguage(lastMacroLanguage);
+    return macroBufferEl.scintilla.focus();
   };
   this.onDialogAccept = function onDialogAccept() {
     var macroContents, macroLanguage, macroPart, quickMacroFolders;

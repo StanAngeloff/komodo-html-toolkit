@@ -3,18 +3,36 @@ dialog
 	background: Window;
 	color:      WindowText;
 	height:     240px;
-	padding:    10px;
+	padding:    0;
 	width:      640px;
 }
 
 view[type="buffer"]
 {
-    border: 1px solid ThreeDDarkShadow;
+	background: ThreeDFace;
+	border:     1px solid ThreeDShadow;
+	margin:     0 10px;
+	padding:    1px;
+}
+
+#language
+{
+    margin: 10px;
+}
+
+#language radio
+{
+	margin:  0 10px 0 0;
+	padding: 0;
 }
 
 .dialog-button-box
 {
-    margin: 10px 0 0 0;
+	background:             ThreeDFace;
+	border-top:             2px solid ThreeDShadow;
+	margin:                 10px 0 0 0;
+	padding:                10px;
+	-moz-border-top-colors: ThreeDShadow Window;
 }
 
 button[dlgtype="accept"],

@@ -14,6 +14,7 @@
 		windowtype="quickMacroWindow"
 		id="quick-macro"
         title="&title;"
+		persist="width height"
         onload="onDialogLoad();"
 		ondialogaccept="return onDialogAccept();"
         onunload="onDialogUnload();">
@@ -25,11 +26,11 @@
 
 	<hbox id="scintillaOverlayXul" />
     <vbox flex="1">
-		<view type="buffer" id="macro-buffer" flex="1" />
 		<radiogroup id="language" orient="horizontal">
 			<radio id="language-coffeescript" label="&coffeescript.label;" accesskey="&coffeescript.accessKey;" oncommand="switchLanguage('coffeescript');" />
 			<radio id="language-javascript" label="&javascript.label;" accesskey="&javascript.accessKey;" oncommand="switchLanguage('javascript');" />
 		</radiogroup>
+		<view type="buffer" id="macro-buffer" flex="1" />
     </vbox>
 
 </dialog>
