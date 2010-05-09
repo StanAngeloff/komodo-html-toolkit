@@ -1,7 +1,6 @@
 xtk.include('domutils')
 
 $toolkit: window.opener.extensions.htmlToolkit
-ko: window.opener.ko
 
 `const Cc = Components.classes`
 `const Ci = Components.interfaces`
@@ -72,7 +71,7 @@ originalUseTabs: null
     quickMacroFolders[0].type: 'folder'
     quickMacroFolders[0].setStringAttribute 'name', cToolboxFolderName
 
-    ko.toolboxes.user.addItem quickMacroFolders[0]
+    window.opener.ko.toolboxes.user.addItem quickMacroFolders[0]
 
   macroPart: partService.toolbox.project.createPartFromType 'macro'
   macroPart.setStringAttribute 'name', "(${ window.arguments[0] + 1 }) " + macroContents.replace(/[\\\/:\*\?<>\|"']+/g, '').replace(/\s+/g, ' ').substr(0, 64)
@@ -88,10 +87,10 @@ originalUseTabs: null
 
   macroPart.iconurl: 'chrome://htmltoolkit/skin/images/icon_quick_macro.png'
 
-  ko.projects.addItem macroPart, quickMacroFolders[0]
+  window.opener.ko.projects.addItem macroPart, quickMacroFolders[0]
 
-  `if (macroPart.project == ko.toolboxes.user.toolbox)
-    ko.toolboxes.user.save()`
+  `if (macroPart.project == window.opener.ko.toolboxes.user.toolbox)
+    window.opener.ko.toolboxes.user.save()`
 
   window.arguments[1].part: macroPart
   return true
@@ -118,7 +117,7 @@ compileMacro: (contents, language) ->
     contents: CoffeeScript.compile contents
   else
     contents: "(function() {\n$contents\n})();"
-  contents: contents.replace(/\s+$/, '').split(/[\r\n|\r|\n]+/)
+  contents: contents.replace(/\s+$/, '').split(/((\r\n)|(\r)|(\n))+/)
   contents[- 2]: "return ${ contents[- 2] }";
 
   code: $toolkit.io.readEntireFile(templateFile)
