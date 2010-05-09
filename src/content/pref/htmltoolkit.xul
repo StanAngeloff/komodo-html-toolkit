@@ -18,6 +18,7 @@
 			<preference id="tag-complete-library-pref" name="extensions.htmltoolkit.tagComplete.libraryEnabled" type="string" />
 			<preference id="tag-complete-default-pref" name="extensions.htmltoolkit.tagComplete.defaultEnabled" type="string" />
 			<preference id="css-fillup-stopper-pref" name="extensions.htmltoolkit.cssFillUpStopper.enabled" type="string" />
+			<preference id="abbreviation-replace-expand-pref" name="extensions.htmltoolkit.abbreviation.replaceExpandEnabled" type="string" />
 		</preferences>
 
 		<vbox flex="1">
@@ -56,6 +57,9 @@
 
 				<separator class="thin" />
 				<label class="note">&tagComplete.ordering;</label>
+
+				<separator class="groove-thin" />
+				<checkbox id="abbreviation-replace-expand-control" preference="abbreviation-replace-expand-pref" label="&abbreviation.replaceExpand;" />
 			</groupbox>
 
 			<groupbox id="css-fillup-stopper-group" orient="vertical">

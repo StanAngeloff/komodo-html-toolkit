@@ -18,12 +18,19 @@ eventsBag: {
     prefsService.QueryInterface Ci.nsIPrefBranch2
 
     # String to bool conversion for checkboxes
+    abbreviationReplaceExpandControlEl: document.getElementById 'abbreviation-replace-expand-control'
+    abbreviationReplaceExpandPrefEl: document.getElementById abbreviationReplaceExpandControlEl.getAttribute 'preference'
+    abbreviationReplaceExpandControlEl.setAttribute('checked', if prefsService.getCharPref(abbreviationReplaceExpandPrefEl.getAttribute('name')) is 'true' then true else false)
+
     cssFillUpStopperControlEl: document.getElementById 'css-fillup-stopper-control'
     cssFillUpStopperPrefEl: document.getElementById cssFillUpStopperControlEl.getAttribute 'preference'
     cssFillUpStopperControlEl.setAttribute('checked', if prefsService.getCharPref(cssFillUpStopperPrefEl.getAttribute('name')) is 'true' then true else false)
 
     tagCompleteGroup: document.getElementById 'tag-complete-group'
     tagCompleteGroup.addEventListener 'keypress', eventsBag.onTagCompleteGroupKeyPress, false
+
+    # Update UI strings
+    abbreviationReplaceExpandControlEl.label: abbreviationReplaceExpandControlEl.label.replace 'keybinding', recentKomodoWindow.gKeybindingMgr.command2key['cmd_expandAbbrev'] or $toolkit.l10n('pref/htmltoolkit').GetStringFromName('noKeybinding')
 
     window.setTimeout(( -> window.centerWindowOnScreen()), 1)
 

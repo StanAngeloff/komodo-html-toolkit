@@ -121,7 +121,10 @@ $self.controller = function() {
 
 			ko.abbrev._expandAbbrev__abbreviation = ko.abbrev.expandAbbrev;
 			ko.abbrev.expandAbbrev = function(abbreviation) {
-				$self.expand(ko.views.manager.currentView, abbreviation);
+				if ('true' === $toolkit.pref('abbreviation.replaceExpandEnabled'))
+					$self.expand(ko.views.manager.currentView, abbreviation);
+				else
+					ko.abbrev._expandAbbrev__abbreviation(abbreviation);
 			};
 		}
 	};

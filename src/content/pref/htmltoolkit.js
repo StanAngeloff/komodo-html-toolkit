@@ -12,14 +12,19 @@
   prefsBranch = prefsService.getBranch('extensions.htmltoolkit.');
   eventsBag = {
     onLoad: function onLoad() {
-      var cssFillUpStopperControlEl, cssFillUpStopperPrefEl, tagCompleteGroup;
+      var abbreviationReplaceExpandControlEl, abbreviationReplaceExpandPrefEl, cssFillUpStopperControlEl, cssFillUpStopperPrefEl, tagCompleteGroup;
       prefsService.QueryInterface(Ci.nsIPrefBranch2);
       // String to bool conversion for checkboxes
+      abbreviationReplaceExpandControlEl = document.getElementById('abbreviation-replace-expand-control');
+      abbreviationReplaceExpandPrefEl = document.getElementById(abbreviationReplaceExpandControlEl.getAttribute('preference'));
+      abbreviationReplaceExpandControlEl.setAttribute('checked', prefsService.getCharPref(abbreviationReplaceExpandPrefEl.getAttribute('name')) === 'true' ? true : false);
       cssFillUpStopperControlEl = document.getElementById('css-fillup-stopper-control');
       cssFillUpStopperPrefEl = document.getElementById(cssFillUpStopperControlEl.getAttribute('preference'));
       cssFillUpStopperControlEl.setAttribute('checked', prefsService.getCharPref(cssFillUpStopperPrefEl.getAttribute('name')) === 'true' ? true : false);
       tagCompleteGroup = document.getElementById('tag-complete-group');
       tagCompleteGroup.addEventListener('keypress', eventsBag.onTagCompleteGroupKeyPress, false);
+      // Update UI strings
+      abbreviationReplaceExpandControlEl.label = abbreviationReplaceExpandControlEl.label.replace('keybinding', recentKomodoWindow.gKeybindingMgr.command2key['cmd_expandAbbrev'] || $toolkit.l10n('pref/htmltoolkit').GetStringFromName('noKeybinding'));
       return window.setTimeout((function() {
         return window.centerWindowOnScreen();
       }), 1);
