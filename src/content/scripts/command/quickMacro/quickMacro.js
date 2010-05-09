@@ -99,7 +99,7 @@ compileMacro = function compileMacro(contents, language) {
   templatePath = '/content/library/command/quickMacro.js';
   templateFile = $toolkit.io.getRelativeURI(templatePath, true);
   language === 'coffeescript' ? (contents = CoffeeScript.compile(contents)) : (contents = ("(function() {\n" + contents + "\n})();"));
-  contents = contents.replace(/\s+$/, '').split(/((\r\n)|(\r)|(\n))+/);
+  contents = contents.replace(/\s+$/, '').split(/[\r\n]+/);
   (_a = contents)[-2 + _a.length] = ("return " + ((_b = contents)[-2 + _b.length]));
   code = $toolkit.io.readEntireFile(templateFile);
   code = code.replace('"contents";', contents.join('\n'), 'g');

@@ -117,7 +117,7 @@ compileMacro: (contents, language) ->
     contents: CoffeeScript.compile contents
   else
     contents: "(function() {\n$contents\n})();"
-  contents: contents.replace(/\s+$/, '').split(/((\r\n)|(\r)|(\n))+/)
+  contents: contents.replace(/\s+$/, '').split(/[\r\n]+/)
   contents[- 2]: "return ${ contents[- 2] }";
 
   code: $toolkit.io.readEntireFile(templateFile)
