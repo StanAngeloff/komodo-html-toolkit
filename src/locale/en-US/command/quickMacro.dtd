@@ -1,0 +1,5 @@
+<!ENTITY title "HTML Toolkit: Quick Macro">
+<!ENTITY coffeescript.label "CoffeeScript">
+<!ENTITY coffeescript.accessKey "C">
+<!ENTITY javascript.label "JavaScript">
+<!ENTITY javascript.accessKey "J">

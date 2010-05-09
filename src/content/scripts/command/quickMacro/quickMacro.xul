@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://komodo/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://komodo/skin/global/global.css" type="text/css"?>
+<?xml-stylesheet href="chrome://komodo/skin/bindings/views.css" type="text/css"?>
+<?xml-stylesheet href="chrome://htmltoolkit/skin/command/quickMacro.css" type="text/css" ?>
+
+<?xul-overlay href="chrome://komodo/content/bindings/scintilla-overlay.xul"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://htmltoolkit/locale/command/quickMacro.dtd">
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+		windowtype="quickMacroWindow"
+		id="quick-macro"
+        title="&title;"
+        onload="onDialogLoad();"
+		ondialogaccept="return onDialogAccept();"
+        onunload="onDialogUnload();">
+
+    <script src="chrome://xtk/content/xtk.js" type="application/x-javascript;version=1.7" />
+
+    <script src="chrome://htmltoolkit/content/scripts/external/coffee-script.js" type="application/x-javascript;version=1.7" />
+    <script src="chrome://htmltoolkit/content/scripts/command/quickMacro/quickMacro.js" type="application/x-javascript" />
+
+	<hbox id="scintillaOverlayXul" />
+    <vbox flex="1">
+		<view type="buffer" id="macro-buffer" flex="1" />
+		<radiogroup id="language" orient="horizontal">
+			<radio id="language-coffeescript" label="&coffeescript.label;" accesskey="&coffeescript.accessKey;" oncommand="switchLanguage('coffeescript');" />
+			<radio id="language-javascript" label="&javascript.label;" accesskey="&javascript.accessKey;" oncommand="switchLanguage('javascript');" />
+		</radiogroup>
+    </vbox>
+
+</dialog>

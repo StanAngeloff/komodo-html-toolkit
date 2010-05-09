@@ -1,0 +1,24 @@
+dialog
+{
+	background: Window;
+	color:      WindowText;
+	height:     240px;
+	padding:    10px;
+	width:      640px;
+}
+
+view[type="buffer"]
+{
+    border: 1px solid ThreeDDarkShadow;
+}
+
+.dialog-button-box
+{
+    margin: 10px 0 0 0;
+}
+
+button[dlgtype="accept"],
+button[dlgtype="cancel"]
+{
+    margin: 0 0 0 10px;
+}
