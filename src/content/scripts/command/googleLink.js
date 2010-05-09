@@ -89,7 +89,11 @@ $self.controller = function() {
 				wnd.focus();
 
 				// Restore focus to the editor
-				scimoz.focus = true;
+				try {
+                    scimoz.focus = true;
+                } catch (e) {
+                    scimoz.isFocused = true;
+                }
 
 				if (searchResult.address) {
 
