@@ -269,8 +269,7 @@ $self.controller: ->
         null
     null
 
-  root.trapExceptions @
-
+  root.trapExceptions this
   this
 
 $self.registerAll: ->

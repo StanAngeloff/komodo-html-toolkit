@@ -13,6 +13,7 @@ $self.controller: ->
       scimoz.autoCCancel() if scimoz.autoCActive()
     true
 
+  root.trapExceptions this
   this
 
 $self.registerAll: ->

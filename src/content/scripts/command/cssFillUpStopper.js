@@ -15,6 +15,7 @@
       }
       return true;
     };
+    root.trapExceptions(this);
     return this;
   };
   $self.registerAll = function registerAll() {
