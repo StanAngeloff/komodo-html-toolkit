@@ -105,7 +105,7 @@ $self.controller = function() {
 
 						snippetValue = '<' + anchorTag + ' ' + hrefAttribute + '=' + quotesStyle + escapedAddress + quotesStyle + '>[[%s]]</' + anchorTag + '>';
 
-					Snippet_insert($toolkit.library.createSnippet(snippetValue));
+					ko.projects.snippetInsert($toolkit.library.createSnippet(snippetValue));
 
 					// Unfortunately Komodo does not keep the selection so we need to restore it manually
 					scimoz.anchor = searchStart + snippetValue.split('>').shift().length + 1;

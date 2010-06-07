@@ -188,7 +188,7 @@ $self.controller = function() {
 			restoreSelection = true;
 		}
 
-		Snippet_insert($toolkit.library.createSnippet(wrapSnippet));
+		ko.projects.snippetInsert($toolkit.library.createSnippet(wrapSnippet));
 		scimoz.scrollCaret();
 
 		// Highlight old selection with our custom marker

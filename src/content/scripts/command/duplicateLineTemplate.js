@@ -58,7 +58,7 @@ $self.controller = function() {
 				// Move cursor at line end; this is where we insert the wrapped snippet
 				scimoz.anchor = scimoz.currentPos = lineEndPosition;
 
-				Snippet_insert($toolkit.library.createSnippet(snippetValue, null, null, 'false', 'false'));
+				ko.projects.snippetInsert($toolkit.library.createSnippet(snippetValue, null, null, 'false', 'false'));
 
 				scimoz.scrollCaret();
 

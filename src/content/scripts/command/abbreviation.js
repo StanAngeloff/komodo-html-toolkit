@@ -202,7 +202,7 @@ $self.controller = function() {
 			insert = function(snippet) {
 
 				// Call Komodo's built-in functions
-				try { Snippet_insert(snippet); }
+				try { ko.projects.snippetInsert(snippet); }
 				catch (e) {
 
 					$toolkit.include('debug');

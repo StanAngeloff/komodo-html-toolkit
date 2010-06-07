@@ -46,7 +46,7 @@ $self.controller = function() {
 				if (typeof ($toolkit.command.undo) === 'object')
 					$toolkit.command.undo.anchor = Math.min(scimoz.anchor, scimoz.currentPos);
 
-				Snippet_insert(newLineSnippet);
+				ko.projects.snippetInsert(newLineSnippet);
 				scimoz.scrollCaret();
 
 				// Do not process event any further

@@ -237,14 +237,14 @@ $self.controller = function() {
 							// Select the entire tag
 							scimoz.setSel(editorPosition - tagName.length - 1, editorPosition + 1);
 							// Call Komodo's built-in functions
-							Snippet_insert(tagComplete);
+							ko.projects.snippetInsert(tagComplete);
 
 						// If our replacement has tabstops, build a fake snippet and insert
 						} else if (ko.tabstops.textHasTabstops(tagComplete)) {
 
 							scimoz.anchor = scimoz.currentPos = tagPosition;
 
-							Snippet_insert($toolkit.library.createSnippet(tagComplete));
+							ko.projects.snippetInsert($toolkit.library.createSnippet(tagComplete));
 
 						// Nothing fancy, just text insertion
 						} else
