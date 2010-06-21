@@ -166,6 +166,16 @@ $self.controller = function() {
 				return false;
 		}
 
+		var editorPosition = Math.min(scimoz.anchor, scimoz.currentPos),
+			positionStyle = scimoz.getStyleAt(editorPosition);
+
+		// Make sure selection is not within an attribute or an operator
+		if (scimoz.anchor !== scimoz.currentPos &&
+			[scimoz.SCE_UDL_M_ATTRNAME,
+			 scimoz.SCE_UDL_M_STRING,
+			 scimoz.SCE_UDL_M_OPERATOR].indexOf(positionStyle) >= 0)
+			return false;
+
 		var expandResult = $self.expand(view);
 		if (expandResult) {
 
