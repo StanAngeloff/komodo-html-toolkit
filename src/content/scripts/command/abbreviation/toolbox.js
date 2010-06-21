@@ -13,6 +13,11 @@ $self.provider = function() {
 
 	this.getAllowedCharacters = function() { return ['\\w', '\\.']; };
 
+	this.canExecute = function(view) {
+
+        return ('true' === $toolkit.pref('tagComplete.toolboxEnabled'));
+    };
+
 	this.findSnippet = function(view, abbreviation) {
 
 		var viewLanguages = [];
