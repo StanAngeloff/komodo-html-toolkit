@@ -31,7 +31,7 @@ $self.provider = function() {
 			abbreviation = abbreviation.substr(1);
 
 		var isXHtmlView = $toolkit.htmlUtils.isXHtmlDoctype($toolkit.editor.guessDoctype(view)),
-			abbreviationLower = ('' + abbreviation).toLowerCase();
+			abbreviationLower = ('' + abbreviation).toLowerCase(),
 			snippet = null;
 
         if ('true' === $toolkit.pref('tagComplete.libraryEnabled')) {
