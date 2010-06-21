@@ -15,20 +15,28 @@ What it does:
 - **Ctrl + Alt + D** — duplicate line as template
 - **Lorem Ipsum generator**: type: `lipsum` followed by either `.chars`, `.words` or `.paras` and `*times` e.g. `lipsum.words*100` will produce a paragraph with 100 Lorem Ipsum words
 - **Markdown & Wiki preview panels**
+- Selection Tools — Capitalise, Hyphenise, Underscorise, Base64, HTML & URL encode/decode
+- HTML Entities auto-complete
+- Quick Macro — create JavaScript/CoffeeScript snippets on the fly
 
-How to Install
-==============
+Playing Nice with Others
+------------------------
+
+As of [1.2.1](http://github.com/StanAngeloff/komodo-html-toolkit/tree/1.2.1) integration with Zen Coding is turned on by default (if installed and enabled). Any HTML tags/abbreviations will be routed through Zen Coding first.
+
+How to Install (stable)
+=======================
 
 - Download the XPI file from [ActiveState Komodo Extensions](http://community.activestate.com/xpi/html-toolkit)
-- Fire up Komodo 5
+- Fire up Komodo 5+ (support for 6/nightly builds is provided)
 - Select *Tools* -> *Add-ons* -> *Extensions*
 - Drag and drop the XPI file onto the *Add-ons* window
 - Wait and confirm the installation
 
 You must restart Komodo for changes to take effect.
 
-Running the latest copy
------------------------
+Running the latest copy (unstable)
+----------------------------------
 
 You can also install HTML Toolkit from source. Follow the
 [Firefox extension proxy file](https://developer.mozilla.org/en/Setting_up_extension_development_environment#Firefox_extension_proxy_file)
@@ -41,4 +49,3 @@ The new 1.0+ version allows developers to add custom abbreviations providers. Th
 You can develop your own to automate common tasks. There is no documentation at this point, but [the code](http://github.com/StanAngeloff/komodo-html-toolkit/blob/master/src/content/scripts/command/abbreviation/lipsum.js#path) should be easy to follow.
 
 HTML Toolkit is modular. You can add your own commands and take advantage of the tools already available. Browse the source code below and ask any questions you might have!
-
