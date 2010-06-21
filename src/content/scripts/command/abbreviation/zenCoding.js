@@ -2,6 +2,7 @@
   var SUBLANGUAGE_EXTRA_LIST, SUBLANGUAGE_SUPPORTED_LIST, root;
   root = (typeof $toolkit !== "undefined" && $toolkit !== null) ? $toolkit : this;
   root.include('editor');
+  root.include('external');
   SUBLANGUAGE_SUPPORTED_LIST = ['HTML', 'XML', 'XBL', 'PHP'];
   SUBLANGUAGE_EXTRA_LIST = ['CSS', 'Haml'];
   $self.provider = function() {
@@ -41,6 +42,7 @@
     return this;
   };
   $self.registerAll = function() {
-    return new $self.provider().register();
+    root.external.zenCoding = new $self.provider();
+    return root.external.zenCoding.register();
   };
 })();

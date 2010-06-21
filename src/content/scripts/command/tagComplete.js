@@ -100,10 +100,20 @@ $self.controller = function() {
 						if ('<' + tagName === lineBuffer &&
 							scimoz.lineFromPosition(editorPosition) === scimoz.lineFromPosition(position)) {
 
-							// Check in toolbox first
 							var abbrevSnippet = null;
 
-							if ('true' === $toolkit.pref('tagComplete.toolboxEnabled')) {
+							// Check if Zen Coding can expand the tag
+							if ( ! abbrevSnippet &&
+								$toolkit.regexp.matchTagWord(tagName, '^', '$') &&
+								$toolkit.external && $toolkit.external.zenCoding &&
+								$toolkit.external.zenCoding.canExecute(view)) {
+
+								abbrevSnippet = $toolkit.external.zenCoding.findSnippet(view, tagName);
+							}
+
+							// Check in toolbox
+							if ( ! abbrevSnippet &&
+								'true' === $toolkit.pref('tagComplete.toolboxEnabled')) {
 
 								abbrevSnippet = ko.abbrev.findAbbrevSnippet(tagName) ||
 												ko.abbrev.findAbbrevSnippet(tagNameLower);

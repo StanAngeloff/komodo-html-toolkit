@@ -1,5 +1,6 @@
 root: $toolkit ? this
 root.include 'editor'
+root.include 'external'
 
 SUBLANGUAGE_SUPPORTED_LIST: ['HTML', 'XML', 'XBL', 'PHP']
 SUBLANGUAGE_EXTRA_LIST:     ['CSS', 'Haml']
@@ -38,4 +39,5 @@ $self.provider: ->
   this
 
 $self.registerAll: ->
-  new $self.provider().register()
+  root.external.zenCoding: new $self.provider()
+  root.external.zenCoding.register()
