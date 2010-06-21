@@ -31,10 +31,15 @@ $self.controller: ->
 
     if result.part?
       @parts.push result.part
-      ko.projects.invokePart result.part
+      return ko.projects.invokePart result.part
+    return null
 
   root.trapExceptions this
   this
 
 $self.registerAll: ->
+  if ko.toolbox2?
+    $log('Quick Macro is not compatible with Komodo 6')
+    return false
+
   new $self.controller().register()
