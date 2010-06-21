@@ -130,7 +130,7 @@ $self.controller = function() {
 								isTagAbbreviation = true;
 
 								// Give more detailed information about where the snippet was found
-								var parentName = null;
+								var parentName = null, lastName;
 
 								if ('*internal*' === tagComplete.parent.name)
 									parentName = $toolkit.l10n('command').GetStringFromName('abbreviation.builtIn');
@@ -145,8 +145,10 @@ $self.controller = function() {
 										tagParent = tagParent.parent;
 									}
 
-									tagPath.pop();
-									tagPath.push($toolkit.l10n('command').GetStringFromName('abbreviation.toolbox'));
+									lastName = tagPath.pop();
+									if ('*internal*' !== lastName) {
+										tagPath.push($toolkit.l10n('command').GetStringFromName('abbreviation.toolbox'));
+									}
 
 									parentName = tagPath.reverse().join(' > ');
 								}

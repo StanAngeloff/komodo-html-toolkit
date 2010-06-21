@@ -390,7 +390,7 @@ $self.controller = function() {
 					if (insertResult) {
 
 						// Give more detailed information about where the snippet was found
-						var snippetName = [];
+						var snippetName = [], lastName;
 
 						if ('*internal*' === snippet.parent.name)
 							snippetName.push($toolkit.l10n('command').GetStringFromName('abbreviation.builtIn'));
@@ -403,8 +403,10 @@ $self.controller = function() {
 								snippetParent = snippetParent.parent;
 							}
 
-							snippetName.pop();
-							snippetName.push($toolkit.l10n('command').GetStringFromName('abbreviation.toolbox'));
+							lastName = snippetName.pop();
+							if ('*internal*' !== lastName) {
+								snippetName.push($toolkit.l10n('command').GetStringFromName('abbreviation.toolbox'));
+							}
 						}
 
 						snippetName = snippetName.reverse().join(' > ');

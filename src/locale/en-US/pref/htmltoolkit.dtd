@@ -4,6 +4,7 @@
 <!ENTITY  components.nameColumn  "Name">
 <!ENTITY  tagComplete.group  "Tag Auto-Complete">
 <!ENTITY  tagComplete.description  "Select the sources for expanding closing tags:">
+<!ENTITY  tagComplete.zenCoding  "Use Zen Coding, if installed and enabled">
 <!ENTITY  tagComplete.toolbox  "Look for snippet in Toolbox and Project 'Abbreviations' folders matching the tag name">
 <!ENTITY  tagComplete.library  "Look for internal snippet matching the tag name, e.g., &lt;a href=&quot;&quot;&gt;&lt;/a&gt; instead of &lt;a&gt;&lt;/a&gt;">
 <!ENTITY  tagComplete.default  "Auto-close if tag name is a valid HTML 4/5 tag">
