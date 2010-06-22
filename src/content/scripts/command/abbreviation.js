@@ -186,22 +186,26 @@ $self.controller = function() {
 		return expandResult;
 	};
 
-	$self.findSnippet = function(view, abbreviation) {
+	$self.findSnippet = function(view, abbreviation, provider) {
 
 		var snippet = null;
 
-		$self.manager.forViewProviders(view, function(provider) {
+		// If no provider is given, attempt to find a snippet in any of the registered ones
+		if (typeof (provider) === 'undefined') {
 
-			if ( ! snippet) {
+			$self.manager.forViewProviders(view, function(provider) { if ( ! snippet) {
+				snippet = $self.findSnippet(view, abbreviation, provider);
+			} });
 
-				// Compile allowed characters to a regular expression and check against abbreviation
-				var providerAllowedCharacters = provider.getAllowedCharacters(),
-					providerAllowedRegExp = new RegExp('^[' + providerAllowedCharacters.join('') + ']+$');
+		} else {
 
-				if (providerAllowedRegExp.test(abbreviation))
-					snippet = provider.findSnippet(view, abbreviation);
-			}
-		});
+			// Compile allowed characters to a regular expression and check against abbreviation
+			var providerAllowedCharacters = provider.getAllowedCharacters(),
+				providerAllowedRegExp = new RegExp('^[' + providerAllowedCharacters.join('') + ']+$');
+
+			if (providerAllowedRegExp.test(abbreviation))
+				snippet = provider.findSnippet(view, abbreviation);
+		}
 
 		return snippet;
 	};
@@ -331,105 +335,109 @@ $self.controller = function() {
 	$self.expand = function(view, abbreviation) {
 
 		var scimoz = view.scimoz,
+			snippet = null,
+			longestAbbreviation = '',
 			expandAtPosition, i;
 
-		if (typeof (abbreviation) === 'undefined')
-			abbreviation = '';
+		if (typeof (abbreviation) === 'undefined' ||
+			! abbreviation.length) {
 
-		// Collect allowed characgters from providers
-		var allowedCharacters = [],
-			providerAllowedCharacters;
+			$self.manager.forViewProviders(view, function(provider) { if ( ! snippet) {
 
-		$self.manager.forViewProviders(view, function(provider) {
+				var providerAllowedCharacters = provider.getAllowedCharacters(),
+					// Compile allowed characters to a regular expression used for look-ups
+					providerAllowedRegExp = new RegExp('^[' + providerAllowedCharacters.join('') + ']+$');
 
-			providerAllowedCharacters = provider.getAllowedCharacters();
-			for (i = 0; i < providerAllowedCharacters.length; i ++)
-				if (allowedCharacters.indexOf(providerAllowedCharacters[i]) < 0)
-					allowedCharacters.push(providerAllowedCharacters[i]);
-		});
+				// Clear previous matching abbreviation from buffer
+				abbreviation = null;
 
-		// Compile allowed characters to a regular expression used for look-ups
-		var abbreviationRegExp = new RegExp('^[' + allowedCharacters.join('') + ']+$');
+				// If there is no selection within the document, expand back
+				if (scimoz.anchor === scimoz.currentPos) {
 
-		if ( ! abbreviation.length) {
+					var rangeStart = scimoz.anchor - 1,
+						rangeEnd = scimoz.currentPos,
+						rangeText;
 
-			// If there is no selection within the document, expand back
-			if (scimoz.anchor === scimoz.currentPos) {
+					while (rangeStart >= 0) {
 
-				var rangeStart = scimoz.anchor - 1,
-					rangeEnd = scimoz.currentPos,
-					rangeText;
+						rangeText = scimoz.getTextRange(rangeStart, rangeEnd);
+						if (providerAllowedRegExp.test(rangeText)) {
 
-				while (rangeStart >= 0) {
+							abbreviation = rangeText;
+							expandAtPosition = rangeStart;
 
-					rangeText = scimoz.getTextRange(rangeStart, rangeEnd);
-					if (abbreviationRegExp.test(rangeText)) {
+						} else
+							break;
 
-						abbreviation = rangeText;
-						expandAtPosition = rangeStart;
-
-					} else
-						break;
-
-					rangeStart --;
-				}
-
-			} else {
-
-				abbreviation = scimoz.selText;
-				expandAtPosition = Math.min(scimoz.anchor, scimoz.currentPos);
-			}
-		}
-
-		// If we have a matching abbreviation, insert snippet
-		if (abbreviationRegExp.test(abbreviation)) {
-
-			var snippet = $self.findSnippet(view, abbreviation);
-			if (snippet) {
-
-				// If auto-complete is visible, close it to prevent auto-complete on selected item
-				if (scimoz.autoCActive())
-					scimoz.autoCCancel();
-
-				try {
-
-					scimoz.beginUndoAction();
-					scimoz.setSel(expandAtPosition, expandAtPosition + abbreviation.length);
-
-					var insertResult = $self.insertSnippet(view, abbreviation, snippet);
-					if (insertResult) {
-
-						// Give more detailed information about where the snippet was found
-						var snippetName = [], lastName;
-
-						if ('*internal*' === snippet.parent.name)
-							snippetName.push($toolkit.l10n('command').GetStringFromName('abbreviation.builtIn'));
-						else {
-
-							var snippetParent = snippet.parent;
-							while (snippetParent) {
-
-								snippetName.push(snippetParent.name);
-								snippetParent = snippetParent.parent;
-							}
-
-							lastName = snippetName.pop();
-							if ('*internal*' !== lastName) {
-								snippetName.push($toolkit.l10n('command').GetStringFromName('abbreviation.toolbox'));
-							}
-						}
-
-						snippetName = snippetName.reverse().join(' > ');
-						ko.statusBar.AddMessage($toolkit.l10n('command').formatStringFromName('abbreviation.snippetFound', [abbreviation, snippetName], 2), 'htmltoolkit', 2500, true);
-
-						return true;
+						rangeStart --;
 					}
 
-				} finally { scimoz.endUndoAction(); }
+				} else {
 
-			} else
-				ko.statusBar.AddMessage($toolkit.l10n('command').formatStringFromName('abbreviation.snippetNotFound', [abbreviation], 1), 'htmltoolkit', 1500, true);
+					abbreviation = scimoz.selText;
+					expandAtPosition = Math.min(scimoz.anchor, scimoz.currentPos);
+				}
+
+				// If we have a matching abbreviation, attempt to find a snippet
+				if (abbreviation && abbreviation.length) {
+
+					if (longestAbbreviation.length < abbreviation.length)
+						longestAbbreviation = abbreviation;
+					snippet = $self.findSnippet(view, abbreviation, provider);
+				}
+
+			} });
+
+		} else {
+
+			longestAbbreviation = abbreviation;
+			snippet = $self.findSnippet(view, abbreviation);
 		}
+
+		if (snippet) {
+
+			// If auto-complete is visible, close it to prevent auto-complete on selected item
+			if (scimoz.autoCActive())
+				scimoz.autoCCancel();
+
+			try {
+
+				scimoz.beginUndoAction();
+				scimoz.setSel(expandAtPosition, expandAtPosition + longestAbbreviation.length);
+
+				var insertResult = $self.insertSnippet(view, longestAbbreviation, snippet);
+				if (insertResult) {
+
+					// Give more detailed information about where the snippet was found
+					var snippetName = [], lastName;
+
+					if ('*internal*' === snippet.parent.name)
+						snippetName.push($toolkit.l10n('command').GetStringFromName('abbreviation.builtIn'));
+					else {
+
+						var snippetParent = snippet.parent;
+						while (snippetParent) {
+
+							snippetName.push(snippetParent.name);
+							snippetParent = snippetParent.parent;
+						}
+
+						lastName = snippetName.pop();
+						if ('*internal*' !== lastName) {
+							snippetName.push($toolkit.l10n('command').GetStringFromName('abbreviation.toolbox'));
+						}
+					}
+
+					snippetName = snippetName.reverse().join(' > ');
+					ko.statusBar.AddMessage($toolkit.l10n('command').formatStringFromName('abbreviation.snippetFound', [longestAbbreviation, snippetName], 2), 'htmltoolkit', 2500, true);
+
+					return true;
+				}
+
+			} finally { scimoz.endUndoAction(); }
+
+		} else if (longestAbbreviation.length)
+			ko.statusBar.AddMessage($toolkit.l10n('command').formatStringFromName('abbreviation.snippetNotFound', [longestAbbreviation], 1), 'htmltoolkit', 1500, true);
 
 		return false;
 	};
