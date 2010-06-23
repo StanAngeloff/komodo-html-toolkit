@@ -69,13 +69,6 @@ $self.controller = function() {
 					var isXHtmlView = $toolkit.htmlUtils.isXHtmlDoctype($toolkit.editor.guessDoctype(view)),
 						editorEndUndo = false;
 
-					// If this was an internal call, do no begin another undo action
-					if ( ! e || ! e.preventUndo) {
-
-						editorEndUndo = true;
-						scimoz.beginUndoAction();
-					}
-
 					try {
 
 						// If autocomplete is visible, close it to prevent autocomplete on selected item
@@ -91,6 +84,13 @@ $self.controller = function() {
 						// Do not process event any further
 						e.preventDefault();
 						e.stopPropagation();
+
+						// If this was an internal call, do no begin another undo action
+						if ( ! e || ! e.preventUndo) {
+
+							editorEndUndo = true;
+							scimoz.beginUndoAction();
+						}
 
 						// Re-paint document so closing arrow is recognised correctly
 						$toolkit.editor.invalidate();
@@ -271,9 +271,9 @@ $self.controller = function() {
 							// If we have indicators within the document, we can't undo
 							if ($toolkit.editor.hasTabstops(view) &&
 								scimoz.anchor !== scimoz.currentPos)
-								$toolkit.command.undo.undoable = false;
+								$toolkit.command.undo.undoable = 0;
 							else
-								$toolkit.command.undo.undoable = true;
+								$toolkit.command.undo.undoable = 2;
 						}
 
 						return true;

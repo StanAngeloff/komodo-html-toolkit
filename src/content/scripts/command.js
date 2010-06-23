@@ -122,7 +122,7 @@ $self.dispatcher = {
 
 		// We cannot undo if the user makes changes to the buffer
 		if (typeof ($toolkit.command.undo) === 'object')
-			if (e.charCode > 0) $toolkit.command.undo.undoable = false;
+			if (e.charCode > 0) $toolkit.command.undo.undoable = 0;
 
 		if ($self.dispatcher.commands.length)
 			$self.dispatcher.process($self.dispatcher.event2key(e, true), e);

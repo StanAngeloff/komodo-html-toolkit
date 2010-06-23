@@ -1,4 +1,4 @@
-$self.undoable = false;
+$self.undoable = 0;
 $self.anchor = $self.position = null;
 
 $toolkit.include('command');
@@ -24,13 +24,17 @@ $self.controller = function() {
 
 	this.trigger = function(e) {
 
-		$self.undoable = false;
+        var levels = $self.undoable;
+
+		$self.undoable = 0;
 
 		var scimoz = ko.views.manager.currentView.scimoz;
 		if (scimoz.currentPos === $self.position) {
 
-			scimoz.undo();
-			scimoz.anchor = scimoz.currentPos = $self.anchor;
+			while (levels --)
+                scimoz.undo();
+
+            scimoz.anchor = scimoz.currentPos = $self.anchor;
 			scimoz.scrollCaret();
 
 			// Do not process event any further

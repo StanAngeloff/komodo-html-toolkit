@@ -61,9 +61,9 @@ $self.controller = function() {
 
 					if ($toolkit.editor.hasTabstops(view) &&
 						scimoz.currentPos !== scimoz.anchor)
-						$toolkit.command.undo.undoable = false;
+						$toolkit.command.undo.undoable = 0;
 					else
-						$toolkit.command.undo.undoable = true;
+						$toolkit.command.undo.undoable = 1;
 				}
 
 				return true;

@@ -121,9 +121,9 @@ $self.controller = function() {
 					// If we have indicators within the document, we can't undo
 					if ($toolkit.editor.hasTabstops(view) &&
 						scimoz.anchor !== scimoz.currentPos)
-						$toolkit.command.undo.undoable = false;
+						$toolkit.command.undo.undoable = 0;
 					else
-						$toolkit.command.undo.undoable = true;
+						$toolkit.command.undo.undoable = 1;
 				}
 
 				return true;

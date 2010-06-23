@@ -96,8 +96,11 @@ $self.controller = function() {
 				$tagComplete.trigger($event)
 
 				if (typeof ($toolkit.command.undo) === 'object' &&
-					$toolkit.command.undo.undoable)
+					$toolkit.command.undo.undoable) {
+
+					$toolkit.command.undo.undoable = 1;
 					$toolkit.command.undo.anchor = undoAnchor;
+                }
 
 				return true;
 
