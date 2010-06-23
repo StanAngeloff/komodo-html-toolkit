@@ -102,15 +102,6 @@ $self.controller = function() {
 
 							var abbrevSnippet = null;
 
-							// Check if Zen Coding can expand the tag
-							if ( ! abbrevSnippet &&
-								$toolkit.regexp.matchTagWord(tagName, '^', '$') &&
-								$toolkit.external && $toolkit.external.zenCoding &&
-								$toolkit.external.zenCoding.canExecute(view)) {
-
-								abbrevSnippet = $toolkit.external.zenCoding.findSnippet(view, tagName);
-							}
-
 							// Check in toolbox
 							if ( ! abbrevSnippet &&
 								'true' === $toolkit.pref('tagComplete.toolboxEnabled')) {
