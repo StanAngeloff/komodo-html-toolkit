@@ -11,7 +11,7 @@ $self.provider = function() {
 	$toolkit.command.abbreviation.provider.apply(this, [providerName = 'toolbox',
 														providerOrdering = 5000]);
 
-	this.getAllowedCharacters = function() { return ['\\w', '\\.']; };
+	this.getAllowedCharacters = function() { return ['<', '\\w', '\\.']; };
 
 	this.canExecute = function(view) {
 
@@ -19,6 +19,9 @@ $self.provider = function() {
     };
 
 	this.findSnippet = function(view, abbreviation) {
+
+		if ('<' === abbreviation.charAt(0))
+			abbreviation = abbreviation.substr(1);
 
 		var viewLanguages = [];
 

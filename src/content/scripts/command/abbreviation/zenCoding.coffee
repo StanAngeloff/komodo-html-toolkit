@@ -9,7 +9,7 @@ $self.provider: ->
   root.command.abbreviation.provider.apply @, [providerName: 'zenCoding'
                                                providerOrdering: 6200]
 
-  @getAllowedCharacters: -> ['a-z', 'A-Z', '0-9', '#', '\\.', '>', '\\+', '\\*', '\\:', '\\$', '\\-', '_', '\\!', '@', '\\[', '\\]', '\\(', '\\)', '\\|']
+  @getAllowedCharacters: -> ['<', 'a-z', 'A-Z', '0-9', '#', '\\.', '>', '\\+', '\\*', '\\:', '\\$', '\\-', '_', '\\!', '@', '\\[', '\\]', '\\(', '\\)', '\\|']
 
   @canExecute: (view) ->
     root.pref('tagComplete.zenCodingEnabled') is 'true' \

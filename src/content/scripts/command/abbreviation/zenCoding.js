@@ -9,7 +9,7 @@
     var providerName, providerOrdering;
     root.command.abbreviation.provider.apply(this, [(providerName = 'zenCoding'), (providerOrdering = 6200)]);
     this.getAllowedCharacters = function() {
-      return ['a-z', 'A-Z', '0-9', '#', '\\.', '>', '\\+', '\\*', '\\:', '\\$', '\\-', '_', '\\!', '@', '\\[', '\\]', '\\(', '\\)', '\\|'];
+      return ['<', 'a-z', 'A-Z', '0-9', '#', '\\.', '>', '\\+', '\\*', '\\:', '\\$', '\\-', '_', '\\!', '@', '\\[', '\\]', '\\(', '\\)', '\\|'];
     };
     this.canExecute = function(view) {
       return root.pref('tagComplete.zenCodingEnabled') === 'true' && (typeof zen_editor !== "undefined" && zen_editor !== null) && (typeof zen_coding !== "undefined" && zen_coding !== null) && ((SUBLANGUAGE_SUPPORTED_LIST.indexOf(view.document.subLanguage) >= 0 && root.editor.isHtmlBuffer(view)) || SUBLANGUAGE_EXTRA_LIST.indexOf(view.document.subLanguage) >= 0);
