@@ -437,7 +437,7 @@ $self.controller = function() {
 			} finally { scimoz.endUndoAction(); }
 
 		} else if (longestAbbreviation.length)
-			ko.statusBar.AddMessage($toolkit.l10n('command').formatStringFromName('abbreviation.snippetNotFound', [longestAbbreviation], 1), 'htmltoolkit', 1500, true);
+			ko.statusBar.AddMessage($toolkit.l10n('command').formatStringFromName('abbreviation.snippetNotFound', [longestAbbreviation], 1), 'htmltoolkit', 1500, false);
 
 		return false;
 	};
