@@ -84,10 +84,19 @@ $self.provider = function(providerName, providerOrdering) {
 
 	this.name = providerName;
 	this.ordering = (typeof (providerOrdering) === 'undefined' ? ++ PROVIDER_ORDERING : parseInt(providerOrdering));
+	this.allowedRegExp = null;
 
 	this.register = function() { $self.manager.addProvider(this); };
 
 	this.unregister = function() { $self.manager.removeProvider(this); };
+
+	this.getAllowedRegExp = function() {
+
+		if ( ! this.allowedRegExp)
+			this.allowedRegExp = new RegExp('^[' + this.getAllowedCharacters().join('') + ']+$');
+
+		return this.allowedRegExp;
+	}
 
 	/** @abstract */
 	this.getAllowedCharacters = function() { return []; };
@@ -199,11 +208,7 @@ $self.controller = function() {
 
 		} else {
 
-			// Compile allowed characters to a regular expression and check against abbreviation
-			var providerAllowedCharacters = provider.getAllowedCharacters(),
-				providerAllowedRegExp = new RegExp('^[' + providerAllowedCharacters.join('') + ']+$');
-
-			if (providerAllowedRegExp.test(abbreviation))
+			if (provider.getAllowedRegExp().test(abbreviation))
 				snippet = provider.findSnippet(view, abbreviation);
 		}
 
@@ -344,10 +349,6 @@ $self.controller = function() {
 
 			$self.manager.forViewProviders(view, function(provider) {
 
-				var providerAllowedCharacters = provider.getAllowedCharacters(),
-					// Compile allowed characters to a regular expression used for look-ups
-					providerAllowedRegExp = new RegExp('^[' + providerAllowedCharacters.join('') + ']+$');
-
 				// Clear previous matching abbreviation from buffer
 				abbreviation = null;
 
@@ -361,7 +362,7 @@ $self.controller = function() {
 					while (rangeStart >= 0) {
 
 						rangeText = scimoz.getTextRange(rangeStart, rangeEnd);
-						if (providerAllowedRegExp.test(rangeText)) {
+						if (provider.getAllowedRegExp().test(rangeText)) {
 
 							abbreviation = rangeText;
 							expandAtPosition = rangeStart;
