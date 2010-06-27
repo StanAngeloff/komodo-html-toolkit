@@ -12,12 +12,31 @@
       return [[], ['a-z', 'A-Z', '0-9', '#', '\\.', '>', '\\+', '\\*', '\\:', '\\$', '\\-', '_', '\\!', '@', '\\[', '\\]', '\\(', '\\)', '\\|']];
     };
     this.canExecute = function(view) {
-      var isEnabled, isInstalled, isLanguageSupported;
+      var isEnabled, isInstalled, isLanguageSupported, lineStartPosition, rangeEnd, rangeStart, rangeText, scimoz;
       isEnabled = root.pref('tagComplete.zenCodingEnabled') === 'true';
       isInstalled = (typeof zen_editor !== "undefined" && zen_editor !== null) && (typeof zen_coding !== "undefined" && zen_coding !== null);
       isLanguageSupported = SUBLANGUAGE_SUPPORTED_LIST.indexOf(view.document.subLanguage) >= 0 && root.editor.isHtmlBuffer(view);
       isLanguageSupported = isLanguageSupported || SUBLANGUAGE_EXTRA_LIST.indexOf(view.document.subLanguage) >= 0;
       if (isEnabled && isInstalled && isLanguageSupported) {
+        // We can use Zen Coding only when the abbreviation is preceded by a whitespace
+        scimoz = view.scimoz;
+        if (scimoz.anchor === scimoz.currentPos) {
+          lineStartPosition = scimoz.positionFromLine(scimoz.lineFromPosition(scimoz.currentPos));
+          rangeStart = scimoz.anchor - 1;
+          rangeEnd = scimoz.currentPos;
+          rangeText = '';
+          while (rangeStart >= 0) {
+            rangeText = scimoz.getTextRange(rangeStart, rangeEnd);
+            if (!this.getAllowedRegExp().test(rangeText)) {
+              break;
+            } else if (rangeStart === lineStartPosition) {
+              rangeText = (" " + rangeText);
+              break;
+            }
+            rangeStart -= 1;
+          }
+          return /^\s+/.test(rangeText);
+        }
         return true;
       }
       return false;

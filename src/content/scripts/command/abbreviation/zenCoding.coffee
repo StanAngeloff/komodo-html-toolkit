@@ -22,6 +22,22 @@ $self.provider: ->
     isLanguageSupported: SUBLANGUAGE_SUPPORTED_LIST.indexOf(view.document.subLanguage) >= 0 and root.editor.isHtmlBuffer(view)
     isLanguageSupported: or SUBLANGUAGE_EXTRA_LIST.indexOf(view.document.subLanguage) >= 0
     if isEnabled and isInstalled and isLanguageSupported
+      # We can use Zen Coding only when the abbreviation is preceded by a whitespace
+      scimoz:            view.scimoz
+      if scimoz.anchor is scimoz.currentPos
+        lineStartPosition: scimoz.positionFromLine scimoz.lineFromPosition scimoz.currentPos
+        rangeStart:        scimoz.anchor - 1
+        rangeEnd:          scimoz.currentPos
+        rangeText:         ''
+        while rangeStart >= 0
+          rangeText: scimoz.getTextRange rangeStart, rangeEnd
+          if not this.getAllowedRegExp().test(rangeText)
+            break
+          else if rangeStart is lineStartPosition
+            rangeText: " $rangeText"
+            break
+          rangeStart: - 1
+        return /^\s+/.test(rangeText)
       return yes
     return no
 
