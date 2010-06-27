@@ -94,8 +94,6 @@ $self.provider = function(providerName, providerOrdering) {
 
 	this.getAllowedRegExp = function(index) {
 
-		var allowedRegExp = null;
-
 		if (typeof (index) === 'undefined' || index === null) {
 
 			if ( ! this.allowedRegExp) {
@@ -108,17 +106,15 @@ $self.provider = function(providerName, providerOrdering) {
 				this.allowedRegExp = new RegExp('^[' + flattenCharacters.join('') + ']+$');
 			}
 
-			allowedRegExp = this.allowedRegExp;
+			return this.allowedRegExp;
 
 		} else {
 
 			if ( ! this.indexedRegExp[index])
 				this.indexedRegExp[index] = new RegExp('^[' + this.getAllowedCharacters()[index].join('') + ']+$');
 
-			allowedRegExp = this.indexedRegExp[index];
+			return this.indexedRegExp[index];
 		}
-
-		return allowedRegExp;
 	}
 
 	/** @abstract */
