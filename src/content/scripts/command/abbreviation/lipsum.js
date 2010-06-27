@@ -14,7 +14,10 @@ $self.provider = function() {
 
 	this.getAllowedCharacters = function() {
 
-		return ['lipsum', '\\.', 'chars', 'words', 'paras', '\\*', '0-9'];
+		return [
+            [],
+            ['lipsum', '\\.', 'chars', 'words', 'paras', '\\*', '0-9']
+        ];
 	};
 
 	this.canExecute = function(view) {

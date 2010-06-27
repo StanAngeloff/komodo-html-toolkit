@@ -6,16 +6,24 @@ SUBLANGUAGE_SUPPORTED_LIST: ['HTML', 'XML', 'XBL', 'PHP']
 SUBLANGUAGE_EXTRA_LIST:     ['CSS', 'Haml']
 
 $self.provider: ->
-  root.command.abbreviation.provider.apply @, [providerName: 'zenCoding'
-                                               providerOrdering: 6200]
+  root.command.abbreviation.provider.apply @, [
+    providerName:     'zenCoding'
+    providerOrdering: 6200
+  ]
 
-  @getAllowedCharacters: -> ['<', 'a-z', 'A-Z', '0-9', '#', '\\.', '>', '\\+', '\\*', '\\:', '\\$', '\\-', '_', '\\!', '@', '\\[', '\\]', '\\(', '\\)', '\\|']
+  @getAllowedCharacters: -> [
+    []
+    ['a-z', 'A-Z', '0-9', '#', '\\.', '>', '\\+', '\\*', '\\:', '\\$', '\\-', '_', '\\!', '@', '\\[', '\\]', '\\(', '\\)', '\\|']
+  ]
 
   @canExecute: (view) ->
-    root.pref('tagComplete.zenCodingEnabled') is 'true' \
-    and zen_editor? and zen_coding? \
-    and ((SUBLANGUAGE_SUPPORTED_LIST.indexOf(view.document.subLanguage) >= 0 and root.editor.isHtmlBuffer(view)) or \
-          SUBLANGUAGE_EXTRA_LIST.indexOf(view.document.subLanguage) >= 0)
+    isEnabled:           root.pref('tagComplete.zenCodingEnabled') is 'true'
+    isInstalled:         zen_editor? and zen_coding?
+    isLanguageSupported: SUBLANGUAGE_SUPPORTED_LIST.indexOf(view.document.subLanguage) >= 0 and root.editor.isHtmlBuffer(view)
+    isLanguageSupported: or SUBLANGUAGE_EXTRA_LIST.indexOf(view.document.subLanguage) >= 0
+    if isEnabled and isInstalled and isLanguageSupported
+      return yes
+    return no
 
   @findSnippet: (view, abbreviation) ->
     length:       abbreviation.length

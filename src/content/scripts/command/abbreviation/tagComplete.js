@@ -14,7 +14,10 @@ $self.provider = function() {
 
 	this.getAllowedCharacters = function() {
 
-		return ['<', 'a-z', 'A-Z', '0-9', '\\-', '\\_', '\\:'];
+		return [
+            ['<'],
+            ['a-z', 'A-Z', '0-9', '\\-', '\\_', '\\:']
+        ];
 	};
 
 	this.canExecute = function(view) {

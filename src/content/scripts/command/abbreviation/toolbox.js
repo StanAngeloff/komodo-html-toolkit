@@ -11,7 +11,13 @@ $self.provider = function() {
 	$toolkit.command.abbreviation.provider.apply(this, [providerName = 'toolbox',
 														providerOrdering = 5000]);
 
-	this.getAllowedCharacters = function() { return ['<', '\\w', '\\.']; };
+	this.getAllowedCharacters = function() {
+
+        return [
+            ['<'],
+            ['\\w', '\\.']
+        ];
+    };
 
 	this.canExecute = function(view) {
 

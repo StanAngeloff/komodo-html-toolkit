@@ -86,17 +86,39 @@ $self.provider = function(providerName, providerOrdering) {
 	this.name = providerName;
 	this.ordering = (typeof (providerOrdering) === 'undefined' ? ++ PROVIDER_ORDERING : parseInt(providerOrdering));
 	this.allowedRegExp = null;
+	this.indexedRegExp = [];
 
 	this.register = function() { $self.manager.addProvider(this); };
 
 	this.unregister = function() { $self.manager.removeProvider(this); };
 
-	this.getAllowedRegExp = function() {
+	this.getAllowedRegExp = function(index) {
 
-		if ( ! this.allowedRegExp)
-			this.allowedRegExp = new RegExp('^[' + this.getAllowedCharacters().join('') + ']+$');
+		var allowedRegExp = null;
 
-		return this.allowedRegExp;
+		if (typeof (index) === 'undefined' || index === null) {
+
+			if ( ! this.allowedRegExp) {
+
+				var i, allowedCharacters, flattenCharacters = [];
+
+				for (i = 0, allowedCharacters = this.getAllowedCharacters(); i < allowedCharacters.length; i ++)
+					flattenCharacters = flattenCharacters.concat(allowedCharacters[i]);
+
+				this.allowedRegExp = new RegExp('^[' + flattenCharacters.join('') + ']+$');
+			}
+
+			allowedRegExp = this.allowedRegExp;
+
+		} else {
+
+			if ( ! this.indexedRegExp[index])
+				this.indexedRegExp[index] = new RegExp('^[' + this.getAllowedCharacters()[index].join('') + ']+$');
+
+			allowedRegExp = this.indexedRegExp[index];
+		}
+
+		return allowedRegExp;
 	}
 
 	/** @abstract */
@@ -346,19 +368,22 @@ $self.controller = function() {
 						rangeEnd = scimoz.currentPos,
 						rangeText;
 
-					while (rangeStart >= 0) {
+					[null, 0].forEach(function(index) {
 
-						rangeText = scimoz.getTextRange(rangeStart, rangeEnd);
-						if (provider.getAllowedRegExp().test(rangeText)) {
+						while (rangeStart >= 0) {
 
-							abbreviation = rangeText;
-							expandAtPosition = rangeStart;
+							rangeText = scimoz.getTextRange(rangeStart, rangeEnd);
+							if (provider.getAllowedRegExp(index).test(rangeText)) {
 
-						} else
-							break;
+								abbreviation = rangeText;
+								expandAtPosition = rangeStart;
 
-						rangeStart --;
-					}
+							} else
+								break;
+
+							rangeStart --;
+						}
+					});
 
 				} else {
 
