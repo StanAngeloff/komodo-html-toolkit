@@ -1,4 +1,5 @@
 $toolkit.include('command.language');
+$toolkit.include('editor');
 $toolkit.include('library');
 $toolkit.include('strings');
 
@@ -158,22 +159,8 @@ $self.controller = function() {
 			scimoz = view.scimoz;
 
 		// Ensure we don't have tabstops remaining within the buffer
-		if (view.document.hasTabstopInsertionTable) {
-
-			var tabstopsTable = view.document.getTabstopInsertionTable({});
-
-			// If we have one tabstop remaining, skip it if it's Backref #0
-			if (tabstopsTable.length === 1) {
-
-				var lastTabstop = tabstopsTable[0];
-
-				if ( ! lastTabstop.isBackref || lastTabstop.backrefNumber !== 0)
-					return false;
-
-			// Don't process if we have more than one tabstop remaining
-			} else if (tabstopsTable.length > 1)
-				return false;
-		}
+		if ($toolkit.editor.hasTabstops(view))
+			return false;
 
 		var editorPosition = Math.min(scimoz.anchor, scimoz.currentPos),
 			positionStyle = scimoz.getStyleAt(editorPosition);
