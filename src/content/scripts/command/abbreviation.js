@@ -335,14 +335,14 @@ $self.controller = function() {
 	$self.expand = function(view, abbreviation) {
 
 		var scimoz = view.scimoz,
-			snippet = null,
+			snippet = null, longestSnippet = null,
 			longestAbbreviation = '',
 			expandAtPosition, i;
 
 		if (typeof (abbreviation) === 'undefined' ||
 			! abbreviation.length) {
 
-			$self.manager.forViewProviders(view, function(provider) { if ( ! snippet) {
+			$self.manager.forViewProviders(view, function(provider) {
 
 				var providerAllowedCharacters = provider.getAllowedCharacters(),
 					// Compile allowed characters to a regular expression used for look-ups
@@ -379,14 +379,18 @@ $self.controller = function() {
 				}
 
 				// If we have a matching abbreviation, attempt to find a snippet
-				if (abbreviation && abbreviation.length) {
+				if (abbreviation && abbreviation.length &&
+					abbreviation.length > longestAbbreviation.length) {
 
-					if (longestAbbreviation.length < abbreviation.length)
+					longestSnippet = $self.findSnippet(view, abbreviation, provider);
+					if (longestSnippet) {
+
 						longestAbbreviation = abbreviation;
-					snippet = $self.findSnippet(view, abbreviation, provider);
+						snippet = longestSnippet;
+					}
 				}
 
-			} });
+			});
 
 		} else {
 
