@@ -2,17 +2,28 @@ root: this
 root.extensions: or {}
 $toolkit: root.extensions.htmlToolkit: or {}
 
-`const POLLING_INTERVAL = 500`
+`const POLLING_INTERVAL = 1000`
 
 pollingTimer:       null
 
 encodingWidget:     null
+indentationWidget:  null
 
 lastEncodingName:   null
 lastEncodingUseBOM: null
+lastNewlineEndings: null
+
+newlineEndings:     ['LF', 'CR', 'CRLF']
+
+lastIndentHardTabs: null
+lastIndentLevels:   null
+lastIndentTabWidth: null
 
 getEncodingButton: ->
   encodingWidget: or document.getElementById 'statusbar-new-encoding-button'
+
+getIndentationButton: ->
+  indentationWidget: or document.getElementById 'statusbar-indentation-button'
 
 clearEncoding: ->
   getEncodingButton().removeAttribute 'label'
@@ -20,8 +31,16 @@ clearEncoding: ->
   lastEncodingName:   null
   lastEncodingUseBOM: null
 
+clearIndentation: ->
+  getIndentationButton().removeAttribute 'label'
+  getIndentationButton().setAttribute    'collapsed', 'true'
+  lastIndentHardTabs: null
+  lastIndentLevels:   null
+  lastIndentTabWidth: null
+
 clearEverything: ->
   clearEncoding()
+  clearIndentation()
 
 startPolling: (view) ->
   block: ->
@@ -30,18 +49,45 @@ startPolling: (view) ->
       if view.getAttribute 'type' is 'startpage'
         clearEverything()
       else
-        if lastEncodingName isnt (newEncodingName: view.document.encoding.short_encoding_name) \
-        or lastEncodingUseBOM isnt (newEncodingUseBOM: view.document.encoding.use_byte_order_marker)
-          lastEncodingName:   newEncodingName
-          lastEncodingUseBOM: newEncodingUseBOM
-          encodingButtonText: lastEncodingName
-          encodingButtonText: + '+BOM' if lastEncodingUseBOM/
+
+        newEncodingName:   view.document.encoding.short_encoding_name
+        newEncodingUseBOM: view.document.encoding.use_byte_order_marker
+        newNewlineEndings: view.document.new_line_endings
+        if lastEncodingName   isnt newEncodingName \
+        or lastEncodingUseBOM isnt newEncodingUseBOM \
+        or lastNewlineEndings isnt newNewlineEndings
+          encodingButtonText: newEncodingName
+          encodingButtonText: + '+BOM' if newEncodingUseBOM
+          encodingButtonText: + ": ${ newlineEndings[newNewlineEndings] }"
           getEncodingButton().setAttribute    'label', encodingButtonText
           getEncodingButton().removeAttribute 'collapsed'
+          lastEncodingName:   newEncodingName
+          lastEncodingUseBOM: newEncodingUseBOM
+          lastNewlineEndings: newNewlineEndings
+
+        if view.scimoz
+          newIndentHardTabs: view.scimoz.useTabs
+          newIndentLevels:   view.scimoz.indent
+          newIndentTabWidth: view.scimoz.tabWidth
+          if lastIndentHardTabs isnt newIndentHardTabs \
+          or lastIndentLevels   isnt newIndentLevels \
+          or lastIndentTabWidth isnt newIndentTabWidth
+            indentationButtonText: "${ if newIndentHardTabs then 'Tabs' else 'Soft Tabs' }: "
+            indentationButtonText: + newIndentLevels
+            indentationButtonText: + " [$newIndentTabWidth]" if newIndentLevels isnt newIndentTabWidth
+            getIndentationButton().setAttribute    'label', indentationButtonText
+            getIndentationButton().removeAttribute 'collapsed'
+            lastIndentHardTabs: newIndentHardTabs
+            lastIndentLevels:   newIndentLevels
+            lastIndentTabWidth: newIndentTabWidth
+        else
+          clearIndentation()
+
     catch e
       clearEverything()
   block()
   pollingTimer: setInterval block, POLLING_INTERVAL
+  id: pollingTimer
 
 stopPolling: ->
   return unless pollingTimer
