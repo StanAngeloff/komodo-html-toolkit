@@ -1,0 +1,21 @@
+#imagepreview_popup
+{
+	background-color: ThreeDFace;
+	border:           1px solid ThreeDDarkShadow;
+	padding:          8px;
+	-moz-box-align:   center;
+}
+
+	#imagepreview_popup image
+	{
+		background: ThreeDHighlight url(chrome://htmltoolkit/skin/images/cssimagepreview_checkers.png) repeat;
+		border:     1px solid ThreeDShadow;
+	}
+
+	#imagepreview_popup label
+	{
+		display:     block;
+		color:       WindowText;
+		font:        menu;
+		padding-top: 10px;
+	}
