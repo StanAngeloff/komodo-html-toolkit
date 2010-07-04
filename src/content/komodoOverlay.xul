@@ -8,11 +8,12 @@
 <overlay id="htmltoolkit" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
     <script type="application/x-javascript" src="chrome://htmltoolkit/content/htmltoolkit.js" />
+    <script type="application/x-javascript" src="chrome://htmltoolkit/content/scripts/statusbar.js" />
 
     <statusbar id="statusbarviewbox">
-		<statusbarpanel id="statusbar-new-encoding"
-						pack="end"
-						insertbefore="statusbar-language">
+        <statusbarpanel id="statusbar-new-encoding"
+                        pack="end"
+                        insertbefore="statusbar-language">
             <toolbarbutton class="statusbar-label"
                            id="statusbar-new-encoding-button"
                            tooltiptext="&status.encoding;"
@@ -21,10 +22,10 @@
                            type="menu"
                            persist="buttonstyle"
                            buttonstyle="text">
-				<menupopup id="statusbar-new-encoding-menu"
-						   position="before_end" />
+                <menupopup id="statusbar-new-encoding-menu"
+                           position="before_end" />
             </toolbarbutton>
-		</statusbarpanel>
+        </statusbarpanel>
         <statusbarpanel id="statusbar-indentation"
                         pack="end"
                         insertbefore="statusbar-language">
@@ -36,8 +37,8 @@
                            type="menu"
                            persist="buttonstyle"
                            buttonstyle="text">
-				<menupopup id="statusbar-indentation-menu"
-						   position="before_end" />
+                <menupopup id="statusbar-indentation-menu"
+                           position="before_end" />
             </toolbarbutton>
         </statusbarpanel>
     </statusbar>

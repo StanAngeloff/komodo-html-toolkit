@@ -1,0 +1,14 @@
+#statusbar-encoding
+{
+  display: none;
+}
+
+#statusbar-new-encoding
+{
+  min-width: 12em;
+}
+
+#statusbar-indentation
+{
+  min-width: 8em;
+}
