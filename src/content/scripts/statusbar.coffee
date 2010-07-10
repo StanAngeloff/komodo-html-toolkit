@@ -2,18 +2,24 @@ root: this
 root.extensions: or {}
 $toolkit: root.extensions.htmlToolkit: or {}
 
+`const XUL_NS = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul'`
+
 `const POLLING_INTERVAL = 1000`
 
 pollingTimer:       null
 
 encodingWidget:     null
+
 indentationWidget:  null
+indentationMenu:    null
+indentationBuilt:   false
 
 lastEncodingName:   null
 lastEncodingUseBOM: null
 lastNewlineEndings: null
 
 newlineEndings:     ['LF', 'CR', 'CRLF']
+indentationsList:   [2, 3, 4, 8]
 
 lastIndentHardTabs: null
 lastIndentLevels:   null
@@ -24,6 +30,9 @@ getEncodingButton: ->
 
 getIndentationButton: ->
   indentationWidget: or document.getElementById 'statusbar-indentation-button'
+
+getIndentationMenu: ->
+  indentationMenu: or document.getElementById 'statusbar-indentation-menu'
 
 clearEncoding: ->
   getEncodingButton().removeAttribute 'label'
@@ -110,3 +119,50 @@ events: {
 
 root.addEventListener eventName, eventHandler, true for eventName, eventHandler of events
 ko.main.addWillCloseHandler -> root.removeEventListener eventName, eventHandler, true for eventName, eventHandler of events
+
+$toolkit.statusbar: or {}
+
+$toolkit.statusbar.updateViewIndentation: (levels) ->
+  view: ko.views.manager?.currentView
+  return unless view and view.getAttribute('type') is 'editor' and view.document and view.scimoz
+  view.scimoz.tabWidth: view.scimoz.indent: levels
+  view.document.prefs.setLongPref 'indentWidth', levels
+  view.document.prefs.setLongPref 'tabWidth', levels
+  restartPolling { originalTarget: view }
+
+$toolkit.statusbar.updateViewHardTabs: (useTabs) ->
+  view: ko.views.manager?.currentView
+  return unless view and view.getAttribute('type') is 'editor' and view.document and view.scimoz
+  view.scimoz.useTabs: useTabs
+  view.document.prefs.setBooleanPref 'useTabs', useTabs
+  restartPolling { originalTarget: view }
+
+$toolkit.statusbar.updateIndentationMenu: ->
+  indentationMenu: getIndentationMenu()
+  unless indentationBuilt
+    firstChild: indentationMenu.firstChild
+    for levels in indentationsList
+      itemEl: document.createElementNS XUL_NS, 'menuitem'
+      itemEl.setAttribute 'class', 'statusbar-label'
+      itemEl.setAttribute 'id', "contextmenu_indentation$levels"
+      itemEl.setAttribute 'name', 'current_indentation'
+      itemEl.setAttribute 'label', levels
+      itemEl.setAttribute 'accesskey', levels
+      itemEl.setAttribute 'type', 'checkbox'
+      itemEl.setAttribute 'data-indent', levels
+      itemEl.addEventListener 'command', ->
+        $toolkit.statusbar.updateViewIndentation levels
+      , null
+      indentationMenu.insertBefore itemEl, firstChild
+    indentationBuilt: yes
+  inList: no
+  for itemEl in indentationMenu.childNodes when (levels: itemEl.getAttribute 'data-indent')?
+    itemEl.setAttribute('checked', if Number(levels) is lastIndentLevels then (inList: yes) else no)
+  otherLevelEl: document.getElementById 'contextmenu_indentationOther'
+  otherLevelEl.setAttribute('checked', if inList then no else yes)
+  softTabsEl: document.getElementById 'contextmenu_indentationSoftTabs'
+  softTabsEl.setAttribute('checked', if lastIndentHardTabs then no else yes)
+
+$toolkit.statusbar.updateSoftTabs: ->
+  softTabsEl: document.getElementById 'contextmenu_indentationSoftTabs'
+  $toolkit.statusbar.updateViewHardTabs softTabsEl.getAttribute('checked') isnt 'true'

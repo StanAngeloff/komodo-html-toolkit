@@ -16,7 +16,7 @@
                         insertbefore="statusbar-language">
             <toolbarbutton class="statusbar-label"
                            id="statusbar-new-encoding-button"
-                           tooltiptext="&status.encoding;"
+                           tooltiptext="&status.encoding.tooltip;"
                            flex="1"
                            orient="horizontal"
                            type="menu"
@@ -31,14 +31,30 @@
                         insertbefore="statusbar-language">
             <toolbarbutton class="statusbar-label"
                            id="statusbar-indentation-button"
-                           tooltiptext="&status.indentation;"
+                           tooltiptext="&status.indentation.tooltip;"
                            flex="1"
                            orient="horizontal"
                            type="menu"
                            persist="buttonstyle"
                            buttonstyle="text">
                 <menupopup id="statusbar-indentation-menu"
-                           position="before_end" />
+                           position="before_end"
+                           onpopupshowing="window.extensions.htmlToolkit.statusbar.updateIndentationMenu();">
+                    <menuitem class="statusbar-label"
+                              id="contextmenu_indentationOther"
+                              name="current_indentation"
+                              label="&status.indentation.other.label;"
+                              accesskey="&status.indentation.other.accessKey;"
+                              type="checkbox" />
+                    <menuseparator />
+                    <menuitem class="statusbar-label"
+                              id="contextmenu_indentationSoftTabs"
+                              name="current_softTabs"
+                              label="&status.indentation.softTabs.label;"
+                              accesskey="&status.indentation.softTabs.accessKey;"
+                              type="checkbox"
+                              oncommand="window.extensions.htmlToolkit.statusbar.updateSoftTabs();" />
+                </menupopup>
             </toolbarbutton>
         </statusbarpanel>
     </statusbar>

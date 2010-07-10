@@ -1,2 +1,6 @@
-<!ENTITY status.encoding "HTML Toolkit: File Encoding &amp; Line Endings">
-<!ENTITY status.indentation "HTML Toolkit: File Indentation">
+<!ENTITY status.encoding.tooltip "HTML Toolkit: File Encoding &amp; Line Endings">
+<!ENTITY status.indentation.tooltip "HTML Toolkit: File Indentation">
+<!ENTITY status.indentation.other.label "Other…">
+<!ENTITY status.indentation.other.accessKey "O">
+<!ENTITY status.indentation.softTabs.label "Tabs as Spaces">
+<!ENTITY status.indentation.softTabs.accessKey "T">
