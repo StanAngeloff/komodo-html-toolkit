@@ -22,6 +22,11 @@
 	-moz-box-flex: 0;
 }
 
+#menu_helpHTMLToolkitSource,
+#troubleshootingViewHTMLToolkitBugsMenuItem {
+  list-style-image: url(chrome://htmltoolkit/skin/images/icon_document_globe.png)
+}
+
 #statusbar-encoding {
   display: none;
 }

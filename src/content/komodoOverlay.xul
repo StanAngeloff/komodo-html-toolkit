@@ -28,6 +28,22 @@
         </panel>
     </popupset>
 
+    <menupopup id="popup_help">
+        <menuitem id="menu_helpHTMLToolkitSource"
+                  class="menuitem-iconic"
+                  label="&sourceCode.menu;"
+                  oncommand="ko.browse.openUrlInDefaultBrowser('http://github.com/StanAngeloff/komodo-html-toolkit/');"
+                  insertafter="menu_helpCommunity" />
+    </menupopup>
+
+    <menupopup id="help-troubleshooting-popup">
+        <menuitem id="troubleshootingViewHTMLToolkitBugsMenuItem"
+                  class="menuitem-iconic"
+                  label="&bugDatabase.menu;"
+                  oncommand="ko.browse.openUrlInDefaultBrowser('http://github.com/StanAngeloff/komodo-html-toolkit/issues');"
+                  insertafter="troubleshootingViewBugsMenuItem" />
+    </menupopup>
+
     <statusbar id="statusbarviewbox">
         <statusbarpanel id="statusbar-new-encoding"
                         pack="end"
