@@ -1,16 +1,22 @@
 (function(){
-  var $toolkit, _a, clearEncoding, clearEverything, clearIndentation, currentView, eventHandler, eventName, events, indentationBuilt, indentationsList, lastEncodingName, lastEncodingUseBOM, lastIndentHardTabs, lastIndentLevels, lastIndentTabWidth, lastNewlineEndings, newlineEndings, pollingTimer, restartPolling, root, startPolling, stopPolling, stopPollingAndClear;
+  var $toolkit, _a, clearEncoding, clearEverything, clearIndentation, currentView, encodingSvc, encodingsBuilt, eventHandler, eventName, events, indentationBuilt, indentationsList, lastEncodingLongName, lastEncodingName, lastEncodingPythonName, lastEncodingUseBOM, lastIndentHardTabs, lastIndentLevels, lastIndentTabWidth, lastNewlineEndings, newlineEndings, pollingTimer, restartPolling, root, startPolling, stopPolling, stopPollingAndClear;
   var __hasProp = Object.prototype.hasOwnProperty;
   root = this;
   root.extensions = root.extensions || {};
   $toolkit = root.extensions.htmlToolkit = root.extensions.htmlToolkit || {};
+  const Cc = Components.classes;
+  const Ci = Components.interfaces;
   const XUL_NS = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul';
   const POLLING_INTERVAL = 1000;
+  encodingSvc = Cc['@activestate.com/koEncodingServices;1'].getService(Ci.koIEncodingServices);
   pollingTimer = null;
   newlineEndings = ['LF', 'CR', 'CRLF'];
   indentationBuilt = false;
   indentationsList = [2, 3, 4, 8];
+  encodingsBuilt = false;
   lastEncodingName = null;
+  lastEncodingLongName = null;
+  lastEncodingPythonName = null;
   lastEncodingUseBOM = null;
   lastNewlineEndings = null;
   lastIndentHardTabs = null;
@@ -42,18 +48,20 @@
   startPolling = function(view) {
     var block, id;
     block = function() {
-      var encodingButtonText, encodingWidget, indentationButtonText, indentationWidget, newEncodingName, newEncodingUseBOM, newIndentHardTabs, newIndentLevels, newIndentTabWidth, newNewlineEndings;
+      var encodingButtonText, encodingWidget, indentationButtonText, indentationWidget, newEncodingLongName, newEncodingName, newEncodingPythonName, newEncodingUseBOM, newIndentHardTabs, newIndentLevels, newIndentTabWidth, newNewlineEndings;
       if (!(typeof view === "undefined" || view == undefined ? undefined : view.document)) {
         return clearEverything();
       }
       try {
-        if (view.getAttribute('type' === 'startpage')) {
+        if (view.getAttribute('type') === 'startpage') {
           return clearEverything();
         } else {
           newEncodingName = view.document.encoding.short_encoding_name;
+          newEncodingPythonName = view.document.encoding.python_encoding_name;
+          newEncodingLongName = view.document.encoding.friendly_encoding_name;
           newEncodingUseBOM = view.document.encoding.use_byte_order_marker;
           newNewlineEndings = view.document.new_line_endings;
-          if (lastEncodingName !== newEncodingName || lastEncodingUseBOM !== newEncodingUseBOM || lastNewlineEndings !== newNewlineEndings) {
+          if (lastEncodingName !== newEncodingName || lastEncodingPythonName !== newEncodingPythonName || lastEncodingLongName !== newEncodingLongName || lastEncodingUseBOM !== newEncodingUseBOM || lastNewlineEndings !== newNewlineEndings) {
             encodingButtonText = newEncodingName;
             if (newEncodingUseBOM) {
               encodingButtonText += '+BOM';
@@ -63,6 +71,8 @@
             encodingWidget.setAttribute('label', encodingButtonText);
             encodingWidget.removeAttribute('collapsed');
             lastEncodingName = newEncodingName;
+            lastEncodingPythonName = newEncodingPythonName;
+            lastEncodingLongName = newEncodingLongName;
             lastEncodingUseBOM = newEncodingUseBOM;
             lastNewlineEndings = newNewlineEndings;
           }
@@ -205,6 +215,54 @@
       _b.push(itemsList[type].setAttribute('checked', lastNewlineEndings === index ? true : false));
     }
     return _b;
+  };
+  $toolkit.statusbar.updateEncodingsMenu = function() {
+    var encodingsMenu, index, itemEl, popupEl, updateChecked, updateClass;
+    encodingsMenu = document.getElementById('statusbar-encodings-menu');
+    if (!(encodingsBuilt)) {
+      index = encodingSvc.get_encoding_index(lastEncodingPythonName);
+      popupEl = ko.widgets.getEncodingPopup(encodingSvc.encoding_hierarchy, true, 'alert(this)');
+      if (index < 0) {
+        itemEl = document.createElementNS(XUL_NS, 'menuitem');
+        itemEl.setAttribute('data', lastEncodingPythonName);
+        itemEl.setAttribute('label', lastEncodingLongName);
+        itemEl.setAttribute('oncommand', 'alert(this)');
+        popupEl.insertBefore(itemEl, popupEl.firstChild);
+      }
+      updateClass = function(node) {
+        var _b, _c, _d, _e, _f, child;
+        node.setAttribute('class', 'statusbar-label');
+        if ((typeof (_b = node.getAttribute('data')) !== "undefined" && _b !== null)) {
+          node.setAttribute('type', 'checkbox');
+        }
+        if (node.childNodes.length) {
+          _c = []; _e = node.childNodes;
+          for (_d = 0, _f = _e.length; _d < _f; _d++) {
+            child = _e[_d];
+            _c.push(updateClass(child));
+          }
+          return _c;
+        }
+      };
+      updateClass(popupEl);
+      while (popupEl.childNodes.length) {
+        encodingsMenu.appendChild(popupEl.firstChild);
+      }
+      encodingsBuilt = true;
+    }
+    updateChecked = function(node) {
+      var _b, _c, _d, _e, _f, child, pythonName;
+      (typeof (_b = (pythonName = node.getAttribute('data'))) !== "undefined" && _b !== null) ? node.setAttribute('checked', pythonName === lastEncodingPythonName ? true : false) : null;
+      if (node.childNodes.length) {
+        _c = []; _e = node.childNodes;
+        for (_d = 0, _f = _e.length; _d < _f; _d++) {
+          child = _e[_d];
+          _c.push(updateChecked(child));
+        }
+        return _c;
+      }
+    };
+    return updateChecked(encodingsMenu);
   };
   $toolkit.statusbar.updateIndentationMenu = function() {
     var _b, _c, _d, _e, _f, _g, _h, firstChild, inList, indentationMenu, itemEl, levels, otherLevelEl, softTabsEl;

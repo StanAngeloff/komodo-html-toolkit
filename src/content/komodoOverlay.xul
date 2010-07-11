@@ -7,8 +7,9 @@
 
 <overlay id="htmltoolkit" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-    <script type="application/x-javascript" src="chrome://htmltoolkit/content/htmltoolkit.js" />
-    <script type="application/x-javascript" src="chrome://htmltoolkit/content/scripts/statusbar.js" />
+    <script type="application/x-javascript;version=1.7" src="chrome://komodo/content/library/encodingmenu.js" />
+    <script type="application/x-javascript"             src="chrome://htmltoolkit/content/htmltoolkit.js" />
+    <script type="application/x-javascript"             src="chrome://htmltoolkit/content/scripts/statusbar.js" />
 
     <popupset id="extensionPopupSet">
         <panel id="customIndentation_panel"
@@ -63,7 +64,7 @@
                           label="&status.lineEndings.menu.label;"
                           accesskey="&status.lineEndings.menu.accessKey;">
                         <menupopup id="statusbar-line-endings-menu"
-                                   position="before_start"
+                                   position="end_before"
                                    onpopupshowing="window.extensions.htmlToolkit.statusbar.updateLineEndingsMenu();">
                             <menuitem class="statusbar-label"
                                       id="contextmenu_lineEndingsDOSWindows"
@@ -90,6 +91,14 @@
                                       accesskey="&status.lineEndings.convertExisting.accessKey;"
                                       oncommand="window.extensions.htmlToolkit.statusbar.updateViewExistingEndings();" />
                         </menupopup>
+                    </menu>
+                    <menu class="statusbar-label"
+                          id="contextmenu_encoding"
+                          label="&status.encoding.menu.label;"
+                          accesskey="&status.encoding.menu.accessKey;">
+                        <menupopup id="statusbar-encodings-menu"
+                                   position="end_before"
+                                   onpopupshowing="window.extensions.htmlToolkit.statusbar.updateEncodingsMenu();" />
                     </menu>
                 </menupopup>
             </toolbarbutton>

@@ -2,24 +2,32 @@ root: this
 root.extensions: or {}
 $toolkit: root.extensions.htmlToolkit: or {}
 
+`const Cc = Components.classes`
+`const Ci = Components.interfaces`
+
 `const XUL_NS = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul'`
 
 `const POLLING_INTERVAL = 1000`
 
-pollingTimer:       null
+encodingSvc: Cc['@activestate.com/koEncodingServices;1'].getService Ci.koIEncodingServices
 
-newlineEndings:     ['LF', 'CR', 'CRLF']
+pollingTimer:           null
 
-indentationBuilt:   false
-indentationsList:   [2, 3, 4, 8]
+newlineEndings:         ['LF', 'CR', 'CRLF']
 
-lastEncodingName:   null
-lastEncodingUseBOM: null
-lastNewlineEndings: null
+indentationBuilt:       no
+indentationsList:       [2, 3, 4, 8]
+encodingsBuilt:         no
 
-lastIndentHardTabs: null
-lastIndentLevels:   null
-lastIndentTabWidth: null
+lastEncodingName:       null
+lastEncodingLongName:   null
+lastEncodingPythonName: null
+lastEncodingUseBOM:     null
+lastNewlineEndings:     null
+
+lastIndentHardTabs:     null
+lastIndentLevels:       null
+lastIndentTabWidth:     null
 
 clearEncoding: ->
   encodingWidget: document.getElementById 'statusbar-new-encoding-button'
@@ -44,24 +52,30 @@ startPolling: (view) ->
   block: ->
     return clearEverything() unless view?.document
     try
-      if view.getAttribute 'type' is 'startpage'
+      if view.getAttribute('type') is 'startpage'
         clearEverything()
       else
-        newEncodingName:   view.document.encoding.short_encoding_name
-        newEncodingUseBOM: view.document.encoding.use_byte_order_marker
-        newNewlineEndings: view.document.new_line_endings
-        if lastEncodingName   isnt newEncodingName \
-        or lastEncodingUseBOM isnt newEncodingUseBOM \
-        or lastNewlineEndings isnt newNewlineEndings
+        newEncodingName:       view.document.encoding.short_encoding_name
+        newEncodingPythonName: view.document.encoding.python_encoding_name
+        newEncodingLongName:   view.document.encoding.friendly_encoding_name
+        newEncodingUseBOM:     view.document.encoding.use_byte_order_marker
+        newNewlineEndings:     view.document.new_line_endings
+        if lastEncodingName       isnt newEncodingName \
+        or lastEncodingPythonName isnt newEncodingPythonName \
+        or lastEncodingLongName   isnt newEncodingLongName \
+        or lastEncodingUseBOM     isnt newEncodingUseBOM \
+        or lastNewlineEndings     isnt newNewlineEndings
           encodingButtonText: newEncodingName
           encodingButtonText: + '+BOM' if newEncodingUseBOM
           encodingButtonText: + ": ${ newlineEndings[newNewlineEndings] }"
           encodingWidget: document.getElementById 'statusbar-new-encoding-button'
           encodingWidget.setAttribute    'label', encodingButtonText
           encodingWidget.removeAttribute 'collapsed'
-          lastEncodingName:   newEncodingName
-          lastEncodingUseBOM: newEncodingUseBOM
-          lastNewlineEndings: newNewlineEndings
+          lastEncodingName:       newEncodingName
+          lastEncodingPythonName: newEncodingPythonName
+          lastEncodingLongName:   newEncodingLongName
+          lastEncodingUseBOM:     newEncodingUseBOM
+          lastNewlineEndings:     newNewlineEndings
         if view.scimoz
           newIndentHardTabs: view.scimoz.useTabs
           newIndentLevels:   view.scimoz.indent
@@ -80,7 +94,6 @@ startPolling: (view) ->
             lastIndentTabWidth: newIndentTabWidth
         else
           clearIndentation()
-
     catch e
       clearEverything()
   block()
@@ -150,6 +163,30 @@ $toolkit.statusbar.updateLineEndingsMenu: ->
   }
   for type, index in newlineEndings
     itemsList[type].setAttribute 'checked', if lastNewlineEndings is index then yes else no
+
+$toolkit.statusbar.updateEncodingsMenu: ->
+  encodingsMenu: document.getElementById 'statusbar-encodings-menu'
+  unless encodingsBuilt
+    index:   encodingSvc.get_encoding_index lastEncodingPythonName
+    popupEl: ko.widgets.getEncodingPopup encodingSvc.encoding_hierarchy, yes, 'alert(this)'
+    if index < 0
+      itemEl: document.createElementNS XUL_NS, 'menuitem'
+      itemEl.setAttribute 'data', lastEncodingPythonName
+      itemEl.setAttribute 'label', lastEncodingLongName
+      itemEl.setAttribute 'oncommand', 'alert(this)'
+      popupEl.insertBefore itemEl, popupEl.firstChild
+    updateClass: (node) ->
+      node.setAttribute 'class', 'statusbar-label'
+      node.setAttribute 'type', 'checkbox' if node.getAttribute('data')?
+      updateClass(child) for child in node.childNodes if node.childNodes.length
+    updateClass popupEl
+    encodingsMenu.appendChild popupEl.firstChild while popupEl.childNodes.length
+    encodingsBuilt: yes
+  updateChecked: (node) ->
+    if (pythonName: node.getAttribute('data'))?
+      node.setAttribute 'checked', if pythonName is lastEncodingPythonName then yes else no
+    updateChecked(child) for child in node.childNodes if node.childNodes.length
+  updateChecked encodingsMenu
 
 $toolkit.statusbar.updateIndentationMenu: ->
   indentationMenu: document.getElementById 'statusbar-indentation-menu'

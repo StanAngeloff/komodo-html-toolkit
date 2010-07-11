@@ -14,6 +14,8 @@
 <!ENTITY status.lineEndings.mac.accessKey "M">
 <!ENTITY status.lineEndings.convertExisting.label "Replace Existing EOLs">
 <!ENTITY status.lineEndings.convertExisting.accessKey "P">
+<!ENTITY status.encoding.menu.label "Encoding">
+<!ENTITY status.encoding.menu.accessKey "E">
 <!ENTITY status.indentation.other.label "Other…">
 <!ENTITY status.indentation.other.accessKey "O">
 <!ENTITY status.indentation.softTabs.label "Tabs as Spaces">
