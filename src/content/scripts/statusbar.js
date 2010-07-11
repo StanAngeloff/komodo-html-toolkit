@@ -1,5 +1,5 @@
 (function(){
-  var $toolkit, _a, clearEncoding, clearEverything, clearIndentation, encodingWidget, eventHandler, eventName, events, getEncodingButton, getIndentationButton, getIndentationMenu, indentationBuilt, indentationMenu, indentationWidget, indentationsList, lastEncodingName, lastEncodingUseBOM, lastIndentHardTabs, lastIndentLevels, lastIndentTabWidth, lastNewlineEndings, newlineEndings, pollingTimer, restartPolling, root, startPolling, stopPolling, stopPollingAndClear;
+  var $toolkit, _a, clearEncoding, clearEverything, clearIndentation, currentView, eventHandler, eventName, events, indentationBuilt, indentationsList, lastEncodingName, lastEncodingUseBOM, lastIndentHardTabs, lastIndentLevels, lastIndentTabWidth, lastNewlineEndings, newlineEndings, pollingTimer, restartPolling, root, startPolling, stopPolling, stopPollingAndClear;
   var __hasProp = Object.prototype.hasOwnProperty;
   root = this;
   root.extensions = root.extensions || {};
@@ -7,37 +7,29 @@
   const XUL_NS = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul';
   const POLLING_INTERVAL = 1000;
   pollingTimer = null;
-  encodingWidget = null;
-  indentationWidget = null;
-  indentationMenu = null;
+  newlineEndings = ['LF', 'CR', 'CRLF'];
   indentationBuilt = false;
+  indentationsList = [2, 3, 4, 8];
   lastEncodingName = null;
   lastEncodingUseBOM = null;
   lastNewlineEndings = null;
-  newlineEndings = ['LF', 'CR', 'CRLF'];
-  indentationsList = [2, 3, 4, 8];
   lastIndentHardTabs = null;
   lastIndentLevels = null;
   lastIndentTabWidth = null;
-  getEncodingButton = function() {
-    return encodingWidget = encodingWidget || document.getElementById('statusbar-new-encoding-button');
-  };
-  getIndentationButton = function() {
-    return indentationWidget = indentationWidget || document.getElementById('statusbar-indentation-button');
-  };
-  getIndentationMenu = function() {
-    return indentationMenu = indentationMenu || document.getElementById('statusbar-indentation-menu');
-  };
   clearEncoding = function() {
-    getEncodingButton().removeAttribute('label');
-    getEncodingButton().setAttribute('collapsed', 'true');
+    var encodingWidget;
+    encodingWidget = document.getElementById('statusbar-new-encoding-button');
+    encodingWidget.removeAttribute('label');
+    encodingWidget.setAttribute('collapsed', 'true');
     lastEncodingName = null;
     lastEncodingUseBOM = null;
     return lastEncodingUseBOM;
   };
   clearIndentation = function() {
-    getIndentationButton().removeAttribute('label');
-    getIndentationButton().setAttribute('collapsed', 'true');
+    var indentationWidget;
+    indentationWidget = document.getElementById('statusbar-indentation-button');
+    indentationWidget.removeAttribute('label');
+    indentationWidget.setAttribute('collapsed', 'true');
     lastIndentHardTabs = null;
     lastIndentLevels = null;
     lastIndentTabWidth = null;
@@ -50,7 +42,7 @@
   startPolling = function(view) {
     var block, id;
     block = function() {
-      var encodingButtonText, indentationButtonText, newEncodingName, newEncodingUseBOM, newIndentHardTabs, newIndentLevels, newIndentTabWidth, newNewlineEndings;
+      var encodingButtonText, encodingWidget, indentationButtonText, indentationWidget, newEncodingName, newEncodingUseBOM, newIndentHardTabs, newIndentLevels, newIndentTabWidth, newNewlineEndings;
       if (!(typeof view === "undefined" || view == undefined ? undefined : view.document)) {
         return clearEverything();
       }
@@ -67,8 +59,9 @@
               encodingButtonText += '+BOM';
             }
             encodingButtonText += (": " + (newlineEndings[newNewlineEndings]));
-            getEncodingButton().setAttribute('label', encodingButtonText);
-            getEncodingButton().removeAttribute('collapsed');
+            encodingWidget = document.getElementById('statusbar-new-encoding-button');
+            encodingWidget.setAttribute('label', encodingButtonText);
+            encodingWidget.removeAttribute('collapsed');
             lastEncodingName = newEncodingName;
             lastEncodingUseBOM = newEncodingUseBOM;
             lastNewlineEndings = newNewlineEndings;
@@ -83,8 +76,9 @@
               if (newIndentLevels !== newIndentTabWidth) {
                 indentationButtonText += (" [" + newIndentTabWidth + "]");
               }
-              getIndentationButton().setAttribute('label', indentationButtonText);
-              getIndentationButton().removeAttribute('collapsed');
+              indentationWidget = document.getElementById('statusbar-indentation-button');
+              indentationWidget.setAttribute('label', indentationButtonText);
+              indentationWidget.removeAttribute('collapsed');
               lastIndentHardTabs = newIndentHardTabs;
               lastIndentLevels = newIndentLevels;
               lastIndentTabWidth = newIndentTabWidth;
@@ -126,6 +120,11 @@
     'current_view_changed': restartPolling,
     'view_closed': stopPollingAndClear
   };
+  currentView = function() {
+    var view;
+    view = ko.views.manager == undefined ? undefined : ko.views.manager.currentView;
+    return view && view.getAttribute('type') === 'editor' && view.document && view.scimoz ? view : false;
+  };
   _a = events;
   for (eventName in _a) { if (__hasProp.call(_a, eventName)) {
     eventHandler = _a[eventName];
@@ -143,8 +142,7 @@
   $toolkit.statusbar = $toolkit.statusbar || {};
   $toolkit.statusbar.updateViewIndentation = function(levels) {
     var view;
-    view = ko.views.manager == undefined ? undefined : ko.views.manager.currentView;
-    if (!(view && view.getAttribute('type') === 'editor' && view.document && view.scimoz)) {
+    if (!(view = currentView())) {
       return null;
     }
     view.scimoz.tabWidth = (view.scimoz.indent = levels);
@@ -156,8 +154,7 @@
   };
   $toolkit.statusbar.updateViewHardTabs = function(useTabs) {
     var view;
-    view = ko.views.manager == undefined ? undefined : ko.views.manager.currentView;
-    if (!(view && view.getAttribute('type') === 'editor' && view.document && view.scimoz)) {
+    if (!(view = currentView())) {
       return null;
     }
     view.scimoz.useTabs = useTabs;
@@ -167,8 +164,8 @@
     });
   };
   $toolkit.statusbar.updateIndentationMenu = function() {
-    var _b, _c, _d, _e, _f, _g, _h, firstChild, inList, itemEl, levels, otherLevelEl, softTabsEl;
-    indentationMenu = getIndentationMenu();
+    var _b, _c, _d, _e, _f, _g, _h, firstChild, inList, indentationMenu, itemEl, levels, otherLevelEl, softTabsEl;
+    indentationMenu = document.getElementById('statusbar-indentation-menu');
     if (!(indentationBuilt)) {
       firstChild = indentationMenu.firstChild;
       _c = indentationsList;
@@ -202,6 +199,29 @@
     otherLevelEl.setAttribute('checked', inList ? false : true);
     softTabsEl = document.getElementById('contextmenu_indentationSoftTabs');
     return softTabsEl.setAttribute('checked', lastIndentHardTabs ? false : true);
+  };
+  $toolkit.statusbar.showCustomIndentationPanel = function() {
+    var panelEl, relativeEl, scaleEl, view;
+    if (!(view = currentView())) {
+      return null;
+    }
+    scaleEl = document.getElementById('customIndentation_scale');
+    scaleEl.setAttribute('value', lastIndentLevels);
+    panelEl = document.getElementById('customIndentation_panel');
+    relativeEl = document.getElementById('statusbarviewbox');
+    return panelEl.openPopup(relativeEl, 'before_end', -document.getElementById('statusbar-language').boxObject.width - 10, 0);
+  };
+  $toolkit.statusbar.handleCustomIndentationPanelKey = function(event) {
+    var _b, panelEl, scaleEl;
+    if (!((event.DOM_VK_ENTER === (_b = event.keyCode) || event.DOM_VK_RETURN === _b))) {
+      return null;
+    }
+    event.preventDefault();
+    event.stopPropagation();
+    scaleEl = document.getElementById('customIndentation_scale');
+    panelEl = document.getElementById('customIndentation_panel');
+    panelEl.hidePopup();
+    return $toolkit.statusbar.updateViewIndentation(Number(scaleEl.getAttribute('value')));
   };
   $toolkit.statusbar.updateSoftTabs = function() {
     var softTabsEl;

@@ -1,14 +1,35 @@
-#statusbar-encoding
-{
+#customIndentation_vbox {
+	max-width: 480px;
+	padding:   4px 10px;
+}
+
+#customIndentation_hbox {
+	-moz-box-align: center;
+	-moz-box-pack:  center;
+}
+
+#customIndentation_scale {
+  -moz-box-flex: 1;
+}
+
+#customIndentation_value {
+	margin-right:  0;
+	margin-left:   0;
+	max-width:     2em;
+	padding-right: 0;
+	padding-left:  0;
+	text-align:    center;
+	-moz-box-flex: 0;
+}
+
+#statusbar-encoding {
   display: none;
 }
 
-#statusbar-new-encoding
-{
+#statusbar-new-encoding {
   min-width: 12em;
 }
 
-#statusbar-indentation
-{
+#statusbar-indentation {
   min-width: 8em;
 }

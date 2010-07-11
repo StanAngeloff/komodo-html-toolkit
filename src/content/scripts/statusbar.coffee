@@ -8,41 +8,30 @@ $toolkit: root.extensions.htmlToolkit: or {}
 
 pollingTimer:       null
 
-encodingWidget:     null
+newlineEndings:     ['LF', 'CR', 'CRLF']
 
-indentationWidget:  null
-indentationMenu:    null
 indentationBuilt:   false
+indentationsList:   [2, 3, 4, 8]
 
 lastEncodingName:   null
 lastEncodingUseBOM: null
 lastNewlineEndings: null
 
-newlineEndings:     ['LF', 'CR', 'CRLF']
-indentationsList:   [2, 3, 4, 8]
-
 lastIndentHardTabs: null
 lastIndentLevels:   null
 lastIndentTabWidth: null
 
-getEncodingButton: ->
-  encodingWidget: or document.getElementById 'statusbar-new-encoding-button'
-
-getIndentationButton: ->
-  indentationWidget: or document.getElementById 'statusbar-indentation-button'
-
-getIndentationMenu: ->
-  indentationMenu: or document.getElementById 'statusbar-indentation-menu'
-
 clearEncoding: ->
-  getEncodingButton().removeAttribute 'label'
-  getEncodingButton().setAttribute    'collapsed', 'true'
+  encodingWidget: document.getElementById 'statusbar-new-encoding-button'
+  encodingWidget.removeAttribute 'label'
+  encodingWidget.setAttribute    'collapsed', 'true'
   lastEncodingName:   null
   lastEncodingUseBOM: null
 
 clearIndentation: ->
-  getIndentationButton().removeAttribute 'label'
-  getIndentationButton().setAttribute    'collapsed', 'true'
+  indentationWidget: document.getElementById 'statusbar-indentation-button'
+  indentationWidget.removeAttribute 'label'
+  indentationWidget.setAttribute    'collapsed', 'true'
   lastIndentHardTabs: null
   lastIndentLevels:   null
   lastIndentTabWidth: null
@@ -58,7 +47,6 @@ startPolling: (view) ->
       if view.getAttribute 'type' is 'startpage'
         clearEverything()
       else
-
         newEncodingName:   view.document.encoding.short_encoding_name
         newEncodingUseBOM: view.document.encoding.use_byte_order_marker
         newNewlineEndings: view.document.new_line_endings
@@ -68,12 +56,12 @@ startPolling: (view) ->
           encodingButtonText: newEncodingName
           encodingButtonText: + '+BOM' if newEncodingUseBOM
           encodingButtonText: + ": ${ newlineEndings[newNewlineEndings] }"
-          getEncodingButton().setAttribute    'label', encodingButtonText
-          getEncodingButton().removeAttribute 'collapsed'
+          encodingWidget: document.getElementById 'statusbar-new-encoding-button'
+          encodingWidget.setAttribute    'label', encodingButtonText
+          encodingWidget.removeAttribute 'collapsed'
           lastEncodingName:   newEncodingName
           lastEncodingUseBOM: newEncodingUseBOM
           lastNewlineEndings: newNewlineEndings
-
         if view.scimoz
           newIndentHardTabs: view.scimoz.useTabs
           newIndentLevels:   view.scimoz.indent
@@ -84,8 +72,9 @@ startPolling: (view) ->
             indentationButtonText: "${ if newIndentHardTabs then 'Tabs' else 'Soft Tabs' }: "
             indentationButtonText: + newIndentLevels
             indentationButtonText: + " [$newIndentTabWidth]" if newIndentLevels isnt newIndentTabWidth
-            getIndentationButton().setAttribute    'label', indentationButtonText
-            getIndentationButton().removeAttribute 'collapsed'
+            indentationWidget: document.getElementById 'statusbar-indentation-button'
+            indentationWidget.setAttribute    'label', indentationButtonText
+            indentationWidget.removeAttribute 'collapsed'
             lastIndentHardTabs: newIndentHardTabs
             lastIndentLevels:   newIndentLevels
             lastIndentTabWidth: newIndentTabWidth
@@ -117,28 +106,30 @@ events: {
   'view_closed':          stopPollingAndClear
 }
 
+currentView: ->
+  view: ko.views.manager?.currentView
+  if view and view.getAttribute('type') is 'editor' and view.document and view.scimoz then view else false
+
 root.addEventListener eventName, eventHandler, true for eventName, eventHandler of events
 ko.main.addWillCloseHandler -> root.removeEventListener eventName, eventHandler, true for eventName, eventHandler of events
 
 $toolkit.statusbar: or {}
 
 $toolkit.statusbar.updateViewIndentation: (levels) ->
-  view: ko.views.manager?.currentView
-  return unless view and view.getAttribute('type') is 'editor' and view.document and view.scimoz
+  return unless view: currentView()
   view.scimoz.tabWidth: view.scimoz.indent: levels
   view.document.prefs.setLongPref 'indentWidth', levels
   view.document.prefs.setLongPref 'tabWidth', levels
   restartPolling { originalTarget: view }
 
 $toolkit.statusbar.updateViewHardTabs: (useTabs) ->
-  view: ko.views.manager?.currentView
-  return unless view and view.getAttribute('type') is 'editor' and view.document and view.scimoz
+  return unless view: currentView()
   view.scimoz.useTabs: useTabs
   view.document.prefs.setBooleanPref 'useTabs', useTabs
   restartPolling { originalTarget: view }
 
 $toolkit.statusbar.updateIndentationMenu: ->
-  indentationMenu: getIndentationMenu()
+  indentationMenu: document.getElementById 'statusbar-indentation-menu'
   unless indentationBuilt
     firstChild: indentationMenu.firstChild
     for levels in indentationsList
@@ -162,6 +153,23 @@ $toolkit.statusbar.updateIndentationMenu: ->
   otherLevelEl.setAttribute('checked', if inList then no else yes)
   softTabsEl: document.getElementById 'contextmenu_indentationSoftTabs'
   softTabsEl.setAttribute('checked', if lastIndentHardTabs then no else yes)
+
+$toolkit.statusbar.showCustomIndentationPanel: ->
+  return unless view: currentView()
+  scaleEl: document.getElementById 'customIndentation_scale'
+  scaleEl.setAttribute 'value', lastIndentLevels
+  panelEl:    document.getElementById 'customIndentation_panel'
+  relativeEl: document.getElementById 'statusbarviewbox'
+  panelEl.openPopup relativeEl, 'before_end', - document.getElementById('statusbar-language').boxObject.width - 10, 0
+
+$toolkit.statusbar.handleCustomIndentationPanelKey: (event) ->
+  return unless event.keyCode in [event.DOM_VK_ENTER, event.DOM_VK_RETURN]
+  event.preventDefault()
+  event.stopPropagation()
+  scaleEl: document.getElementById 'customIndentation_scale'
+  panelEl: document.getElementById 'customIndentation_panel'
+  panelEl.hidePopup()
+  $toolkit.statusbar.updateViewIndentation Number(scaleEl.getAttribute 'value')
 
 $toolkit.statusbar.updateSoftTabs: ->
   softTabsEl: document.getElementById 'contextmenu_indentationSoftTabs'

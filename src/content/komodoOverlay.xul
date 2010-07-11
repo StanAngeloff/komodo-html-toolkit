@@ -10,6 +10,24 @@
     <script type="application/x-javascript" src="chrome://htmltoolkit/content/htmltoolkit.js" />
     <script type="application/x-javascript" src="chrome://htmltoolkit/content/scripts/statusbar.js" />
 
+    <popupset id="extensionPopupSet">
+        <panel id="customIndentation_panel"
+               onpopupshown="document.getElementById('customIndentation_scale').focus();">
+            <vbox id="customIndentation_vbox">
+                <description id="gotoLine_description">&customIndentation.panel.description;</description>
+                <hbox id="customIndentation_hbox">
+                    <scale id="customIndentation_scale"
+                           min="1" max="32"
+                           pageincrement="4"
+                           orient="horizontal"
+                           onkeypress="window.extensions.htmlToolkit.statusbar.handleCustomIndentationPanelKey(event);" />
+                    <textbox id="customIndentation_value" observes="customIndentation_scale"
+                             disabled="true" />
+                </hbox>
+            </vbox>
+        </panel>
+    </popupset>
+
     <statusbar id="statusbarviewbox">
         <statusbarpanel id="statusbar-new-encoding"
                         pack="end"
@@ -45,7 +63,8 @@
                               name="current_indentation"
                               label="&status.indentation.other.label;"
                               accesskey="&status.indentation.other.accessKey;"
-                              type="checkbox" />
+                              type="checkbox"
+                              oncommand="window.extensions.htmlToolkit.statusbar.showCustomIndentationPanel();" />
                     <menuseparator />
                     <menuitem class="statusbar-label"
                               id="contextmenu_indentationSoftTabs"

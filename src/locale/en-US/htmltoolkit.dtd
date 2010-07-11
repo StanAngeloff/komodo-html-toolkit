@@ -1,3 +1,5 @@
+<!ENTITY customIndentation.panel.description "HTML Toolkit: Number of Spaces per Indent:">
+<!ENTITY customIndentation.panel.close "Close">
 <!ENTITY status.encoding.tooltip "HTML Toolkit: File Encoding &amp; Line Endings">
 <!ENTITY status.indentation.tooltip "HTML Toolkit: File Indentation">
 <!ENTITY status.indentation.other.label "Other…">
