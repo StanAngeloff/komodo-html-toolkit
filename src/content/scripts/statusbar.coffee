@@ -115,7 +115,19 @@ ko.main.addWillCloseHandler -> root.removeEventListener eventName, eventHandler,
 
 $toolkit.statusbar: or {}
 
+$toolkit.statusbar.updateViewLineEndings: (mode) ->
+  return if lastNewlineEndings is mode
+  return unless view: currentView()
+  view.document.new_line_endings: mode
+  view.document.prefs.setStringPref 'endOfLine', newlineEndings[mode]
+  restartPolling { originalTarget: view }
+
+$toolkit.statusbar.updateViewExistingEndings: ->
+  return unless view: currentView()
+  view.document.existing_line_endings: lastNewlineEndings
+
 $toolkit.statusbar.updateViewIndentation: (levels) ->
+  return if levels is lastIndentLevels
   return unless view: currentView()
   view.scimoz.tabWidth: view.scimoz.indent: levels
   view.document.prefs.setLongPref 'indentWidth', levels
@@ -123,10 +135,21 @@ $toolkit.statusbar.updateViewIndentation: (levels) ->
   restartPolling { originalTarget: view }
 
 $toolkit.statusbar.updateViewHardTabs: (useTabs) ->
+  return if useTabs is lastIndentHardTabs
   return unless view: currentView()
   view.scimoz.useTabs: useTabs
   view.document.prefs.setBooleanPref 'useTabs', useTabs
   restartPolling { originalTarget: view }
+
+$toolkit.statusbar.updateLineEndingsMenu: ->
+  lineEndingsMenu: document.getElementById 'statusbar-line-endings-menu'
+  itemsList:       {
+    LF:   document.getElementById 'contextmenu_lineEndingsUnix'
+    CR:   document.getElementById 'contextmenu_lineEndingsMac'
+    CRLF: document.getElementById 'contextmenu_lineEndingsDOSWindows'
+  }
+  for type, index in newlineEndings
+    itemsList[type].setAttribute 'checked', if lastNewlineEndings is index then yes else no
 
 $toolkit.statusbar.updateIndentationMenu: ->
   indentationMenu: document.getElementById 'statusbar-indentation-menu'

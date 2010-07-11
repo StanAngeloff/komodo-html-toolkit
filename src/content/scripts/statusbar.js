@@ -140,8 +140,33 @@
     return _b;
   });
   $toolkit.statusbar = $toolkit.statusbar || {};
+  $toolkit.statusbar.updateViewLineEndings = function(mode) {
+    var view;
+    if (lastNewlineEndings === mode) {
+      return null;
+    }
+    if (!(view = currentView())) {
+      return null;
+    }
+    view.document.new_line_endings = mode;
+    view.document.prefs.setStringPref('endOfLine', newlineEndings[mode]);
+    return restartPolling({
+      originalTarget: view
+    });
+  };
+  $toolkit.statusbar.updateViewExistingEndings = function() {
+    var view;
+    if (!(view = currentView())) {
+      return null;
+    }
+    view.document.existing_line_endings = lastNewlineEndings;
+    return view.document.existing_line_endings;
+  };
   $toolkit.statusbar.updateViewIndentation = function(levels) {
     var view;
+    if (levels === lastIndentLevels) {
+      return null;
+    }
     if (!(view = currentView())) {
       return null;
     }
@@ -154,6 +179,9 @@
   };
   $toolkit.statusbar.updateViewHardTabs = function(useTabs) {
     var view;
+    if (useTabs === lastIndentHardTabs) {
+      return null;
+    }
     if (!(view = currentView())) {
       return null;
     }
@@ -162,6 +190,21 @@
     return restartPolling({
       originalTarget: view
     });
+  };
+  $toolkit.statusbar.updateLineEndingsMenu = function() {
+    var _b, _c, _d, index, itemsList, lineEndingsMenu, type;
+    lineEndingsMenu = document.getElementById('statusbar-line-endings-menu');
+    itemsList = {
+      LF: document.getElementById('contextmenu_lineEndingsUnix'),
+      CR: document.getElementById('contextmenu_lineEndingsMac'),
+      CRLF: document.getElementById('contextmenu_lineEndingsDOSWindows')
+    };
+    _b = []; _c = newlineEndings;
+    for (index = 0, _d = _c.length; index < _d; index++) {
+      type = _c[index];
+      _b.push(itemsList[type].setAttribute('checked', lastNewlineEndings === index ? true : false));
+    }
+    return _b;
   };
   $toolkit.statusbar.updateIndentationMenu = function() {
     var _b, _c, _d, _e, _f, _g, _h, firstChild, inList, indentationMenu, itemEl, levels, otherLevelEl, softTabsEl;

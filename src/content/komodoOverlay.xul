@@ -57,7 +57,41 @@
                            persist="buttonstyle"
                            buttonstyle="text">
                 <menupopup id="statusbar-new-encoding-menu"
-                           position="before_end" />
+                           position="before_end">
+                    <menu class="statusbar-label"
+                          id="contextmenu_lineEndings"
+                          label="&status.lineEndings.menu.label;"
+                          accesskey="&status.lineEndings.menu.accessKey;">
+                        <menupopup id="statusbar-line-endings-menu"
+                                   position="before_start"
+                                   onpopupshowing="window.extensions.htmlToolkit.statusbar.updateLineEndingsMenu();">
+                            <menuitem class="statusbar-label"
+                                      id="contextmenu_lineEndingsDOSWindows"
+                                      label="&status.lineEndings.dosWindows.label;"
+                                      accesskey="&status.lineEndings.dosWindows.accessKey;"
+                                      type="checkbox"
+                                      oncommand="window.extensions.htmlToolkit.statusbar.updateViewLineEndings(2);" />
+                            <menuitem class="statusbar-label"
+                                      id="contextmenu_lineEndingsUnix"
+                                      label="&status.lineEndings.unix.label;"
+                                      accesskey="&status.lineEndings.unix.accessKey;"
+                                      type="checkbox"
+                                      oncommand="window.extensions.htmlToolkit.statusbar.updateViewLineEndings(0);" />
+                            <menuitem class="statusbar-label"
+                                      id="contextmenu_lineEndingsMac"
+                                      label="&status.lineEndings.mac.label;"
+                                      accesskey="&status.lineEndings.mac.accessKey;"
+                                      type="checkbox"
+                                      oncommand="window.extensions.htmlToolkit.statusbar.updateViewLineEndings(1);" />
+                            <menuseparator />
+                            <menuitem class="statusbar-label"
+                                      id="contextmenu_lineEndingsConvertExisting"
+                                      label="&status.lineEndings.convertExisting.label;"
+                                      accesskey="&status.lineEndings.convertExisting.accessKey;"
+                                      oncommand="window.extensions.htmlToolkit.statusbar.updateViewExistingEndings();" />
+                        </menupopup>
+                    </menu>
+                </menupopup>
             </toolbarbutton>
         </statusbarpanel>
         <statusbarpanel id="statusbar-indentation"
@@ -76,7 +110,6 @@
                            onpopupshowing="window.extensions.htmlToolkit.statusbar.updateIndentationMenu();">
                     <menuitem class="statusbar-label"
                               id="contextmenu_indentationOther"
-                              name="current_indentation"
                               label="&status.indentation.other.label;"
                               accesskey="&status.indentation.other.accessKey;"
                               type="checkbox"
@@ -84,7 +117,6 @@
                     <menuseparator />
                     <menuitem class="statusbar-label"
                               id="contextmenu_indentationSoftTabs"
-                              name="current_softTabs"
                               label="&status.indentation.softTabs.label;"
                               accesskey="&status.indentation.softTabs.accessKey;"
                               type="checkbox"

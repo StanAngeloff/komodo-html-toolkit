@@ -4,6 +4,16 @@
 <!ENTITY sourceCode.menu "HTML Toolkit Source Code">
 <!ENTITY status.encoding.tooltip "HTML Toolkit: File Encoding &amp; Line Endings">
 <!ENTITY status.indentation.tooltip "HTML Toolkit: File Indentation">
+<!ENTITY status.lineEndings.menu.label "Line Endings">
+<!ENTITY status.lineEndings.menu.accessKey "L">
+<!ENTITY status.lineEndings.dosWindows.label "DOS/Windows (\r\n)">
+<!ENTITY status.lineEndings.dosWindows.accessKey "W">
+<!ENTITY status.lineEndings.unix.label "Unix (\n)">
+<!ENTITY status.lineEndings.unix.accessKey "U">
+<!ENTITY status.lineEndings.mac.label "Mac Classic (\r)">
+<!ENTITY status.lineEndings.mac.accessKey "M">
+<!ENTITY status.lineEndings.convertExisting.label "Replace Existing EOLs">
+<!ENTITY status.lineEndings.convertExisting.accessKey "P">
 <!ENTITY status.indentation.other.label "Other…">
 <!ENTITY status.indentation.other.accessKey "O">
 <!ENTITY status.indentation.softTabs.label "Tabs as Spaces">
