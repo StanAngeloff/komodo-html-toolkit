@@ -26,16 +26,17 @@
     var encodingWidget;
     encodingWidget = document.getElementById('statusbar-new-encoding-button');
     encodingWidget.removeAttribute('label');
-    encodingWidget.setAttribute('collapsed', 'true');
     lastEncodingName = null;
+    lastEncodingLongName = null;
+    lastEncodingPythonName = null;
     lastEncodingUseBOM = null;
-    return lastEncodingUseBOM;
+    lastNewlineEndings = null;
+    return lastNewlineEndings;
   };
   clearIndentation = function() {
     var indentationWidget;
     indentationWidget = document.getElementById('statusbar-indentation-button');
     indentationWidget.removeAttribute('label');
-    indentationWidget.setAttribute('collapsed', 'true');
     lastIndentHardTabs = null;
     lastIndentLevels = null;
     lastIndentTabWidth = null;
@@ -69,7 +70,6 @@
             encodingButtonText += (": " + (newlineEndings[newNewlineEndings]));
             encodingWidget = document.getElementById('statusbar-new-encoding-button');
             encodingWidget.setAttribute('label', encodingButtonText);
-            encodingWidget.removeAttribute('collapsed');
             lastEncodingName = newEncodingName;
             lastEncodingPythonName = newEncodingPythonName;
             lastEncodingLongName = newEncodingLongName;
@@ -88,7 +88,6 @@
               }
               indentationWidget = document.getElementById('statusbar-indentation-button');
               indentationWidget.setAttribute('label', indentationButtonText);
-              indentationWidget.removeAttribute('collapsed');
               lastIndentHardTabs = newIndentHardTabs;
               lastIndentLevels = newIndentLevels;
               lastIndentTabWidth = newIndentTabWidth;
@@ -202,33 +201,32 @@
     });
   };
   $toolkit.statusbar.updateLineEndingsMenu = function() {
-    var _b, _c, _d, index, itemsList, lineEndingsMenu, type;
+    var _b, _c, convertEl, index, itemsList, lineEndingsMenu, type;
     lineEndingsMenu = document.getElementById('statusbar-line-endings-menu');
     itemsList = {
       LF: document.getElementById('contextmenu_lineEndingsUnix'),
       CR: document.getElementById('contextmenu_lineEndingsMac'),
       CRLF: document.getElementById('contextmenu_lineEndingsDOSWindows')
     };
-    _b = []; _c = newlineEndings;
-    for (index = 0, _d = _c.length; index < _d; index++) {
-      type = _c[index];
-      _b.push(itemsList[type].setAttribute('checked', lastNewlineEndings === index ? true : false));
+    _b = newlineEndings;
+    for (index = 0, _c = _b.length; index < _c; index++) {
+      type = _b[index];
+      if (typeof lastNewlineEndings !== "undefined" && lastNewlineEndings !== null) {
+        itemsList[type].removeAttribute('disabled');
+        itemsList[type].setAttribute('checked', lastNewlineEndings === index ? true : false);
+      } else {
+        itemsList[type].setAttribute('disabled', true);
+        itemsList[type].setAttribute('checked', false);
+      }
     }
-    return _b;
+    convertEl = document.getElementById('contextmenu_lineEndingsConvertExisting');
+    return (typeof lastNewlineEndings !== "undefined" && lastNewlineEndings !== null) ? convertEl.removeAttribute('disabled') : convertEl.setAttribute('disabled', true);
   };
   $toolkit.statusbar.updateEncodingsMenu = function() {
-    var encodingsMenu, index, itemEl, popupEl, updateChecked, updateClass;
+    var encodingsMenu, index, itemEl, popupEl, updateChecked, updateClass, updateDisabled;
     encodingsMenu = document.getElementById('statusbar-encodings-menu');
     if (!(encodingsBuilt)) {
-      index = encodingSvc.get_encoding_index(lastEncodingPythonName);
-      popupEl = ko.widgets.getEncodingPopup(encodingSvc.encoding_hierarchy, true, 'alert(this)');
-      if (index < 0) {
-        itemEl = document.createElementNS(XUL_NS, 'menuitem');
-        itemEl.setAttribute('data', lastEncodingPythonName);
-        itemEl.setAttribute('label', lastEncodingLongName);
-        itemEl.setAttribute('oncommand', 'alert(this)');
-        popupEl.insertBefore(itemEl, popupEl.firstChild);
-      }
+      popupEl = ko.widgets.getEncodingPopup(encodingSvc.encoding_hierarchy, true, 'alert("TODO: " + this)');
       updateClass = function(node) {
         var _b, _c, _d, _e, _f, child;
         node.setAttribute('class', 'statusbar-label');
@@ -250,8 +248,19 @@
       }
       encodingsBuilt = true;
     }
+    if (typeof lastEncodingPythonName !== "undefined" && lastEncodingPythonName !== null) {
+      index = encodingSvc.get_encoding_index(lastEncodingPythonName);
+    }
+    if (index < 0) {
+      itemEl = document.createElementNS(XUL_NS, 'menuitem');
+      itemEl.setAttribute('data', lastEncodingPythonName);
+      itemEl.setAttribute('label', lastEncodingLongName);
+      itemEl.setAttribute('oncommand', 'alert("TODO: " + this)');
+      encodingsMenu.insertBefore(itemEl, encodingsMenu.firstChild);
+    }
     updateChecked = function(node) {
       var _b, _c, _d, _e, _f, child, pythonName;
+      node.removeAttribute('disabled');
       (typeof (_b = (pythonName = node.getAttribute('data'))) !== "undefined" && _b !== null) ? node.setAttribute('checked', pythonName === lastEncodingPythonName ? true : false) : null;
       if (node.childNodes.length) {
         _c = []; _e = node.childNodes;
@@ -262,10 +271,25 @@
         return _c;
       }
     };
-    return updateChecked(encodingsMenu);
+    updateDisabled = function(node) {
+      var _b, _c, _d, _e, _f, child, pythonName;
+      if (!node.childNodes.length) {
+        node.setAttribute('disabled', true);
+      }
+      (typeof (_b = (pythonName = node.getAttribute('data'))) !== "undefined" && _b !== null) ? node.setAttribute('checked', false) : null;
+      if (node.childNodes.length) {
+        _c = []; _e = node.childNodes;
+        for (_d = 0, _f = _e.length; _d < _f; _d++) {
+          child = _e[_d];
+          _c.push(updateDisabled(child));
+        }
+        return _c;
+      }
+    };
+    return (typeof lastEncodingPythonName !== "undefined" && lastEncodingPythonName !== null) ? updateChecked(encodingsMenu) : updateDisabled(encodingsMenu);
   };
   $toolkit.statusbar.updateIndentationMenu = function() {
-    var _b, _c, _d, _e, _f, _g, _h, firstChild, inList, indentationMenu, itemEl, levels, otherLevelEl, softTabsEl;
+    var _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, firstChild, inList, indentationMenu, itemEl, levels, otherLevelEl, softTabsEl;
     indentationMenu = document.getElementById('statusbar-indentation-menu');
     if (!(indentationBuilt)) {
       firstChild = indentationMenu.firstChild;
@@ -290,16 +314,31 @@
       }
       indentationBuilt = true;
     }
-    inList = false;
-    _f = indentationMenu.childNodes;
-    for (_e = 0, _g = _f.length; _e < _g; _e++) {
-      itemEl = _f[_e];
-      (typeof (_h = (levels = itemEl.getAttribute('data-indent'))) !== "undefined" && _h !== null) ? itemEl.setAttribute('checked', Number(levels) === lastIndentLevels ? (inList = true) : false) : null;
+    if (typeof lastIndentLevels !== "undefined" && lastIndentLevels !== null) {
+      inList = false;
+      _f = indentationMenu.childNodes;
+      for (_e = 0, _g = _f.length; _e < _g; _e++) {
+        itemEl = _f[_e];
+        itemEl.removeAttribute('disabled');
+        if ((typeof (_h = (levels = itemEl.getAttribute('data-indent'))) !== "undefined" && _h !== null)) {
+          itemEl.setAttribute('checked', Number(levels) === lastIndentLevels ? (inList = true) : false);
+        }
+      }
+      otherLevelEl = document.getElementById('contextmenu_indentationOther');
+      otherLevelEl.setAttribute('checked', inList ? false : true);
+      softTabsEl = document.getElementById('contextmenu_indentationSoftTabs');
+      return softTabsEl.setAttribute('checked', lastIndentHardTabs ? false : true);
+    } else {
+      _i = []; _k = indentationMenu.childNodes;
+      for (_j = 0, _l = _k.length; _j < _l; _j++) {
+        itemEl = _k[_j];
+        _i.push((function() {
+          itemEl.setAttribute('disabled', true);
+          return itemEl.setAttribute('checked', false);
+        })());
+      }
+      return _i;
     }
-    otherLevelEl = document.getElementById('contextmenu_indentationOther');
-    otherLevelEl.setAttribute('checked', inList ? false : true);
-    softTabsEl = document.getElementById('contextmenu_indentationSoftTabs');
-    return softTabsEl.setAttribute('checked', lastIndentHardTabs ? false : true);
   };
   $toolkit.statusbar.showCustomIndentationPanel = function() {
     var panelEl, relativeEl, scaleEl, view;

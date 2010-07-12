@@ -32,14 +32,15 @@ lastIndentTabWidth:     null
 clearEncoding: ->
   encodingWidget: document.getElementById 'statusbar-new-encoding-button'
   encodingWidget.removeAttribute 'label'
-  encodingWidget.setAttribute    'collapsed', 'true'
-  lastEncodingName:   null
-  lastEncodingUseBOM: null
+  lastEncodingName:       null
+  lastEncodingLongName:   null
+  lastEncodingPythonName: null
+  lastEncodingUseBOM:     null
+  lastNewlineEndings:     null
 
 clearIndentation: ->
   indentationWidget: document.getElementById 'statusbar-indentation-button'
   indentationWidget.removeAttribute 'label'
-  indentationWidget.setAttribute    'collapsed', 'true'
   lastIndentHardTabs: null
   lastIndentLevels:   null
   lastIndentTabWidth: null
@@ -70,7 +71,6 @@ startPolling: (view) ->
           encodingButtonText: + ": ${ newlineEndings[newNewlineEndings] }"
           encodingWidget: document.getElementById 'statusbar-new-encoding-button'
           encodingWidget.setAttribute    'label', encodingButtonText
-          encodingWidget.removeAttribute 'collapsed'
           lastEncodingName:       newEncodingName
           lastEncodingPythonName: newEncodingPythonName
           lastEncodingLongName:   newEncodingLongName
@@ -88,7 +88,6 @@ startPolling: (view) ->
             indentationButtonText: + " [$newIndentTabWidth]" if newIndentLevels isnt newIndentTabWidth
             indentationWidget: document.getElementById 'statusbar-indentation-button'
             indentationWidget.setAttribute    'label', indentationButtonText
-            indentationWidget.removeAttribute 'collapsed'
             lastIndentHardTabs: newIndentHardTabs
             lastIndentLevels:   newIndentLevels
             lastIndentTabWidth: newIndentTabWidth
@@ -162,19 +161,22 @@ $toolkit.statusbar.updateLineEndingsMenu: ->
     CRLF: document.getElementById 'contextmenu_lineEndingsDOSWindows'
   }
   for type, index in newlineEndings
-    itemsList[type].setAttribute 'checked', if lastNewlineEndings is index then yes else no
+    if lastNewlineEndings?
+      itemsList[type].removeAttribute 'disabled'
+      itemsList[type].setAttribute 'checked', if lastNewlineEndings is index then yes else no
+    else
+      itemsList[type].setAttribute 'disabled', yes
+      itemsList[type].setAttribute 'checked', no
+  convertEl: document.getElementById 'contextmenu_lineEndingsConvertExisting'
+  if lastNewlineEndings?
+    convertEl.removeAttribute 'disabled'
+  else
+    convertEl.setAttribute 'disabled', yes
 
 $toolkit.statusbar.updateEncodingsMenu: ->
   encodingsMenu: document.getElementById 'statusbar-encodings-menu'
   unless encodingsBuilt
-    index:   encodingSvc.get_encoding_index lastEncodingPythonName
-    popupEl: ko.widgets.getEncodingPopup encodingSvc.encoding_hierarchy, yes, 'alert(this)'
-    if index < 0
-      itemEl: document.createElementNS XUL_NS, 'menuitem'
-      itemEl.setAttribute 'data', lastEncodingPythonName
-      itemEl.setAttribute 'label', lastEncodingLongName
-      itemEl.setAttribute 'oncommand', 'alert(this)'
-      popupEl.insertBefore itemEl, popupEl.firstChild
+    popupEl: ko.widgets.getEncodingPopup encodingSvc.encoding_hierarchy, yes, 'alert("TODO: " + this)'
     updateClass: (node) ->
       node.setAttribute 'class', 'statusbar-label'
       node.setAttribute 'type', 'checkbox' if node.getAttribute('data')?
@@ -182,11 +184,24 @@ $toolkit.statusbar.updateEncodingsMenu: ->
     updateClass popupEl
     encodingsMenu.appendChild popupEl.firstChild while popupEl.childNodes.length
     encodingsBuilt: yes
+  index: encodingSvc.get_encoding_index(lastEncodingPythonName) if lastEncodingPythonName?
+  if index < 0
+    itemEl: document.createElementNS XUL_NS, 'menuitem'
+    itemEl.setAttribute 'data', lastEncodingPythonName
+    itemEl.setAttribute 'label', lastEncodingLongName
+    itemEl.setAttribute 'oncommand', 'alert("TODO: " + this)'
+    encodingsMenu.insertBefore itemEl, encodingsMenu.firstChild
   updateChecked: (node) ->
+    node.removeAttribute 'disabled'
     if (pythonName: node.getAttribute('data'))?
       node.setAttribute 'checked', if pythonName is lastEncodingPythonName then yes else no
     updateChecked(child) for child in node.childNodes if node.childNodes.length
-  updateChecked encodingsMenu
+  updateDisabled: (node) ->
+    node.setAttribute('disabled', yes) if not node.childNodes.length
+    if (pythonName: node.getAttribute('data'))?
+      node.setAttribute 'checked', no
+    updateDisabled(child) for child in node.childNodes if node.childNodes.length
+  if lastEncodingPythonName? then updateChecked(encodingsMenu) else updateDisabled(encodingsMenu)
 
 $toolkit.statusbar.updateIndentationMenu: ->
   indentationMenu: document.getElementById 'statusbar-indentation-menu'
@@ -206,13 +221,19 @@ $toolkit.statusbar.updateIndentationMenu: ->
       , null
       indentationMenu.insertBefore itemEl, firstChild
     indentationBuilt: yes
-  inList: no
-  for itemEl in indentationMenu.childNodes when (levels: itemEl.getAttribute 'data-indent')?
-    itemEl.setAttribute('checked', if Number(levels) is lastIndentLevels then (inList: yes) else no)
-  otherLevelEl: document.getElementById 'contextmenu_indentationOther'
-  otherLevelEl.setAttribute('checked', if inList then no else yes)
-  softTabsEl: document.getElementById 'contextmenu_indentationSoftTabs'
-  softTabsEl.setAttribute('checked', if lastIndentHardTabs then no else yes)
+  if lastIndentLevels?
+    inList: no
+    for itemEl in indentationMenu.childNodes
+      itemEl.removeAttribute 'disabled'
+      itemEl.setAttribute('checked', if Number(levels) is lastIndentLevels then (inList: yes) else no) if (levels: itemEl.getAttribute 'data-indent')?
+    otherLevelEl: document.getElementById 'contextmenu_indentationOther'
+    otherLevelEl.setAttribute('checked', if inList then no else yes)
+    softTabsEl: document.getElementById 'contextmenu_indentationSoftTabs'
+    softTabsEl.setAttribute('checked', if lastIndentHardTabs then no else yes)
+  else
+    for itemEl in indentationMenu.childNodes
+      itemEl.setAttribute 'disabled', yes
+      itemEl.setAttribute 'checked', no
 
 $toolkit.statusbar.showCustomIndentationPanel: ->
   return unless view: currentView()

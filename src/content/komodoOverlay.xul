@@ -98,7 +98,7 @@
                           accesskey="&status.encoding.menu.accessKey;">
                         <menupopup id="statusbar-encodings-menu"
                                    position="end_before"
-                                   onpopupshowing="window.extensions.htmlToolkit.statusbar.updateEncodingsMenu();" />
+                                   onpopupshowing="window.extensions.htmlToolkit.statusbar.updateEncodingsMenu(event);" />
                     </menu>
                 </menupopup>
             </toolbarbutton>
@@ -116,7 +116,7 @@
                            buttonstyle="text">
                 <menupopup id="statusbar-indentation-menu"
                            position="before_end"
-                           onpopupshowing="window.extensions.htmlToolkit.statusbar.updateIndentationMenu();">
+                           onpopupshowing="window.extensions.htmlToolkit.statusbar.updateIndentationMenu(event);">
                     <menuitem class="statusbar-label"
                               id="contextmenu_indentationOther"
                               label="&status.indentation.other.label;"
