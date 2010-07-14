@@ -14,10 +14,10 @@
 	<prefpane id="components" label="&components.title;" selected="true" image="chrome://htmltoolkit/skin/images/gear.png">
 
 		<preferences id="components-preferences">
-			<preference id="tag-complete-zen-coding-pref" name="extensions.htmltoolkit.tagComplete.zenCodingEnabled" type="string" />
 			<preference id="tag-complete-toolbox-pref" name="extensions.htmltoolkit.tagComplete.toolboxEnabled" type="string" />
 			<preference id="tag-complete-library-pref" name="extensions.htmltoolkit.tagComplete.libraryEnabled" type="string" />
 			<preference id="tag-complete-default-pref" name="extensions.htmltoolkit.tagComplete.defaultEnabled" type="string" />
+			<preference id="tag-complete-zen-coding-pref" name="extensions.htmltoolkit.tagComplete.zenCodingEnabled" type="string" />
 			<preference id="css-fillup-stopper-pref" name="extensions.htmltoolkit.cssFillUpStopper.enabled" type="string" />
 			<preference id="abbreviation-replace-expand-pref" name="extensions.htmltoolkit.abbreviation.replaceExpandEnabled" type="string" />
 		</preferences>
@@ -37,12 +37,6 @@
 					<treechildren flex="1" alternatingbackground="true">
 						<treeitem>
 							<treerow>
-								<treecell preference-editable="true" preference="tag-complete-zen-coding-pref" />
-								<treecell label="&tagComplete.zenCoding;" />
-							</treerow>
-						</treeitem>
-						<treeitem>
-							<treerow>
 								<treecell preference-editable="true" preference="tag-complete-toolbox-pref" />
 								<treecell label="&tagComplete.toolbox;" />
 							</treerow>
@@ -57,6 +51,12 @@
 							<treerow>
 								<treecell preference-editable="true" preference="tag-complete-default-pref" />
 								<treecell label="&tagComplete.default;" />
+							</treerow>
+						</treeitem>
+						<treeitem>
+							<treerow>
+								<treecell preference-editable="true" preference="tag-complete-zen-coding-pref" />
+								<treecell label="&tagComplete.zenCoding;" />
 							</treerow>
 						</treeitem>
 					</treechildren>
