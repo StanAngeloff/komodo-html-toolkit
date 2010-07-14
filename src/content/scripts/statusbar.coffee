@@ -138,6 +138,55 @@ $toolkit.statusbar.updateViewExistingEndings: ->
   return unless view: currentView()
   view.document.existing_line_endings: lastNewlineEndings
 
+$toolkit.statusbar.updateViewEncoding: (pythonName) ->
+  return if lastEncodingPythonName is pythonName
+  return unless view: currentView()
+  return unless newEncoding: encodingSvc.get_encoding_info pythonName
+  viewEncoding: Cc['@activestate.com/koEncoding;1'].createInstance Ci.koIEncoding
+  viewEncoding.python_encoding_name: pythonName
+  viewEncoding.use_byte_order_marker: newEncoding.byte_order_marker and lastEncodingUseBOM
+  warning:  view.document.languageObj.getEncodingWarning viewEncoding
+  question: $toolkit.l10n('htmltoolkit').formatStringFromName 'areYouSureThatYouWantToChangeTheEncoding', [warning], 1
+  if warning is '' or ko.dialogs.yesNo(question, 'No') is 'Yes'
+    try
+      view.document.encoding: viewEncoding
+      view.lintBuffer.request()
+      restartPolling { originalTarget: view }
+    catch error
+      lastErrorSvc: Cc['@activestate.com/koLastErrorService;1'].getService Ci.koILastErrorService
+      errorCode:    lastErrorSvc.getLastErrorCode()
+      errorMessage: lastErrorSvc.getLastErrorMessage()
+      if errorCode is 0
+        message: $toolkit.l10n('htmltoolkit').formatStringFromName 'internalErrorSettingTheEncoding', [view.document.displayPath, pythonName], 2
+        ko.dialogs.internalError message, "$message\n\n$errorMessage", error
+      else
+        question: $toolkit.l10n('htmltoolkit').formatStringFromName 'forceEncodingConversion', [errorMessage], 1
+        choice:   ko.dialogs.customButtons(
+          question
+          [
+            "&${ applyButton:  $toolkit.l10n('htmltoolkit').GetStringFromName 'forceEncodingApplyButton' }"
+            "&${ cancelButton: $toolkit.l10n('htmltoolkit').GetStringFromName 'forceEncodingCancelButton' }"
+          ]
+          cancelButton
+        )
+        if choice is applyButton
+          try
+            view.document.forceEncodingFromEncodingName pythonName
+            restartPolling { originalTarget: view }
+          catch error
+            message: $toolkit.l10n('htmltoolkit').formatStringFromName 'internalErrorForcingTheEncoding', [view.document.displayPath, pythonName], 2
+            ko.dialogs.internalError message, "$message\n\n$errorMessage", error
+
+$toolkit.statusbar.updateViewEncodingBOM: ->
+  return unless view: currentView()
+  bomEl:  document.getElementById 'contextmenu_encodingUseBOM'
+  wasBOM: bomEl.getAttribute('checked') is true
+  return if lastEncodingUseBOM is useBOM: not wasBOM
+  bomEl.setAttribute 'checked', useBOM
+  view.document.encoding.use_byte_order_marker: useBOM
+  view.document.isDirty: yes
+  restartPolling { originalTarget: view }
+
 $toolkit.statusbar.updateViewIndentation: (levels) ->
   return if levels is lastIndentLevels
   return unless view: currentView()
@@ -176,20 +225,20 @@ $toolkit.statusbar.updateLineEndingsMenu: ->
 $toolkit.statusbar.updateEncodingsMenu: ->
   encodingsMenu: document.getElementById 'statusbar-encodings-menu'
   unless encodingsBuilt
-    popupEl: ko.widgets.getEncodingPopup encodingSvc.encoding_hierarchy, yes, 'alert("TODO: " + this)'
+    popupEl: ko.widgets.getEncodingPopup encodingSvc.encoding_hierarchy, yes, 'window.extensions.htmlToolkit.statusbar.updateViewEncoding(this.getAttribute("data"));'
     updateClass: (node) ->
       node.setAttribute 'class', 'statusbar-label'
       node.setAttribute 'type', 'checkbox' if node.getAttribute('data')?
       updateClass(child) for child in node.childNodes if node.childNodes.length
     updateClass popupEl
-    encodingsMenu.appendChild popupEl.firstChild while popupEl.childNodes.length
+    encodingsMenu.insertBefore popupEl.firstChild, (firstChild: or encodingsMenu.firstChild) while popupEl.childNodes.length
     encodingsBuilt: yes
   index: encodingSvc.get_encoding_index(lastEncodingPythonName) if lastEncodingPythonName?
   if index < 0
     itemEl: document.createElementNS XUL_NS, 'menuitem'
     itemEl.setAttribute 'data', lastEncodingPythonName
     itemEl.setAttribute 'label', lastEncodingLongName
-    itemEl.setAttribute 'oncommand', 'alert("TODO: " + this)'
+    itemEl.setAttribute 'oncommand', 'window.extensions.htmlToolkit.statusbar.updateViewEncoding(this.getAttribute("data"));'
     encodingsMenu.insertBefore itemEl, encodingsMenu.firstChild
   updateChecked: (node) ->
     node.removeAttribute 'disabled'
@@ -201,12 +250,22 @@ $toolkit.statusbar.updateEncodingsMenu: ->
     if (pythonName: node.getAttribute('data'))?
       node.setAttribute 'checked', no
     updateDisabled(child) for child in node.childNodes if node.childNodes.length
-  if lastEncodingPythonName? then updateChecked(encodingsMenu) else updateDisabled(encodingsMenu)
+  bomEl:        document.getElementById 'contextmenu_encodingUseBOM'
+  lastEncoding: encodingSvc.get_encoding_info lastEncodingPythonName if lastEncodingPythonName?
+  if lastEncoding?
+    updateChecked(encodingsMenu)
+  else
+    updateDisabled(encodingsMenu)
+  if lastEncoding?.byte_order_marker
+    bomEl.removeAttribute 'disabled'
+    bomEl.setAttribute 'checked', if lastEncodingUseBOM then yes else no
+  else
+    bomEl.setAttribute 'disabled', yes
+    bomEl.setAttribute 'checked', no
 
 $toolkit.statusbar.updateIndentationMenu: ->
   indentationMenu: document.getElementById 'statusbar-indentation-menu'
   unless indentationBuilt
-    firstChild: indentationMenu.firstChild
     for levels in indentationsList
       itemEl: document.createElementNS XUL_NS, 'menuitem'
       itemEl.setAttribute 'class', 'statusbar-label'
@@ -216,10 +275,8 @@ $toolkit.statusbar.updateIndentationMenu: ->
       itemEl.setAttribute 'accesskey', levels
       itemEl.setAttribute 'type', 'checkbox'
       itemEl.setAttribute 'data-indent', levels
-      itemEl.addEventListener 'command', ->
-        $toolkit.statusbar.updateViewIndentation levels
-      , null
-      indentationMenu.insertBefore itemEl, firstChild
+      itemEl.addEventListener 'command', ( -> $toolkit.statusbar.updateViewIndentation levels), null
+      indentationMenu.insertBefore itemEl, (firstChild: or indentationMenu.firstChild)
     indentationBuilt: yes
   if lastIndentLevels?
     inList: no

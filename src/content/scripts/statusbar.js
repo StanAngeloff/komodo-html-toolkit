@@ -171,6 +171,71 @@
     view.document.existing_line_endings = lastNewlineEndings;
     return view.document.existing_line_endings;
   };
+  $toolkit.statusbar.updateViewEncoding = function(pythonName) {
+    var applyButton, cancelButton, choice, errorCode, errorMessage, lastErrorSvc, message, newEncoding, question, view, viewEncoding, warning;
+    if (lastEncodingPythonName === pythonName) {
+      return null;
+    }
+    if (!(view = currentView())) {
+      return null;
+    }
+    if (!(newEncoding = encodingSvc.get_encoding_info(pythonName))) {
+      return null;
+    }
+    viewEncoding = Cc['@activestate.com/koEncoding;1'].createInstance(Ci.koIEncoding);
+    viewEncoding.python_encoding_name = pythonName;
+    viewEncoding.use_byte_order_marker = newEncoding.byte_order_marker && lastEncodingUseBOM;
+    warning = view.document.languageObj.getEncodingWarning(viewEncoding);
+    question = $toolkit.l10n('htmltoolkit').formatStringFromName('areYouSureThatYouWantToChangeTheEncoding', [warning], 1);
+    if (warning === '' || ko.dialogs.yesNo(question, 'No') === 'Yes') {
+      try {
+        view.document.encoding = viewEncoding;
+        view.lintBuffer.request();
+        return restartPolling({
+          originalTarget: view
+        });
+      } catch (error) {
+        lastErrorSvc = Cc['@activestate.com/koLastErrorService;1'].getService(Ci.koILastErrorService);
+        errorCode = lastErrorSvc.getLastErrorCode();
+        errorMessage = lastErrorSvc.getLastErrorMessage();
+        if (errorCode === 0) {
+          message = $toolkit.l10n('htmltoolkit').formatStringFromName('internalErrorSettingTheEncoding', [view.document.displayPath, pythonName], 2);
+          return ko.dialogs.internalError(message, ("" + message + "\n\n" + errorMessage), error);
+        } else {
+          question = $toolkit.l10n('htmltoolkit').formatStringFromName('forceEncodingConversion', [errorMessage], 1);
+          choice = ko.dialogs.customButtons(question, [("&" + (applyButton = $toolkit.l10n('htmltoolkit').GetStringFromName('forceEncodingApplyButton'))), ("&" + (cancelButton = $toolkit.l10n('htmltoolkit').GetStringFromName('forceEncodingCancelButton')))], cancelButton);
+          if (choice === applyButton) {
+            try {
+              view.document.forceEncodingFromEncodingName(pythonName);
+              return restartPolling({
+                originalTarget: view
+              });
+            } catch (error) {
+              message = $toolkit.l10n('htmltoolkit').formatStringFromName('internalErrorForcingTheEncoding', [view.document.displayPath, pythonName], 2);
+              return ko.dialogs.internalError(message, ("" + message + "\n\n" + errorMessage), error);
+            }
+          }
+        }
+      }
+    }
+  };
+  $toolkit.statusbar.updateViewEncodingBOM = function() {
+    var bomEl, useBOM, view, wasBOM;
+    if (!(view = currentView())) {
+      return null;
+    }
+    bomEl = document.getElementById('contextmenu_encodingUseBOM');
+    wasBOM = bomEl.getAttribute('checked') === true;
+    if (lastEncodingUseBOM === (useBOM = !wasBOM)) {
+      return null;
+    }
+    bomEl.setAttribute('checked', useBOM);
+    view.document.encoding.use_byte_order_marker = useBOM;
+    view.document.isDirty = true;
+    return restartPolling({
+      originalTarget: view
+    });
+  };
   $toolkit.statusbar.updateViewIndentation = function(levels) {
     var view;
     if (levels === lastIndentLevels) {
@@ -223,10 +288,10 @@
     return (typeof lastNewlineEndings !== "undefined" && lastNewlineEndings !== null) ? convertEl.removeAttribute('disabled') : convertEl.setAttribute('disabled', true);
   };
   $toolkit.statusbar.updateEncodingsMenu = function() {
-    var encodingsMenu, index, itemEl, popupEl, updateChecked, updateClass, updateDisabled;
+    var bomEl, encodingsMenu, firstChild, index, itemEl, lastEncoding, popupEl, updateChecked, updateClass, updateDisabled;
     encodingsMenu = document.getElementById('statusbar-encodings-menu');
     if (!(encodingsBuilt)) {
-      popupEl = ko.widgets.getEncodingPopup(encodingSvc.encoding_hierarchy, true, 'alert("TODO: " + this)');
+      popupEl = ko.widgets.getEncodingPopup(encodingSvc.encoding_hierarchy, true, 'window.extensions.htmlToolkit.statusbar.updateViewEncoding(this.getAttribute("data"));');
       updateClass = function(node) {
         var _b, _c, _d, _e, _f, child;
         node.setAttribute('class', 'statusbar-label');
@@ -244,7 +309,7 @@
       };
       updateClass(popupEl);
       while (popupEl.childNodes.length) {
-        encodingsMenu.appendChild(popupEl.firstChild);
+        encodingsMenu.insertBefore(popupEl.firstChild, (firstChild = firstChild || encodingsMenu.firstChild));
       }
       encodingsBuilt = true;
     }
@@ -255,7 +320,7 @@
       itemEl = document.createElementNS(XUL_NS, 'menuitem');
       itemEl.setAttribute('data', lastEncodingPythonName);
       itemEl.setAttribute('label', lastEncodingLongName);
-      itemEl.setAttribute('oncommand', 'alert("TODO: " + this)');
+      itemEl.setAttribute('oncommand', 'window.extensions.htmlToolkit.statusbar.updateViewEncoding(this.getAttribute("data"));');
       encodingsMenu.insertBefore(itemEl, encodingsMenu.firstChild);
     }
     updateChecked = function(node) {
@@ -286,17 +351,27 @@
         return _c;
       }
     };
-    return (typeof lastEncodingPythonName !== "undefined" && lastEncodingPythonName !== null) ? updateChecked(encodingsMenu) : updateDisabled(encodingsMenu);
+    bomEl = document.getElementById('contextmenu_encodingUseBOM');
+    if (typeof lastEncodingPythonName !== "undefined" && lastEncodingPythonName !== null) {
+      lastEncoding = encodingSvc.get_encoding_info(lastEncodingPythonName);
+    }
+    (typeof lastEncoding !== "undefined" && lastEncoding !== null) ? updateChecked(encodingsMenu) : updateDisabled(encodingsMenu);
+    if (typeof lastEncoding === "undefined" || lastEncoding == undefined ? undefined : lastEncoding.byte_order_marker) {
+      bomEl.removeAttribute('disabled');
+      return bomEl.setAttribute('checked', lastEncodingUseBOM ? true : false);
+    } else {
+      bomEl.setAttribute('disabled', true);
+      return bomEl.setAttribute('checked', false);
+    }
   };
   $toolkit.statusbar.updateIndentationMenu = function() {
-    var _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, firstChild, inList, indentationMenu, itemEl, levels, otherLevelEl, softTabsEl;
+    var _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, inList, indentationMenu, itemEl, levels, otherLevelEl, softTabsEl;
     indentationMenu = document.getElementById('statusbar-indentation-menu');
     if (!(indentationBuilt)) {
-      firstChild = indentationMenu.firstChild;
       _c = indentationsList;
       for (_b = 0, _d = _c.length; _b < _d; _b++) {
         (function() {
-          var itemEl;
+          var firstChild, itemEl;
           var levels = _c[_b];
           itemEl = document.createElementNS(XUL_NS, 'menuitem');
           itemEl.setAttribute('class', 'statusbar-label');
@@ -306,10 +381,10 @@
           itemEl.setAttribute('accesskey', levels);
           itemEl.setAttribute('type', 'checkbox');
           itemEl.setAttribute('data-indent', levels);
-          itemEl.addEventListener('command', function() {
+          itemEl.addEventListener('command', (function() {
             return $toolkit.statusbar.updateViewIndentation(levels);
-          }, null);
-          return indentationMenu.insertBefore(itemEl, firstChild);
+          }), null);
+          return indentationMenu.insertBefore(itemEl, (firstChild = firstChild || indentationMenu.firstChild));
         })();
       }
       indentationBuilt = true;

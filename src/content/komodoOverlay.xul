@@ -98,7 +98,15 @@
                           accesskey="&status.encoding.menu.accessKey;">
                         <menupopup id="statusbar-encodings-menu"
                                    position="end_before"
-                                   onpopupshowing="window.extensions.htmlToolkit.statusbar.updateEncodingsMenu(event);" />
+                                   onpopupshowing="window.extensions.htmlToolkit.statusbar.updateEncodingsMenu(event);">
+                            <menuseparator />
+                            <menuitem class="statusbar-label"
+                                      id="contextmenu_encodingUseBOM"
+                                      label="&status.encoding.useBOM.label;"
+                                      accesskey="&status.encoding.useBOM.accessKey;"
+                                      type="checkbox"
+                                      oncommand="window.extensions.htmlToolkit.statusbar.updateViewEncodingBOM();" />
+                        </menupopup>
                     </menu>
                 </menupopup>
             </toolbarbutton>
