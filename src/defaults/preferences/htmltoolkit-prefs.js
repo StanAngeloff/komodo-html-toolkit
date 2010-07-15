@@ -6,3 +6,6 @@ pref('extensions.htmltoolkit.tagComplete.defaultEnabled', 'true');
 pref('extensions.htmltoolkit.abbreviation.replaceExpandEnabled', 'true');
 
 pref('extensions.htmltoolkit.cssFillUpStopper.enabled', 'true');
+
+pref('extensions.htmltoolkit.installedVersion', 'first-run');
+pref('extensions.htmltoolkit.isRegistered', 'false');

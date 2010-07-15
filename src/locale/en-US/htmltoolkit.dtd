@@ -1,7 +1,11 @@
 <!ENTITY customIndentation.panel.description "HTML Toolkit: Number of Spaces per Indent:">
 <!ENTITY customIndentation.panel.close "Close">
-<!ENTITY bugDatabase.menu "HTML Toolkit Bug Database">
-<!ENTITY sourceCode.menu "HTML Toolkit Source Code">
+<!ENTITY bugDatabase.menu.label "HTML Toolkit Bug Database">
+<!ENTITY bugDatabase.menu.accessKey "B">
+<!ENTITY sourceCode.menu.label "HTML Toolkit Source Code">
+<!ENTITY sourceCode.menu.accessKey "C">
+<!ENTITY releaseNotes.menu.label "HTML Toolkit Release Notes">
+<!ENTITY releaseNotes.menu.accessKey "R">
 <!ENTITY status.encoding.tooltip "HTML Toolkit: File Encoding &amp; Line Endings">
 <!ENTITY status.indentation.tooltip "HTML Toolkit: File Indentation">
 <!ENTITY status.lineEndings.menu.label "Line Endings">

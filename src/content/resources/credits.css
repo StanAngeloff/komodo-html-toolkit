@@ -6,17 +6,17 @@
 }
 
 * {
-	margin:  0;
-	padding: 0;
+	font-family: Vollkorn, Georgia, Garamond, 'Palatino Linotype', Palatino, 'Book Antiqua', 'Times New Roman', times, serif;
+	margin:      0;
+	padding:     0;
 }
 
 html, body {
-	background:  Window;
-	color:       WindowText;
-	font-family: Vollkorn, Georgia, Garamond, 'Palatino Linotype', Palatino, 'Book Antiqua', 'Times New Roman', times, serif;
-	height:      100%;
-	overflow:    hidden;
-	width:       100%;
+	background: Window;
+	color:      WindowText;
+	height:     100%;
+	overflow:   hidden;
+	width:      100%;
 }
 
 h1 {
@@ -72,6 +72,10 @@ h2 {
 	-moz-user-select:   none;
 }
 
+#thank-you {
+	margin: 10px 0;
+}
+
 dl {
 	margin-left: 10px;
 }
@@ -106,4 +110,80 @@ a:hover {
 
 #contributors, #libraries {
 	margin-bottom: 10px;
+}
+
+#release-notes {
+	font-size: 14px;
+}
+
+h3 {
+	font-size:     16px;
+	font-weight:   normal;
+	margin-bottom: 5px;
+	padding:       5px 10px;
+	text-shadow:   0 1px 0 rgba(255, 255, 255, 1);
+}
+
+ul {
+	margin: 0 0 20px 30px;
+}
+
+ul li {
+	border-bottom:  1px dotted rgba(0, 0, 0, 0.25);
+	color:          rgba(0, 0, 0, 0.85);
+	margin-bottom:  5px;
+	padding-bottom: 5px;
+}
+
+ul li:last-child {
+	border-bottom:  none;
+	margin-bottom:  0;
+	padding-bottom: 0;
+}
+
+ul li strong {
+	color:       rgba(0, 0, 0, 1);
+	font-weight: normal;
+}
+
+code {
+	color:          rgba(96, 0, 0, 0.95);
+	font-family:    monaco, inconsolata, consolas, 'Lucida Console', 'Bitstream Vera Sans Mono', 'DejaVu Sans Mono', 'Courier New', Courier, monospace;
+	font-size:      12px;
+	letter-spacing: -1px;
+	padding:        0 2px;
+}
+
+p {
+	margin: 0 0 10px 10px;
+}
+
+#tell-the-developer {
+	background:         rgba(255, 196, 0, 0.25);
+	border:             1px solid rgba(255, 196, 0, 0.5);
+	margin-top:         20px;
+	padding:            10px;
+	-moz-border-radius: 10px;
+	-moz-box-shadow:    0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+#tell-the-developer p {
+	margin: 0 0 5px 0;
+}
+
+#tell-the-developer p.note {
+	color:         rgba(0, 0, 0, 0.5);
+	font-size:     12px;
+	margin-bottom: 10px;
+}
+
+#register {
+	text-align: center;
+}
+
+#register button {
+	cursor:    pointer;
+	font-size: 14px;
+	margin:    0 auto;
+	padding:   2px 10px;
 }

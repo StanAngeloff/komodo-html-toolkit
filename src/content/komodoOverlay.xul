@@ -30,9 +30,16 @@
     </popupset>
 
     <menupopup id="popup_help">
+        <menuitem id="menu_helpHTMLToolkitReleaseNotes"
+                  class="menuitem-iconic"
+                  label="&releaseNotes.menu.label;"
+                  accesskey="&releaseNotes.menu.accessKey;"
+                  oncommand="ko.open.URI('chrome://htmltoolkit/content/resources/release_notes.html', 'browser', true);"
+                  insertafter="menu_helpReleaseNotes" />
         <menuitem id="menu_helpHTMLToolkitSource"
                   class="menuitem-iconic"
-                  label="&sourceCode.menu;"
+                  label="&sourceCode.menu.label;"
+                  accesskey="&sourceCode.menu.accessKey;"
                   oncommand="ko.browse.openUrlInDefaultBrowser('http://github.com/StanAngeloff/komodo-html-toolkit/');"
                   insertafter="menu_helpCommunity" />
     </menupopup>
@@ -40,7 +47,8 @@
     <menupopup id="help-troubleshooting-popup">
         <menuitem id="troubleshootingViewHTMLToolkitBugsMenuItem"
                   class="menuitem-iconic"
-                  label="&bugDatabase.menu;"
+                  label="&bugDatabase.menu.label;"
+                  accesskey="&bugDatabase.menu.accessKey;"
                   oncommand="ko.browse.openUrlInDefaultBrowser('http://github.com/StanAngeloff/komodo-html-toolkit/issues');"
                   insertafter="troubleshootingViewBugsMenuItem" />
     </menupopup>

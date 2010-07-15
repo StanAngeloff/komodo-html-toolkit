@@ -1,10 +1,114 @@
 <!DOCTYPE HTML>
 <html lang="en-US">
 <head>
-    <meta charset="utf-8" />
-    <title>HTML Toolkit 1.3</title>
+  <meta charset="utf-8" />
+  <title>HTML Toolkit &ndash; Release Notes</title>
+  <link rel="stylesheet" type="text/css" href="credits.css" media="all" />
+  <script type="text/javascript">
+  // <![CDATA[
+  const Cc = Components.classes;
+  const Ci = Components.interfaces;
+
+  var windowManagerService = Cc['@mozilla.org/appshell/window-mediator;1'].getService(Ci.nsIWindowMediator);
+  var recentKomodoWindow = windowManagerService.getMostRecentWindow('Komodo');
+
+  var prefsService = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefService);
+
+  var ko = recentKomodoWindow.ko;
+
+  function register(event, url) {
+    var messageEl = document.getElementById('tell-the-developer'),
+        buttonEl = document.getElementById('register').getElementsByTagName('button')[0],
+        request = new XMLHttpRequest(),
+        prefsBranch;
+    event.preventDefault();
+    event.stopPropagation();
+    buttonEl.setAttribute('disabled', true);
+    request.open('POST', url, true);
+    request.onreadystatechange = function() {
+      if (request.readyState === 4) {
+        messageEl.parentNode.removeChild(messageEl);
+        ko.dialogs.customButtons('Thank you for registering as a User of HTML Toolkit. Your participation will help the Developer improve future versions of the extension.', ['Close'], null, null, 'HTML Toolkit');
+        try {
+          prefsBranch = prefsService.getBranch('extensions.htmltoolkit.');
+          prefsBranch.setCharPref('isRegistered', 'true');
+        } catch (e) {
+          // ignore
+        }
+      }
+    }
+    request.send();
+  }
+  // ]]>
+  </script>
 </head>
 <body>
+
+<div id="credits">
+  <h1><span>HTML Toolkit</span></h1>
+  <div id="wrapper">
+    <h2 id="thank-you"><span>
+      Thank you for installing HTML Toolkit
+      <script type="text/javascript">
+      // <![CDATA[
+      document.write(recentKomodoWindow.extensions.htmlToolkit.VERSION);
+      // ]]>
+      </script>
+    </span></h2>
+    <div id="release-notes">
+      <h3><span>Release notes:</span></h3>
+      <ul>
+        <li><strong>Compatibility with Komodo&nbsp;6&nbsp;beta</strong></li>
+        <li><strong>Integration with ZenCoding, if installed and enabled</strong></li>
+        <li><strong>Added support for HTML5 documents</strong></li>
+        <li>Added &lsquo;Options&rsquo; dialogue to control auto-complete behaviour</li>
+        <li>Added Selection&nbsp;Tools: capitalise, hyphenise, underscorise; URI, HTML and Base64 encode/decode</li>
+        <li>Added HTML&nbsp;entities auto-complete: trigger by typing <code>&lsquo;&amp;&rsquo;</code></li>
+        <li>Added CSS&nbsp;Fill-up&nbsp;Stopper: prevents auto-complete of property values when &lsquo;Space&rsquo; is pressed</li>
+        <li>Added &lsquo;Quick Macro&rsquo; dialogue <code>Ctrl&nbsp;+&nbsp;Alt&nbsp;+&nbsp;R</code>: record macros on the fly using CoffeeScript/JavaScript (Komodo&nbsp;5 only)</li>
+        <li>Added status bar encoding and indentation support: change settings on-the-fly with just a few mouse clicks</li>
+        <li>Added support for snippets within sub-folders, e.g., <code>Abbreviations&nbsp;&raquo;&nbsp;PHP&nbsp;&raquo;&nbsp;Drupal</code></li>
+        <li>Improved Undo support after tag auto-complete</li>
+        <li>Improved status bar feedback when inserting a snippet</li>
+        <li>Improved logic for picking up shortcut letters in auto-complete pop-up</li>
+        <li>Updated to work in XBL documents</li>
+      </ul>
+      <p>You can view this page again by using the <code>Help&nbsp;&raquo;&nbsp;HTML&nbsp;Toolkit&nbsp;Release&nbsp;Notes</code> menu.</p>
+      <script type="text/javascript">
+      // <![CDATA[
+      try {
+        if ('true' === recentKomodoWindow.extensions.htmlToolkit.pref('isRegistered')) {
+          document.writeln('<style type="text/css" media="all">');
+          document.writeln('#tell-the-developer { display: none; }');
+          document.writeln('</style>');
+        }
+      } catch (e) {
+        // ignore
+      }
+      // ]]>
+      </script>
+      <div id="tell-the-developer">
+        <p>Please tell the Developer you are using HTML&nbsp;Toolkit.</p>
+        <p class="note">
+          By using the button below you will make a web request to
+          <script type="text/javascript">
+          // <![CDATA[
+          var registerUrl = 'http://www.psp-webtech.co.uk/komodo/htmltoolkit/register.php';
+
+          document.write('<a href="' + registerUrl + '" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">');
+          document.write(registerUrl.split('://').pop().split('/').shift());
+          document.write('</a>.');
+          // ]]>
+          </script>
+          No personal data will be stored apart from your network IP address.
+        </p>
+        <div id="register">
+          <button type="button" onclick="register(event, registerUrl);"><span>Register</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>

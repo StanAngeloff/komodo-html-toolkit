@@ -37,6 +37,8 @@ if (typeof (extensions) === 'undefined')
 
 	var $toolkit = extensions.htmlToolkit || (extensions.htmlToolkit = {});
 
+	$toolkit.VERSION = 1.3;
+
 	$toolkit.include = function(namespace, includeOnce) {
 
 		var loader = Cc['@mozilla.org/moz/jssubscript-loader;1'].getService(Ci.mozIJSSubScriptLoader);
@@ -108,14 +110,6 @@ if (typeof (extensions) === 'undefined')
 		return _l10nCache[bundle];
 	};
 
-	$toolkit.log = function(message) {
-		consoleService.logStringMessage(message);
-	};
-
-	$toolkit.pref = function(key) {
-		return prefsBranch.getCharPref(key);
-	};
-
 	$toolkit.trapExceptions = function(obj, bound) {
 
 		if (obj && typeof (obj) === 'object') {
@@ -165,6 +159,13 @@ if (typeof (extensions) === 'undefined')
 											  notificationIcon = 'chrome://htmltoolkit/skin/images/icon_exclamation_diamond.png',
 											  notificationPriority = notificationEl.PRIORITY_WARNING_LOW);
 		}
+
+		var installedVersion = parseFloat($toolkit.pref('installedVersion'));
+		if (isNaN(installedVersion) || installedVersion < $toolkit.VERSION) {
+
+			ko.open.URI('chrome://htmltoolkit/content/resources/release_notes.html', 'browser', true);
+			prefsBranch.setCharPref('installedVersion', '' + $toolkit.VERSION);
+		}
 	};
 
 	$toolkit.registerAll = function(type) {
@@ -193,6 +194,14 @@ if (typeof (extensions) === 'undefined')
 	};
 
 	$toolkit.trapExceptions($toolkit);
+
+	$toolkit.log = function(message) {
+		consoleService.logStringMessage(message);
+	};
+
+	$toolkit.pref = function(key) {
+		return prefsBranch.getCharPref(key);
+	};
 
 	$toolkit.registerAll('module');
 	$toolkit.registerAll('command');
