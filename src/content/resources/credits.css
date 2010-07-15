@@ -1,0 +1,109 @@
+@font-face {
+	font-family: 'Vollkorn';
+	src:         url('fonts/vollkorn.ttf') format('truetype');
+	font-style:  normal;
+	font-weight: normal;
+}
+
+* {
+	margin:  0;
+	padding: 0;
+}
+
+html, body {
+	background:  Window;
+	color:       WindowText;
+	font-family: Vollkorn, Georgia, Garamond, 'Palatino Linotype', Palatino, 'Book Antiqua', 'Times New Roman', times, serif;
+	height:      100%;
+	overflow:    hidden;
+	width:       100%;
+}
+
+h1 {
+	background:       rgba(0, 0, 0, 0.75);
+	border-bottom:    rgba(0, 0, 0, 1);
+	color:            rgba(255, 255, 255, 0.95);
+	cursor:           default;
+	font-size:        24px;
+	font-weight:      normal;
+	height:           47px;
+	left:             0;
+	line-height:      47px;
+	padding-left:     10px;
+	position:         absolute;
+	right:            0;
+	text-shadow:      0 1px 1px rgba(0, 0, 0, 1);
+	top:              0;
+	z-index:          20;
+	-moz-box-shadow:  0 2px 4px rgba(0, 0, 0, 0.25);
+	-moz-user-select: none;
+}
+
+h1 span {
+	background: transparent url(chrome://htmltoolkit/skin/images/icon.png) no-repeat 99% 50%;
+	display:    block;
+}
+
+#wrapper {
+	bottom:      0;
+	font-size:   12px;
+	left:        0;
+	line-height: 16px;
+	overflow:    scroll;
+	overflow-x:  hidden;
+	padding:     10px;
+	position:    absolute;
+	right:       0;
+	top:         48px;
+	z-index:     10;
+}
+
+h2 {
+	background:         rgba(5, 116, 210, 0.1);
+	border:             1px solid rgba(0, 0, 0, 0.25);
+	cursor:             default;
+	font-size:          18px;
+	font-weight:        normal;
+	margin-bottom:      5px;
+	padding:            5px 10px;
+	text-shadow:        0 1px 0 rgba(255, 255, 255, 1);
+	-moz-border-radius: 10px;
+	-moz-box-shadow:    0 1px 2px rgba(0, 0, 0, 0.25);
+	-moz-user-select:   none;
+}
+
+dl {
+	margin-left: 10px;
+}
+
+dl dt {
+	font-size: 15px;
+}
+
+dl dd {
+	border-bottom:  1px dotted rgba(0, 0, 0, 0.25);
+	font-size:      13px;
+	margin-bottom:  5px;
+	padding-bottom: 5px;
+}
+
+dl dd:last-child {
+	border-bottom:  none;
+	margin-bottom:  0;
+	padding-bottom: 0;
+}
+
+a {
+	color:           rgba(0, 0, 196, 1);
+	text-decoration: underline;
+}
+
+a:hover {
+	background-color: rgba(0, 0, 196, 0.05);
+	color:            rgba(0, 0, 223, 1);
+	text-decoration:  underline;
+}
+
+#contributors, #libraries {
+	margin-bottom: 10px;
+}

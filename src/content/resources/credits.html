@@ -1,171 +1,96 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-					  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE HTML>
+<html lang="en-US">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title>HTML Toolkit Credits</title>
-	<style type="text/css" media="all">
-	/* <![CDATA[ */
-	html { background-color: white; }
+  <meta charset="utf-8" />
+  <title>HTML Toolkit Credits</title>
+  <link rel="stylesheet" type="text/css" href="credits.css" media="all" />
+  <script type="text/javascript">
+  // <![CDATA[
+  const Cc = Components.classes;
+  const Ci = Components.interfaces;
 
-	* { cursor: default; -moz-user-select: none; margin: 0; padding: 0; font: menu; }
+  var windowManagerService = Cc['@mozilla.org/appshell/window-mediator;1'].getService(Ci.nsIWindowMediator);
+  var recentKomodoWindow = windowManagerService.getMostRecentWindow('Komodo');
 
-	strong, strong * { font-weight: bold; }
-	em, em * { font-style: italic; }
-	a, a * { cursor: pointer; color: #00f; text-decoration: none; }
-	hr { border: none; margin-top: 12em; }
-
-	#credits { position: absolute; top: 0; right: 0; bottom: 0; left: 0; overflow: hidden; overflow-y: visible; text-align: center; }
-	#credits pre { margin: 12em 0 24em 0; }
-	/* ]]> */
-	</style>
+  var ko = recentKomodoWindow.ko;
+  // ]]>
+  </script>
 </head>
 <body>
 
-<script type="text/javascript">
-// <![CDATA[
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-
-var windowManagerService = Cc['@mozilla.org/appshell/window-mediator;1'].getService(Ci.nsIWindowMediator);
-var recentKomodoWindow = windowManagerService.getMostRecentWindow('Komodo');
-
-var ko = recentKomodoWindow.ko;
-// ]]>
-</script>
 <div id="credits">
-<p><pre><strong><em>HTML Toolkit</em></strong>
-<hr />
-<strong>DEVELOPERS</strong>
-___________
-
-Stan Angeloff
-<a href="http://blog.angeloff.name/" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">http://blog.angeloff.name/</a>
-
-Florent Verschelde
-<a href="http://fvsch.com/" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">http://fvsch.com/</a>
-
-
-<strong>LIBRARIES</strong>
-__________
-
-CoffeeScript -- Unfancy JavaScript
-Copyright (c) 2010 Jeremy Ashkenas
-<a href="http://jashkenas.github.com/coffee-script/" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">http://jashkenas.github.com/coffee-script/</a>
-
-showdown.js -- a javascript port of Markdown
-Copyright (c) 2007 John Fraser.
-Original Markdown Copyright (c) 2004-2005 John Gruber
-<a href="http://daringfireball.net/projects/markdown/" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">http://daringfireball.net/projects/markdown/</a>
-
-Tripoli -- a generic CSS standard for HTML rendering
-Copyright (C) 2007 David Hellsing
-<a href="http://devkick.com/lab/tripoli/" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">http://devkick.com/lab/tripoli/</a>
-
-TiddlyWiki -- a reusable non-linear personal web notebook
-Copyright (c) UnaMesa Association 2004-2009
-<a href="http://www.tiddlywiki.com/" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">http://www.tiddlywiki.com/</a>
-
-Lorem Ipsum Generator
-Will Munslow, Code/idea stolen from Captain Cursor and Travis Spencer
-<a href="http://subterrane.com/files/loremipsum.html" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">http://subterrane.com/files/loremipsum.html</a>
-
-JavaScript wordwrap
-Jonas Raoni Soares Silva (original revised)
-Nick Callen (improved)
-Kevin van Zonneveld (improved)
-Sakimori (improved)
-Michael Grier (bugfixed)
-<a href="http://phpjs.org/functions/wordwrap:581" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">http://phpjs.org/functions/wordwrap:581</a>
-
-jslibs -- standalone JavaScript development runtime environment
-GNU General Public License v2
-<a href="http://code.google.com/p/jslibs/wiki/JavascriptTips" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">http://code.google.com/p/jslibs/wiki/JavascriptTips</a>
-
-
-<strong>RESOURCES</strong>
-__________
-
-Fugue Icons
-Creative Commons Attribution 3.0 license
-<a href="http://www.pinvoke.com/" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">http://www.pinvoke.com/</a>
-
-</pre></p>
+  <h1><span>HTML Toolkit</span></h1>
+  <div id="wrapper">
+    <div id="contributors">
+      <h2><span>Contributors</span></h2>
+      <dl>
+        <dt>Stan Angeloff</dt>
+        <dd>
+          <a href="http://blog.angeloff.name/" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">http://blog.angeloff.name/</a>
+        </dd>
+        <dt>Florent Verschelde</dt>
+        <dd>
+          <a href="http://fvsch.com/" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">http://fvsch.com/</a>
+        </dd>
+      </dl>
+    </div>
+    <div id="libraries">
+      <h2><span>Libraries</span></h2>
+      <dl>
+        <dt>CoffeeScript -- Unfancy JavaScript</dt>
+        <dd>
+          Copyright (c) 2010 Jeremy Ashkenas<br />
+          <a href="http://jashkenas.github.com/coffee-script/" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">http://jashkenas.github.com/coffee-script/</a>
+        </dd>
+        <dt>showdown.js -- a javascript port of Markdown</dt>
+        <dd>
+          Copyright (c) 2007 John Fraser<br />
+          Original Markdown Copyright (c) 2004-2005 John Gruber<br />
+          <a href="http://daringfireball.net/projects/markdown/" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">http://daringfireball.net/projects/markdown/</a>
+        </dd>
+        <dt>Tripoli -- a generic CSS standard for HTML rendering</dt>
+        <dd>
+          Copyright (C) 2007 David Hellsing<br />
+          <a href="http://devkick.com/lab/tripoli/" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">http://devkick.com/lab/tripoli/</a>
+        </dd>
+        <dt>TiddlyWiki -- a reusable non-linear personal web notebook</dt>
+        <dd>
+          Copyright (c) UnaMesa Association 2004-2009<br />
+          <a href="http://www.tiddlywiki.com/" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">http://www.tiddlywiki.com/</a>
+        </dd>
+        <dt>Lorem Ipsum Generator</dt>
+        <dd>
+          Will Munslow, Code/idea stolen from Captain Cursor and Travis Spencer<br />
+          <a href="http://subterrane.com/files/loremipsum.html" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">http://subterrane.com/files/loremipsum.html</a>
+        </dd>
+        <dt>JavaScript wordwrap</dt>
+        <dd>
+          Jonas Raoni Soares Silva (original revised)<br />
+          Nick Callen (improved)<br />
+          Kevin van Zonneveld (improved)<br />
+          Sakimori (improved)<br />
+          Michael Grier (bugfixed)<br />
+          <a href="http://phpjs.org/functions/wordwrap:581" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">http://phpjs.org/functions/wordwrap:581</a>
+        </dd>
+        <dt>jslibs -- standalone JavaScript development runtime environment</dt>
+        <dd>
+          GNU General Public License v2<br />
+          <a href="http://code.google.com/p/jslibs/wiki/JavascriptTips" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">http://code.google.com/p/jslibs/wiki/JavascriptTips</a>
+        </dd>
+      </dl>
+    </div>
+    <div id="resources">
+      <h2><span>Resources</span></h2>
+      <dl>
+        <dt>Fugue Icons</dt>
+        <dd>
+          Creative Commons Attribution 3.0 license<br />
+          <a href="http://www.pinvoke.com/" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">http://www.pinvoke.com/</a>
+        </dd>
+      </dl>
+    </div>
+  </div>
 </div>
-
-<script type="text/javascript">
-// <![CDATA[
-(function() {
-
-var shadowEl;
-
-for (var i = 0; i < 20; i ++) {
-
-	shadowEl = document.createElement('div');
-
-	shadowEl.style.position = 'absolute';
-	shadowEl.style.top = i + 'px';
-	shadowEl.style.left = 0;
-	shadowEl.style.right = 0;
-	shadowEl.style.height = '1px';
-	shadowEl.style.backgroundColor = 'rgba(255, 255, 255, ' + ((20 - i) / 20) + ')';
-
-	document.body.appendChild(shadowEl);
-}
-
-for (var i = 0; i < 10; i ++) {
-
-	shadowEl = document.createElement('div');
-
-	shadowEl.style.position = 'absolute';
-	shadowEl.style.bottom = i + 'px';
-	shadowEl.style.left = 0;
-	shadowEl.style.right = 0;
-	shadowEl.style.height = '1px';
-	shadowEl.style.backgroundColor = 'rgba(255, 255, 255, ' + ((10 - i) / 10) + ')';
-
-	document.body.appendChild(shadowEl);
-}
-
-var creditsEl = document.getElementById('credits'),
-	scrollOffset = 1;
-
-creditsEl.addEventListener('click', function() {
-
-	if (scrollOffset > 0)
-		scrollOffset = 0;
-	else
-		scrollOffset = 1;
-
-}, false);
-
-creditsEl.addEventListener('dblclick', function() {
-	creditsEl.scrollTop = 0;
-}, false);
-
-window.setTimeout(function runCredits() {
-
-	creditsEl.scrollTop = 0;
-
-	var creditsInterval = window.setInterval(function scrollCredits() {
-
-		var lastScrollTop = creditsEl.scrollTop;
-
-		creditsEl.scrollTop += scrollOffset;
-		if (lastScrollTop == creditsEl.scrollTop && scrollOffset > 0) {
-
-			window.clearInterval(creditsInterval);
-			window.setTimeout(runCredits, 3500);
-		}
-
-	}, 35);
-
-}, 2500);
-
-})();
-// ]]>
-</script>
 
 </body>
 </html>
