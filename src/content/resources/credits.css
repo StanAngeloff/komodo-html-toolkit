@@ -19,6 +19,10 @@ html, body {
 	width:      100%;
 }
 
+body {
+	padding-bottom: 10px;
+}
+
 h1 {
 	background:       rgba(0, 0, 0, 0.75);
 	border-bottom:    rgba(0, 0, 0, 1);
