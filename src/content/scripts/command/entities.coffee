@@ -280,7 +280,7 @@ $self.onViewOpened: (e) ->
 $self.controller: ->
   root.command.language.controller.apply @, [command: 'entities',
                                              triggerKeys: '&',
-                                             supportedLanguages: ['HTML'],
+                                             supportedLanguages: ['HTML', 'HTML5'],
                                              canChangeTriggerKeys: false]
 
   @trigger: (e) ->

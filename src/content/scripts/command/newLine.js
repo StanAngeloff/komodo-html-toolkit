@@ -9,7 +9,7 @@ $self.controller = function() {
 
 	$toolkit.command.language.controller.apply(this, [command = 'newLine',
 													  triggerKeys = ['Shift+Enter', 'Shift+Return'],
-													  supportedLanguages = 'HTML',
+													  supportedLanguages = ['HTML', 'HTML5'],
 													  canChangeTriggerKeys = false]);
 
 	this.trigger = function(e) {

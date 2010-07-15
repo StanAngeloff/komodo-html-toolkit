@@ -14,7 +14,7 @@ $self.controller = function() {
 
 	$toolkit.command.language.controller.apply(this, [command = 'tagComplete',
 													  triggerKeys = '>',
-													  supportedLanguages = ['HTML', 'XML', 'XBL', 'PHP', '_PHPDoc'],
+													  supportedLanguages = ['HTML', 'HTML5', 'XML', 'XBL', 'PHP', '_PHPDoc'],
 													  canChangeTriggerKeys = false]);
 
 	this.trigger = function(e) {
@@ -25,7 +25,7 @@ $self.controller = function() {
 
 		// If we are working in a PHP buffer, check one position back to make sure we have HTML
 		if (languagePair.indexOf('PHP') >= 0 &&
-			'HTML' !== view.document.languageForPosition(Math.max(0, Math.max(scimoz.anchor, scimoz.currentPos) - 1)))
+			['HTML', 'HTML5'].indexOf(view.document.languageForPosition(Math.max(0, Math.max(scimoz.anchor, scimoz.currentPos) - 1))) < 0)
 			return false;
 
 		var editorPosition = Math.min(scimoz.anchor, scimoz.currentPos),

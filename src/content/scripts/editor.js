@@ -22,13 +22,13 @@ $self.isHtmlBuffer = function(view) {
 
 	var languagePair = [view.document.subLanguage, view.document.language];
 
-	return (languagePair.indexOf('HTML') >= 0 ||
+	return ((languagePair.indexOf('HTML') >= 0 || languagePair.indexOf('HTML5') >= 0) ||
 			// When starting a script or a style block within a server-side language e.g. PHP,
 			// the subLanguage changes; to fix this, check one character back
 			((languagePair.indexOf('JavaScript') >= 0 || languagePair.indexOf('CSS') >= 0 ||
 			  // Immediately before <?php blocks
 			  languagePair.indexOf('PHP') >= 0) &&
-			 'HTML' === view.document.languageForPosition(Math.max(0, Math.max(view.scimoz.anchor, view.scimoz.currentPos) - 1))));
+			 ['HTML', 'HTML5'].indexOf(view.document.languageForPosition(Math.max(0, Math.max(view.scimoz.anchor, view.scimoz.currentPos) - 1)))) >= 0);
 };
 
 $self.findTagBefore = function(position, scimoz) {
@@ -279,7 +279,7 @@ $self.guessNewLine = function(document) {
 $self.guessDoctype = function(view) {
 
 	// Figure out which DOM language we are in
-	var domLanguages = ['XML', 'HTML', 'XHTML', 'XSLT'],
+	var domLanguages = ['XML', 'HTML', 'HTML5', 'XHTML', 'XSLT'],
 		languageService = view.document.languageObj,
 		viewLanguage = domLanguages.indexOf(languageService.name) < 0 ? null : languageService.name;
 
@@ -322,7 +322,7 @@ $self.guessDoctype = function(view) {
 		return 'implied HTML';
 
 	// Attempt to fetch the default HTML DOCTYPE from Komodo's preferences
-	if ('HTML' === viewLanguage) {
+	if ('HTML' === viewLanguage || 'HTML5' === viewLanguage) {
 
 		var preferencesService = Cc['@activestate.com/koPrefService;1'].getService(Ci.koIPrefService),
 			defaultDeclaration = preferencesService.prefs.getStringPref('defaultHTMLDecl');

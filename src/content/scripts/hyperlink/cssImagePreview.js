@@ -17,7 +17,7 @@ ko.hyperlinks.ImagePreviewHandler = function() {
 		regexp = /\burl\(["']?(?!\/|\\)([^'"\)]+)["']?\)/i,
 		callback = function() { },
 		replacement = null,
-		supportedLanguages = ['CSS', 'HTML'],
+		supportedLanguages = ['CSS', 'HTML', 'HTML5'],
 		markerStyle = Components.interfaces.ISciMoz.INDIC_PLAIN,
 		markerColour = RGB(0xD0, 0x40, 0xFF);
 

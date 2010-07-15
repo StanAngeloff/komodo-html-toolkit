@@ -2,7 +2,7 @@ $toolkit.include('editor');
 $toolkit.include('htmlUtils');
 $toolkit.include('library');
 
-var SUBLANGUAGE_SUPPORTED_LIST = ['HTML', 'XML', 'XBL', 'PHP'];
+var SUBLANGUAGE_SUPPORTED_LIST = ['HTML', 'HTML5', 'XML', 'XBL', 'PHP'];
 
 $self.provider = function() {
 

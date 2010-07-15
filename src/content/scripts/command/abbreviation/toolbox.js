@@ -38,7 +38,8 @@ $self.provider = function() {
 			viewLanguages.push(view.document.language);
 
 		// Special cases
-		if (viewLanguages.indexOf('HTML') < 0) {
+		if (viewLanguages.indexOf('HTML') < 0 &&
+            viewLanguages.indexOf('HTML5') < 0) {
 
 			// subLanguage is not set to HTML in Smarty templates
 			if (view.document.subLanguage === 'Smarty')

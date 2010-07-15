@@ -1,7 +1,7 @@
 $toolkit.include('command');
 $toolkit.include('editor');
 
-var LANGUAGE_SUPPORTED_LIST = ['HTML', 'XML', 'XUL', 'XBL', 'MXML', 'RXML', 'PHP', 'Smarty', 'Django', 'RHTML', 'CSS'];
+var LANGUAGE_SUPPORTED_LIST = ['HTML', 'HTML5', 'XML', 'XUL', 'XBL', 'MXML', 'RXML', 'PHP', 'Smarty', 'Django', 'RHTML', 'CSS'];
 
 $self.controller = function() {
 

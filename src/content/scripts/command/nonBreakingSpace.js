@@ -7,7 +7,7 @@ $self.controller = function() {
 
 	$toolkit.command.language.controller.apply(this, [command = 'nonBreakingSpace',
 													  triggerKeys = 'Shift+Space',
-													  supportedLanguages = ['HTML'],
+													  supportedLanguages = ['HTML', 'HTML5'],
 													  canChangeTriggerKeys = false]);
 
 	this.trigger = function(e) {

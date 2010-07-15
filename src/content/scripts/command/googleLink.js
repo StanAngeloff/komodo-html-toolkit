@@ -9,7 +9,7 @@ $self.controller = function() {
 
 	$toolkit.command.language.controller.apply(this, [command = 'googleLink',
 													  triggerKeys = 'Ctrl+Alt+Shift+L',
-													  supportedLanguages = ['HTML'],
+													  supportedLanguages = ['HTML', 'HTML5'],
 													  canChangeTriggerKeys = true]);
 
 	this.trigger = function() {
