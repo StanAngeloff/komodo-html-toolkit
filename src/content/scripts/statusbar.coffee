@@ -53,9 +53,7 @@ startPolling: (view) ->
   block: ->
     return clearEverything() unless view?.document
     try
-      if view.getAttribute('type') is 'startpage'
-        clearEverything()
-      else
+      if view.getAttribute('type') is 'editor'
         newEncodingName:       view.document.encoding.short_encoding_name
         newEncodingPythonName: view.document.encoding.python_encoding_name
         newEncodingLongName:   view.document.encoding.friendly_encoding_name
@@ -93,6 +91,8 @@ startPolling: (view) ->
             lastIndentTabWidth: newIndentTabWidth
         else
           clearIndentation()
+      else
+        clearEverything()
     catch e
       clearEverything()
   block()
