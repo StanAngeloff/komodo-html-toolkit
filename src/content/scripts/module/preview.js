@@ -56,7 +56,7 @@ $self.storage = new (function() {
 	var timeNow = (function() { return Math.floor(new Date().getTime() / 1000); });
 
 	/** @type  Components.interfaces.mozIStorageStatement */
-	var cleanUpStatement = dbConnection.createStatement('DELETE FROM preview_options WHERE timestamp = ?1');
+	var cleanUpStatement = dbConnection.createStatement('DELETE FROM preview_options WHERE timestamp < ?1');
 
 	cleanUpStatement.bindInt32Parameter(0, timeNow() - (2 * 7 * 24 * 60 * 60));
 	cleanUpStatement.execute();
