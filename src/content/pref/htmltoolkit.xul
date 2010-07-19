@@ -7,7 +7,7 @@
 <prefwindow id="htmltoolkitOptions"
 			xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 			title="&options.title;"
-			width="640">
+			width="640" height="480">
 
 	<script type="application/x-javascript" src="chrome://htmltoolkit/content/pref/htmltoolkit.js" />
 
