@@ -219,16 +219,14 @@ $toolkit.statusbar.updateViewEncoding = function(pythonName) {
   }
 };
 $toolkit.statusbar.updateViewEncodingBOM = function() {
-  var bomEl, useBOM, view, wasBOM;
+  var bomEl, useBOM, view;
   if (!(view = currentView())) {
     return null;
   }
   bomEl = document.getElementById('contextmenu_encodingUseBOM');
-  wasBOM = bomEl.getAttribute('checked') === true;
-  if (lastEncodingUseBOM === (useBOM = !wasBOM)) {
+  if (lastEncodingUseBOM === (useBOM = bomEl.getAttribute('checked') === 'true')) {
     return null;
   }
-  bomEl.setAttribute('checked', useBOM);
   view.document.encoding.use_byte_order_marker = useBOM;
   view.document.isDirty = true;
   return restartPolling({
@@ -442,3 +440,4 @@ $toolkit.statusbar.updateSoftTabs = function() {
   softTabsEl = document.getElementById('contextmenu_indentationSoftTabs');
   return $toolkit.statusbar.updateViewHardTabs(softTabsEl.getAttribute('checked') !== 'true');
 };
+$toolkit.trapExceptions($toolkit.statusbar);

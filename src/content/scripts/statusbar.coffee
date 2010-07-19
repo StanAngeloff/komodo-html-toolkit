@@ -180,9 +180,7 @@ $toolkit.statusbar.updateViewEncoding: (pythonName) ->
 $toolkit.statusbar.updateViewEncodingBOM: ->
   return unless view: currentView()
   bomEl:  document.getElementById 'contextmenu_encodingUseBOM'
-  wasBOM: bomEl.getAttribute('checked') is true
-  return if lastEncodingUseBOM is useBOM: not wasBOM
-  bomEl.setAttribute 'checked', useBOM
+  return if lastEncodingUseBOM is useBOM: bomEl.getAttribute('checked') is 'true'
   view.document.encoding.use_byte_order_marker: useBOM
   view.document.isDirty: yes
   restartPolling { originalTarget: view }
@@ -312,3 +310,5 @@ $toolkit.statusbar.handleCustomIndentationPanelKey: (event) ->
 $toolkit.statusbar.updateSoftTabs: ->
   softTabsEl: document.getElementById 'contextmenu_indentationSoftTabs'
   $toolkit.statusbar.updateViewHardTabs softTabsEl.getAttribute('checked') isnt 'true'
+
+$toolkit.trapExceptions $toolkit.statusbar
