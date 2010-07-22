@@ -3,18 +3,15 @@
   const Cc = Components.classes;
   const Ci = Components.interfaces;
   const XUL_NS = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul';
-  // Find the most recent Komodo window and grab a reference to the HTML Toolkit extension
   windowManagerService = Cc['@mozilla.org/appshell/window-mediator;1'].getService(Ci.nsIWindowMediator);
   recentKomodoWindow = windowManagerService.getMostRecentWindow('Komodo');
   $toolkit = recentKomodoWindow.extensions.htmlToolkit;
-  // Grab the preferences branch for HTML Toolkit
   prefsService = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefService);
   prefsBranch = prefsService.getBranch('extensions.htmltoolkit.');
   eventsBag = {
-    onLoad: function onLoad() {
+    onLoad: function() {
       var abbreviationReplaceExpandControlEl, abbreviationReplaceExpandPrefEl, cssFillUpStopperControlEl, cssFillUpStopperPrefEl, tagCompleteGroup;
       prefsService.QueryInterface(Ci.nsIPrefBranch2);
-      // String to bool conversion for checkboxes
       abbreviationReplaceExpandControlEl = document.getElementById('abbreviation-replace-expand-control');
       abbreviationReplaceExpandPrefEl = document.getElementById(abbreviationReplaceExpandControlEl.getAttribute('preference'));
       abbreviationReplaceExpandControlEl.setAttribute('checked', prefsService.getCharPref(abbreviationReplaceExpandPrefEl.getAttribute('name')) === 'true' ? true : false);
@@ -23,14 +20,13 @@
       cssFillUpStopperControlEl.setAttribute('checked', prefsService.getCharPref(cssFillUpStopperPrefEl.getAttribute('name')) === 'true' ? true : false);
       tagCompleteGroup = document.getElementById('tag-complete-group');
       tagCompleteGroup.addEventListener('keypress', eventsBag.onTagCompleteGroupKeyPress, false);
-      // Update UI strings
       abbreviationReplaceExpandControlEl.label = abbreviationReplaceExpandControlEl.label.replace('keybinding', recentKomodoWindow.gKeybindingMgr.command2key['cmd_expandAbbrev'] || $toolkit.l10n('pref/htmltoolkit').GetStringFromName('noKeybinding'));
       return window.setTimeout((function() {
         return window.centerWindowOnScreen();
       }), 1);
     },
-    onTagCompleteGroupKeyPress: function onTagCompleteGroupKeyPress(e) {
-      var _a, _b, _c, _d, _e, _f, _g, _h, groupedState, i, j, rangeEnd, rangeStart, selectedRows, selection, selectionLength, tree;
+    onTagCompleteGroupKeyPress: function(e) {
+      var _a, _b, _c, _d, groupedState, i, j, rangeEnd, rangeStart, selectedRows, selection, selectionLength, tree;
       if (e.charCode === 32 && !e.altKey) {
         tree = document.getElementById('tag-complete-tree');
         selection = tree.view.selection;
@@ -41,33 +37,32 @@
         selectedRows = [];
         rangeStart = {};
         rangeEnd = {};
-        _a = 0; _b = selectionLength;
-        for (i = _a; (_a <= _b ? i < _b : i > _b); (_a <= _b ? i += 1 : i -= 1)) {
+        for (i = 0; (0 <= selectionLength ? i < selectionLength : i > selectionLength); (0 <= selectionLength ? i += 1 : i -= 1)) {
           selection.getRangeAt(i, rangeStart, rangeEnd);
-          _c = rangeStart.value; _d = rangeEnd.value;
-          for (j = _c; (_c <= _d ? j <= _d : j >= _d); (_c <= _d ? j += 1 : j -= 1)) {
+          (_a = rangeStart.value); (_b = rangeEnd.value);
+          for (j = _a; (_a <= _b ? j <= _b : j >= _b); (_a <= _b ? j += 1 : j -= 1)) {
             if (j >= 0) {
               selectedRows.push(j);
             }
           }
         }
         groupedState = true;
-        _e = 0; _f = selectedRows.length;
-        for (i = _e; (_e <= _f ? i < _f : i > _f); (_e <= _f ? i += 1 : i -= 1)) {
+        (_c = selectedRows.length);
+        for (i = 0; (0 <= _c ? i < _c : i > _c); (0 <= _c ? i += 1 : i -= 1)) {
           groupedState = groupedState && tree.view.getCellValue(selectedRows[i], {}) === 'true';
           if (!(groupedState)) {
             break;
           }
         }
-        _g = 0; _h = selectedRows.length;
-        for (i = _g; (_g <= _h ? i < _h : i > _h); (_g <= _h ? i += 1 : i -= 1)) {
+        (_d = selectedRows.length);
+        for (i = 0; (0 <= _d ? i < _d : i > _d); (0 <= _d ? i += 1 : i -= 1)) {
           tree.view.setCellValue(selectedRows[i], {}, groupedState ? 'false' : 'true');
         }
         return false;
       }
       return true;
     },
-    onAccept: function onAccept() {
+    onAccept: function() {
       var _a, _b, _c, _d, cell, prefEl, prefId, preferenceName, tagCompleteCells, tagCompleteTree;
       tagCompleteTree = document.getElementById('tag-complete-tree');
       tagCompleteCells = tagCompleteTree.getElementsByTagName('treecell');
@@ -78,7 +73,7 @@
           prefId = cell.getAttribute('preference');
           if (prefId.length) {
             prefEl = document.getElementById(prefId);
-            if ((typeof prefEl !== "undefined" && prefEl !== null)) {
+            if (typeof prefEl !== "undefined" && prefEl !== null) {
               preferenceName = prefEl.getAttribute('name');
               return prefsService.setCharPref(preferenceName, cell.getAttribute('value'));
             }

@@ -1,8 +1,10 @@
 root: $toolkit ? this
 
 $self.tool: ->
-  root.command.selectionTools.tool.apply @, [toolName: 'general',
-                                             toolOrdering: 5900]
+  root.command.selectionTools.tool.apply @, [
+    toolName:     'general'
+    toolOrdering: 5900
+  ]
 
   @getSupportedTransformers: -> ['capitalise', 'hyphenise', 'underscorise']
 

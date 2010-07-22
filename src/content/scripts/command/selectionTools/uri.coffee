@@ -1,8 +1,10 @@
 root: $toolkit ? this
 
 $self.tool: ->
-  root.command.selectionTools.tool.apply @, [toolName: 'uri',
-                                             toolOrdering: 5700]
+  root.command.selectionTools.tool.apply @, [
+    toolName:     'uri'
+    toolOrdering: 5700
+  ]
 
   @getSupportedTransformers: -> ['encode', 'decode']
 

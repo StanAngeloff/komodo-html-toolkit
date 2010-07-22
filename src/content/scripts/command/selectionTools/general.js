@@ -1,13 +1,13 @@
 (function(){
   var root;
   root = (typeof $toolkit !== "undefined" && $toolkit !== null) ? $toolkit : this;
-  $self.tool = function tool() {
+  $self.tool = function() {
     var toolName, toolOrdering;
     root.command.selectionTools.tool.apply(this, [(toolName = 'general'), (toolOrdering = 5900)]);
-    this.getSupportedTransformers = function getSupportedTransformers() {
+    this.getSupportedTransformers = function() {
       return ['capitalise', 'hyphenise', 'underscorise'];
     };
-    this.trigger = function trigger(transformer, string) {
+    this.trigger = function(transformer, string) {
       if (transformer === 'capitalise') {
         return string.replace(/[\-_]\D/g, function(match) {
           return match.charAt(1).toUpperCase();
@@ -25,7 +25,7 @@
     };
     return this;
   };
-  $self.registerAll = function registerAll() {
+  $self.registerAll = function() {
     return new $self.tool().register();
   };
 })();

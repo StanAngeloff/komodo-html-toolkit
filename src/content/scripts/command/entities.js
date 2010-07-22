@@ -1,9 +1,10 @@
-var root;
-root = (typeof $toolkit !== "undefined" && $toolkit !== null) ? $toolkit : this;
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const ACIID_HTML_ENTITY = 14;
-var entities = [
+(function(){
+  var root;
+  root = (typeof $toolkit !== "undefined" && $toolkit !== null) ? $toolkit : this;
+  const Cc = Components.classes;
+  const Ci = Components.interfaces;
+  const ACIID_HTML_ENTITY = 14;
+  var entities = [
   'quot', // quotation mark, U+0022 ISOnum
   'amp', // ampersand, U+0026 ISOnum
   'lt', // less-than sign, U+003C ISOnum
@@ -258,53 +259,54 @@ var entities = [
   'hearts', // black heart suit = valentine, U+2665 ISOpub
   'diams' // black diamond suit, U+2666 ISOpub
 ];
-entities.sort(function(left, right) {
-  if (left.toLowerCase() < right.toLowerCase()) {
-    return -1;
-  }
-  if (left.toLowerCase() > right.toLowerCase()) {
-    return +1;
-  }
-  return 0;
-});
-$self.destroy = function() {
-  return window.removeEventListener('view_opened', $self.onViewOpened, true);
-};
-$self.initialize = function() {
-  return window.addEventListener('view_opened', $self.onViewOpened, true);
-};
-$self.onViewOpened = function(e) {
-  var view;
-  view = e.originalTarget;
-  view && view.scimoz ? view.scimoz.registerImage(ACIID_HTML_ENTITY, ko.markers.getPixmap('chrome://htmltoolkit/skin/images/ac_html_entity.xpm')) : null;
-  return true;
-};
-$self.controller = function() {
-  var canChangeTriggerKeys, command, supportedLanguages, triggerKeys;
-  root.command.language.controller.apply(this, [(command = 'entities'), (triggerKeys = '&'), (supportedLanguages = ['HTML', 'HTML5']), (canChangeTriggerKeys = false)]);
-  this.trigger = function(e) {
-    this.onKeyEvent('up', function() {
-      var _a, _b, _c, _d, entity, lineRange, lineStartPosition, scimoz;
-      scimoz = ko.views.manager.currentView.scimoz;
-      if (scimoz.currentPos === scimoz.anchor && scimoz.currentPos > 0 && scimoz.getStyleAt(scimoz.currentPos - 1) === scimoz.SCE_UDL_M_ENTITY) {
-        lineStartPosition = scimoz.positionFromLine(scimoz.lineFromPosition(scimoz.currentPos));
-        lineRange = scimoz.getTextRange(lineStartPosition, scimoz.currentPos);
-        /[^&]*&$/.test(lineRange) ? scimoz.autoCShow(1, (function() {
-          _a = []; _c = entities;
-          for (_b = 0, _d = _c.length; _b < _d; _b++) {
-            entity = _c[_b];
-            _a.push('&' + entity + ';?' + ACIID_HTML_ENTITY);
-          }
-          return _a;
-        })().join(String.fromCharCode(scimoz.autoCSeparator))) : null;
-      }
-      return true;
-    });
+  entities.sort(function(left, right) {
+    if (left.toLowerCase() < right.toLowerCase()) {
+      return -1;
+    }
+    if (left.toLowerCase() > right.toLowerCase()) {
+      return +1;
+    }
+    return 0;
+  });
+  $self.destroy = function() {
+    return window.removeEventListener('view_opened', $self.onViewOpened, true);
+  };
+  $self.initialize = function() {
+    return window.addEventListener('view_opened', $self.onViewOpened, true);
+  };
+  $self.onViewOpened = function(e) {
+    var view;
+    view = e.originalTarget;
+    view && view.scimoz ? view.scimoz.registerImage(ACIID_HTML_ENTITY, ko.markers.getPixmap('chrome://htmltoolkit/skin/images/ac_html_entity.xpm')) : null;
     return true;
   };
-  root.trapExceptions(this);
-  return this;
-};
-$self.registerAll = function() {
-  return new $self.controller().register();
-};
+  $self.controller = function() {
+    var canChangeTriggerKeys, command, supportedLanguages, triggerKeys;
+    root.command.language.controller.apply(this, [(command = 'entities'), (triggerKeys = '&'), (supportedLanguages = ['HTML', 'HTML5']), (canChangeTriggerKeys = false)]);
+    this.trigger = function(e) {
+      this.onKeyEvent('up', function() {
+        var _a, _b, _c, _d, entity, lineRange, lineStartPosition, scimoz;
+        scimoz = ko.views.manager.currentView.scimoz;
+        if (scimoz.currentPos === scimoz.anchor && scimoz.currentPos > 0 && scimoz.getStyleAt(scimoz.currentPos - 1) === scimoz.SCE_UDL_M_ENTITY) {
+          lineStartPosition = scimoz.positionFromLine(scimoz.lineFromPosition(scimoz.currentPos));
+          lineRange = scimoz.getTextRange(lineStartPosition, scimoz.currentPos);
+          /[^&]*&$/.test(lineRange) ? scimoz.autoCShow(1, (function() {
+            _a = []; _c = entities;
+            for (_b = 0, _d = _c.length; _b < _d; _b++) {
+              entity = _c[_b];
+              _a.push('&' + entity + ';?' + ACIID_HTML_ENTITY);
+            }
+            return _a;
+          })().join(String.fromCharCode(scimoz.autoCSeparator))) : null;
+        }
+        return true;
+      });
+      return true;
+    };
+    root.trapExceptions(this);
+    return this;
+  };
+  $self.registerAll = function() {
+    return new $self.controller().register();
+  };
+})();

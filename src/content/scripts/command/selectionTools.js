@@ -1,15 +1,10 @@
 (function(){
   var TOOL_COMMANDS_GROUP, TOOL_NATIVE_MENU_ID, TOOL_ORDERING, encodingService, root;
-  var __to_array = Array.prototype.slice, __bind = function(func, obj, args) {
-    return function() {
-      return func.apply(obj || {}, args ? args.concat(__to_array.call(arguments, 0)) : arguments);
-    };
-  };
   root = (typeof $toolkit !== "undefined" && $toolkit !== null) ? $toolkit : this;
   const Cc = Components.classes;
   const Ci = Components.interfaces;
   const XUL_NS = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul';
-  $self.destroy = function destroy() {
+  $self.destroy = function() {
     var _a;
     if ((typeof (_a = $self.manager) !== "undefined" && _a !== null)) {
       $self.manager.unregister();
@@ -18,10 +13,10 @@
   };
   $self.manager = {
     tools: [],
-    register: function register() {    },
-    unregister: function unregister() {    },
+    register: function() {    },
+    unregister: function() {    },
     changeHandler: null,
-    addTool: function addTool(obj) {
+    addTool: function(obj) {
       var index;
       index = $self.manager.indexOfTool(obj);
       if (index < 0) {
@@ -32,7 +27,7 @@
       }
       return index;
     },
-    removeTool: function removeTool(obj) {
+    removeTool: function(obj) {
       var index, tool;
       index = $self.manager.indexOfTool(obj);
       if (index >= 0) {
@@ -43,17 +38,17 @@
       }
       return null;
     },
-    indexOfTool: function indexOfTool(obj) {
-      var _a, _b, index;
-      _a = 0; _b = $self.manager.tools.length;
-      for (index = _a; (_a <= _b ? index < _b : index > _b); (_a <= _b ? index += 1 : index -= 1)) {
+    indexOfTool: function(obj) {
+      var _a, index;
+      (_a = $self.manager.tools.length);
+      for (index = 0; (0 <= _a ? index < _a : index > _a); (0 <= _a ? index += 1 : index -= 1)) {
         if ($self.manager.tools[index] === obj) {
           return index;
         }
       }
       return -1;
     },
-    sortTools: function sortTools() {
+    sortTools: function() {
       return $self.manager.tools.sort(function(left, right) {
         if (left.ordering < right.ordering) {
           return -1;
@@ -64,9 +59,9 @@
         return 0;
       });
     },
-    onChange: function onChange(handler) {
+    onChange: function(handler) {
       var _a;
-      if ((typeof handler !== "undefined" && handler !== null)) {
+      if (typeof handler !== "undefined" && handler !== null) {
         this.changeHandler = handler;
         return this.changeHandler;
       } else if ((typeof (_a = this.changeHandler) !== "undefined" && _a !== null)) {
@@ -79,7 +74,7 @@
   TOOL_ORDERING = 9900;
   TOOL_COMMANDS_GROUP = 'cmd_htmlToolkit_selectionTools_';
   TOOL_NATIVE_MENU_ID = 'codeConvert_menu';
-  $self.tool = function tool(toolName, toolOrdering) {
+  $self.tool = function(toolName, toolOrdering) {
     this.name = toolName;
     this.ordering = (typeof toolOrdering !== "undefined" && toolOrdering !== null) ? toolOrdering : (++TOOL_ORDERING);
     this.register = (function() {
@@ -91,34 +86,34 @@
     this.getSupportedTransformers = (function() {
       return [];
     });
-    this.trigger = function trigger(transformer) {
+    this.trigger = function(transformer) {
       return null;
     };
     return this;
   };
   encodingService = Cc['@activestate.com/koEncodingServices;1'].getService(Ci.koIEncodingServices);
-  $self.controller = function controller() {
+  $self.controller = function() {
     var _a, canChangeTriggerKeys, command, triggerKeys;
     root.command.controller.apply(this, [(command = 'selectionTools'), (triggerKeys = 'None'), (canChangeTriggerKeys = false)]);
     this.hasNative = (typeof (_a = document.getElementById(TOOL_NATIVE_MENU_ID)) !== "undefined" && _a !== null);
-    this.canExecute = function canExecute(e) {
+    this.canExecute = function(e) {
       return ko.views.manager && ko.views.manager.currentView && ko.views.manager.currentView.getAttribute('type') === 'editor' && ko.views.manager.currentView.document && ko.views.manager.currentView.scimoz && ko.views.manager.currentView.scimoz.currentPos !== ko.views.manager.currentView.scimoz.anchor;
     };
-    this.rebuildEditMenu = function rebuildEditMenu() {
+    this.rebuildEditMenu = function() {
       var globalSet, isMac, popupEl, referenceEl, separatorEl, topMenuEl;
       globalSet = document.getElementById('broadcasterset_global');
       if (!(typeof globalSet !== "undefined" && globalSet !== null)) {
         throw "FATAL: Cannot find Komodo's global broadcaster set.";
       }
       Array.prototype.slice(globalSet.childNodes).forEach(function(broadcasterEl) {
-        broadcasterEl.id == undefined ? undefined : broadcasterEl.id.indexOf(TOOL_COMMANDS_GROUP) === 0 ? globalSet.removeChild(broadcasterEl) : null;
+        (broadcasterEl.id == undefined ? undefined : broadcasterEl.id.indexOf(TOOL_COMMANDS_GROUP)) === 0 ? globalSet.removeChild(broadcasterEl) : null;
         return null;
       });
       if (this.hasNative) {
         topMenuEl = document.getElementById(TOOL_NATIVE_MENU_ID);
         popupEl = document.getElementById(("" + (TOOL_NATIVE_MENU_ID) + "popup"));
         Array.prototype.slice(popupEl.childNodes).forEach(function(menuEl) {
-          menuEl.id == undefined ? undefined : menuEl.id.indexOf('menu_selectionTools') === 0 ? popupEl.removeChild(menuEl) : null;
+          (menuEl.id == undefined ? undefined : menuEl.id.indexOf('menu_selectionTools')) === 0 ? popupEl.removeChild(menuEl) : null;
           return null;
         });
         if ((popupEl.childNodes[popupEl.childNodes.length - 1] == undefined ? undefined : popupEl.childNodes[popupEl.childNodes.length - 1].localName) !== 'menuseparator') {
@@ -127,7 +122,7 @@
         }
       } else {
         topMenuEl = document.getElementById('menu_selectionTools');
-        if ((typeof topMenuEl !== "undefined" && topMenuEl !== null)) {
+        if (typeof topMenuEl !== "undefined" && topMenuEl !== null) {
           topMenuEl.parentNode.removeChild(topMenuEl);
         }
         topMenuEl = document.createElementNS(XUL_NS, 'menu');
@@ -145,20 +140,16 @@
           commandLabel = root.l10n('command').GetStringFromName(("selectionTools." + (tool.name) + "." + (transformer) + ".menuLabel"));
           commandAccessKey = root.l10n('command').GetStringFromName(("selectionTools." + (tool.name) + "." + (transformer) + ".menuAccessKey"));
           commandDescription = root.l10n('command').formatStringFromName('selectionTools.binding', [commandLabel], 1);
-          // Register command as new broadcaster
           broadcasterEl = document.createElementNS(XUL_NS, 'broadcaster');
           broadcasterEl.setAttribute('id', commandName);
           broadcasterEl.setAttribute('key', ("key_" + commandName));
           broadcasterEl.setAttribute('oncommand', ("ko.commands.doCommandAsync('" + commandName + "', event);"));
           broadcasterEl.setAttribute('desc', commandDescription);
           globalSet.appendChild(broadcasterEl);
-          // Set default key binding, if specified
           try {
-            // Make sure the User has not overridden the default key bindings
             existingKeyBindings = gKeybindingMgr.command2keysequences(commandName);
             if (!existingKeyBindings.length) {
               triggerKeys = root.l10n('command').GetStringFromName(("selectionTools." + (tool.name) + "." + (transformer) + ".triggerKeys"));
-              // Ctrl is Meta on a Mac, update assigned triggers keys to match
               if (isMac) {
                 triggerKeys = triggerKeys.replace('Ctrl', 'Meta', 'g');
               }
@@ -170,7 +161,7 @@
               gKeybindingMgr._add_keybinding_sequences(defaultKeyBindings);
             }
           } catch (e) {
-            // ignore
+
           }
           menuEl = document.createElementNS(XUL_NS, 'menuitem');
           menuEl.setAttribute('label', commandLabel);
@@ -182,7 +173,6 @@
         separatorEl = document.createElementNS(XUL_NS, 'menuseparator');
         return popupEl.appendChild(separatorEl);
       });
-      // Remova last separator
       if (popupEl.childNodes.length) {
         popupEl.removeChild(popupEl.childNodes[popupEl.childNodes.length - 1]);
       }
@@ -193,12 +183,12 @@
       }
       return null;
     };
-    this.onMenuShowing = function onMenuShowing() {
+    this.onMenuShowing = function() {
       var topMenuEl;
       topMenuEl = document.getElementById(this.hasNative ? TOOL_NATIVE_MENU_ID : 'menu_selectionTools');
       return topMenuEl.setAttribute('disabled', this.canExecute(false) ? 'false' : 'true');
     };
-    this.moveBuiltInMenuItems = function moveBuiltInMenuItems() {
+    this.moveBuiltInMenuItems = function() {
       var convertLowerCaseEl, convertUpperCaseEl, popupEl;
       popupEl = document.getElementById('popup_selectionTools');
       convertLowerCaseEl = document.getElementById('menu_convertLowerCase');
@@ -207,7 +197,7 @@
       convertUpperCaseEl = document.getElementById('menu_convertUpperCase');
       return popupEl.insertBefore(convertUpperCaseEl, popupEl.firstChild);
     };
-    this.restoreBuiltInMenuItems = function restoreBuiltInMenuItems() {
+    this.restoreBuiltInMenuItems = function() {
       var convertLowerCaseEl, convertUpperCaseEl, referenceEl;
       referenceEl = document.getElementById('menu_selectionTools');
       referenceEl ? (referenceEl = referenceEl.nextSibling) : (referenceEl = document.getElementById('menu_marks'));
@@ -218,11 +208,17 @@
       return referenceEl.parentNode.insertBefore(convertUpperCaseEl, referenceEl.nextSibling);
     };
     this.registerBase = this.register;
-    this.register = function register() {
-      $self.manager.onChange(__bind(function() {
+    this.register = function() {
+      $self.manager.onChange((function(__this) {
+        var __func = function() {
           return this.rebuildEditMenu();
-        }, this));
-      root.events.onLoad(__bind(function() {
+        };
+        return (function() {
+          return __func.apply(__this, arguments);
+        });
+      })(this));
+      root.events.onLoad((function(__this) {
+        var __func = function() {
           var menuEl;
           this.rebuildEditMenu();
           if (!this.hasNative) {
@@ -231,12 +227,17 @@
           menuEl = document.getElementById('popup_sourcecode');
           menuEl.addEventListener('popupshowing', this.onMenuShowing, false);
           return window.controllers.appendController(this);
-        }, this));
+        };
+        return (function() {
+          return __func.apply(__this, arguments);
+        });
+      })(this));
       return this.registerBase();
     };
     this.unregisterBase = this.unregister;
-    this.unregister = function unregister() {
-      root.events.onUnload(__bind(function() {
+    this.unregister = function() {
+      root.events.onUnload((function(__this) {
+        var __func = function() {
           var menuEl;
           menuEl = document.getElementById('popup_sourcecode');
           menuEl.removeEventListener('popupshowing', this.onMenuShowing, false);
@@ -244,22 +245,26 @@
             this.restoreBuiltInMenuItems();
           }
           return window.controllers.removeController(this);
-        }, this));
+        };
+        return (function() {
+          return __func.apply(__this, arguments);
+        });
+      })(this));
       return this.unregisterBase();
     };
-    this.supportsCommand = function supportsCommand(command) {
+    this.supportsCommand = function(command) {
       if (command.indexOf(TOOL_COMMANDS_GROUP) === 0) {
         return true;
       }
       return false;
     };
-    this.isCommandEnabled = function isCommandEnabled(command) {
+    this.isCommandEnabled = function(command) {
       if (command.indexOf(TOOL_COMMANDS_GROUP) === 0) {
         return this.canExecute(false);
       }
       return false;
     };
-    this.doCommand = function doCommand(command) {
+    this.doCommand = function(command) {
       var _b, toolName, transformer;
       if (this.isCommandEnabled(command)) {
         _b = command.substr(TOOL_COMMANDS_GROUP.length).split('_');
@@ -293,7 +298,7 @@
     root.trapExceptions(this);
     return this;
   };
-  $self.registerAll = function registerAll() {
+  $self.registerAll = function() {
     root.registerAll(__namespace__);
     return new $self.controller().register();
   };

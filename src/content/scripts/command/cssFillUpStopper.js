@@ -2,10 +2,10 @@
   var root;
   root = (typeof $toolkit !== "undefined" && $toolkit !== null) ? $toolkit : this;
   root.include('command.language');
-  $self.controller = function controller() {
+  $self.controller = function() {
     var canChangeTriggerKeys, command, supportedLanguages, triggerKeys;
     root.command.language.controller.apply(this, [(command = 'cssFillUpStopper'), (triggerKeys = 'Space'), (supportedLanguages = ['CSS']), (canChangeTriggerKeys = false)]);
-    this.trigger = function trigger(e) {
+    this.trigger = function(e) {
       var scimoz;
       if (root.pref('cssFillUpStopper.enabled') === 'true') {
         scimoz = ko.views.manager.currentView.scimoz;
@@ -18,7 +18,7 @@
     root.trapExceptions(this);
     return this;
   };
-  $self.registerAll = function registerAll() {
+  $self.registerAll = function() {
     return new $self.controller().register();
   };
 })();

@@ -259,8 +259,10 @@ for entityName of entityToCode
     characterToEntity[String.fromCharCode entityToCode[entityName]]: entityName
 
 $self.tool: ->
-  root.command.selectionTools.tool.apply @, [toolName: 'html',
-                                             toolOrdering: 5600]
+  root.command.selectionTools.tool.apply @, [
+    toolName:     'html'
+    toolOrdering: 5600
+  ]
 
   @getSupportedTransformers: -> ['encode', 'decode']
 
@@ -268,7 +270,7 @@ $self.tool: ->
     switch transformer
       when 'encode'
         return string.replace /[\u0022-\u2666]/g, (match) ->
-          if match in characterToEntity then '&' + characterToEntity[match] + ';' else match
+          if match of characterToEntity then '&' + characterToEntity[match] + ';' else match
       when 'decode'
         return string.replace /&(.+?);/g, (match, entity) ->
           String.fromCharCode(if entity[0] isnt '#' then entityToCode[entity] else if entity[1] is 'x' then parseInt(entity.substr(2), 16) else parseInt(entity.substr(1)))

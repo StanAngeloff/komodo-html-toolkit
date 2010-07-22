@@ -1,8 +1,10 @@
 root: $toolkit ? this
 
 $self.tool: ->
-  root.command.selectionTools.tool.apply @, [toolName: 'base64',
-                                             toolOrdering: 5800]
+  root.command.selectionTools.tool.apply @, [
+    toolName:     'base64'
+    toolOrdering: 5800
+  ]
 
   @getSupportedTransformers: -> ['encode', 'decode']
 
@@ -11,12 +13,12 @@ $self.tool: ->
       when 'encode'
         try
           return window.btoa string
-        catch e
+        catch e then
           # ignore
       when 'decode'
         try
           return window.atob string
-        catch e
+        catch e then
           # ignore
     null
 

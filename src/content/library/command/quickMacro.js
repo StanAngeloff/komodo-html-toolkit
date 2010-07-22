@@ -5,7 +5,7 @@
   scimoz = view && view.scimoz;
   session = (this.__quickMacro_session = this.__quickMacro_session || {});
   _ = (__ = scimoz && scimoz.selText);
-  print = function print(string) {
+  print = function(string) {
     scimoz.insertText(scimoz.currentPos, string);
     scimoz.anchor = scimoz.currentPos += string.length;
     return scimoz.anchor;

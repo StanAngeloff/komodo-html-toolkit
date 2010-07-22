@@ -257,23 +257,20 @@
                         diams: 0x2666 };
   characterToEntity = {};
   _a = entityToCode;
-  for (entityName in _a) { if (__hasProp.call(_a, entityName)) {
+  for (entityName in _a) {
+    if (!__hasProp.call(_a, entityName)) continue;
     characterToEntity[String.fromCharCode(entityToCode[entityName])] = entityName;
-  }}
-  $self.tool = function tool() {
+  }
+  $self.tool = function() {
     var toolName, toolOrdering;
     root.command.selectionTools.tool.apply(this, [(toolName = 'html'), (toolOrdering = 5600)]);
-    this.getSupportedTransformers = function getSupportedTransformers() {
+    this.getSupportedTransformers = function() {
       return ['encode', 'decode'];
     };
-    this.trigger = function trigger(transformer, string) {
+    this.trigger = function(transformer, string) {
       if (transformer === 'encode') {
         return string.replace(/[\u0022-\u2666]/g, function(match) {
-          if (match in characterToEntity) {
-            return '&' + characterToEntity[match] + ';';
-          } else {
-            return match;
-          }
+          return match in characterToEntity ? '&' + characterToEntity[match] + ';' : match;
         });
       } else if (transformer === 'decode') {
         return string.replace(/&(.+?);/g, function(match, entity) {
@@ -292,7 +289,7 @@
     };
     return this;
   };
-  $self.registerAll = function registerAll() {
+  $self.registerAll = function() {
     return new $self.tool().register();
   };
 })();
