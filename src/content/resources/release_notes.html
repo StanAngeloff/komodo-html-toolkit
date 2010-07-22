@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <title>HTML Toolkit &ndash; Release Notes</title>
-  <link rel="stylesheet" type="text/css" href="credits.css" media="all" />
+  <link rel="stylesheet" type="text/css" href="common.css" media="all" />
   <script type="text/javascript">
   // <![CDATA[
   const Cc = Components.classes;
@@ -52,12 +52,45 @@
       Thank you for installing HTML Toolkit
       <script type="text/javascript">
       // <![CDATA[
-      document.write(recentKomodoWindow.extensions.htmlToolkit.VERSION);
+      document.write(recentKomodoWindow.extensions.htmlToolkit.VERSION_MAJOR
+                  + (recentKomodoWindow.extensions.htmlToolkit.VERSION_MINOR ? '.' + recentKomodoWindow.extensions.htmlToolkit.VERSION_MINOR : ''));
       // ]]>
       </script>
     </span></h2>
+    <script type="text/javascript">
+    // <![CDATA[
+    try {
+      if ('true' === recentKomodoWindow.extensions.htmlToolkit.pref('isRegistered')) {
+        document.writeln('<style type="text/css" media="all">');
+        document.writeln('#tell-the-developer { display: none; }');
+        document.writeln('</style>');
+      }
+    } catch (e) {
+      // ignore
+    }
+    // ]]>
+    </script>
+    <div id="tell-the-developer">
+      <p>Please tell the Developer you are using HTML&nbsp;Toolkit.</p>
+      <p class="note">
+        By using the button below you will make a web request to
+        <script type="text/javascript">
+        // <![CDATA[
+        var registerUrl = 'http://www.psp-webtech.co.uk/komodo/htmltoolkit/register.php';
+
+        document.write('<a href="' + registerUrl + '" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">');
+        document.write(registerUrl.split('://').pop().split('/').shift());
+        document.write('</a>.');
+        // ]]>
+        </script>
+        No personal data will be stored apart from your network IP address.
+      </p>
+      <div id="register">
+        <button type="button" onclick="register(event, registerUrl);"><span>Register</span></button>
+      </div>
+    </div>
     <div id="release-notes">
-      <h3><span>Release notes:</span></h3>
+      <h3><span>1.3 Release notes:</span></h3>
       <ul>
         <li><strong>Compatibility with Komodo&nbsp;6&nbsp;beta</strong></li>
         <li><strong>Integration with ZenCoding, if installed and enabled</strong></li>
@@ -74,39 +107,15 @@
         <li>Improved logic for picking up shortcut letters in auto-complete pop-up</li>
         <li>Updated to work in XBL documents</li>
       </ul>
+      <h3><span>1.3.1 Changelog:</span></h3>
+      <ul>
+        <li>Fixed bug in clean up routine in the Preview module: the SQLite table was never cleared properly</li>
+        <li><a href="http://github.com/StanAngeloff/komodo-html-toolkit/issues/closed#issue/3" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">Fixed #3</a>: Preferences window truncated on OS X </li>
+        <li><a href="http://github.com/StanAngeloff/komodo-html-toolkit/issues/closed#issue/6" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">Fixed #6</a>: Encoding menu - "Use signature (BOM)" cant be unchecked</li>
+        <li><a href="http://github.com/StanAngeloff/komodo-html-toolkit/issues/closed#issue/7" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">Fixed #7</a>: &amp; not autocompleting for column 0</li>
+        <li>Removed Wiki preview and language support</li>
+      </ul>
       <p>You can view this page again by using the <code>Help&nbsp;&raquo;&nbsp;HTML&nbsp;Toolkit&nbsp;Release&nbsp;Notes</code> menu.</p>
-      <script type="text/javascript">
-      // <![CDATA[
-      try {
-        if ('true' === recentKomodoWindow.extensions.htmlToolkit.pref('isRegistered')) {
-          document.writeln('<style type="text/css" media="all">');
-          document.writeln('#tell-the-developer { display: none; }');
-          document.writeln('</style>');
-        }
-      } catch (e) {
-        // ignore
-      }
-      // ]]>
-      </script>
-      <div id="tell-the-developer">
-        <p>Please tell the Developer you are using HTML&nbsp;Toolkit.</p>
-        <p class="note">
-          By using the button below you will make a web request to
-          <script type="text/javascript">
-          // <![CDATA[
-          var registerUrl = 'http://www.psp-webtech.co.uk/komodo/htmltoolkit/register.php';
-
-          document.write('<a href="' + registerUrl + '" onclick="ko.browse.openUrlInDefaultBrowser(this.href); return false;">');
-          document.write(registerUrl.split('://').pop().split('/').shift());
-          document.write('</a>.');
-          // ]]>
-          </script>
-          No personal data will be stored apart from your network IP address.
-        </p>
-        <div id="register">
-          <button type="button" onclick="register(event, registerUrl);"><span>Register</span></button>
-        </div>
-      </div>
     </div>
   </div>
 </div>

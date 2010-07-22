@@ -1,7 +1,7 @@
 /* ***** BEGIN LICENSE BLOCK *****
  * The MIT License
  *
- * Copyright (c) 2009 Stan Angeloff
+ * Copyright (c) 2010 Stan Angeloff
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,7 +37,8 @@ if (typeof (extensions) === 'undefined')
 
 	var $toolkit = extensions.htmlToolkit || (extensions.htmlToolkit = {});
 
-	$toolkit.VERSION = 1.3;
+	$toolkit.VERSION_MAJOR = 1.3;
+	$toolkit.VERSION_MINOR = 1;
 
 	$toolkit.include = function(namespace, includeOnce) {
 
@@ -161,10 +162,10 @@ if (typeof (extensions) === 'undefined')
 		}
 
 		var installedVersion = parseFloat($toolkit.pref('installedVersion'));
-		if (isNaN(installedVersion) || installedVersion < $toolkit.VERSION) {
+		if (isNaN(installedVersion) || installedVersion < $toolkit.VERSION_MAJOR) {
 
 			ko.open.URI('chrome://htmltoolkit/content/resources/release_notes.html', 'browser', true);
-			prefsBranch.setCharPref('installedVersion', '' + $toolkit.VERSION);
+			prefsBranch.setCharPref('installedVersion', '' + $toolkit.VERSION_MAJOR);
 		}
 	};
 
