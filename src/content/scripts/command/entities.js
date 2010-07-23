@@ -1,6 +1,7 @@
 (function(){
   var root;
   root = (typeof $toolkit !== "undefined" && $toolkit !== null) ? $toolkit : this;
+  root.include('command.language');
   const Cc = Components.classes;
   const Ci = Components.interfaces;
   const ACIID_HTML_ENTITY = 14;

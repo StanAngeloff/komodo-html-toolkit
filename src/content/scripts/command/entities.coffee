@@ -1,4 +1,5 @@
 root: $toolkit ? this
+root.include 'command.language'
 
 `const Cc = Components.classes`
 `const Ci = Components.interfaces`
