@@ -169,7 +169,7 @@ $self.controller: ->
       separatorEl: document.createElementNS XUL_NS, 'menuseparator'
       popupEl.appendChild separatorEl
 
-    # Remova last separator
+    # Remove last separator
     popupEl.removeChild popupEl.childNodes[popupEl.childNodes.length - 1] if popupEl.childNodes.length
 
     if not @hasNative
@@ -182,7 +182,14 @@ $self.controller: ->
 
   @onMenuShowing: ->
     topMenuEl: document.getElementById(if @hasNative then TOOL_NATIVE_MENU_ID else 'menu_selectionTools')
-    topMenuEl.setAttribute('disabled', if @canExecute(false) then 'false' else 'true')
+    isDisabled: if @canExecute(false) then true else false
+    updateDisabled: (node) ->
+      if isDisabled
+        node.removeAttribute 'disabled'
+      else
+        node.setAttribute 'disabled', 'true'
+      updateDisabled(child) for child in node.childNodes if node.childNodes.length
+    updateDisabled childEl for childEl in topMenuEl.childNodes
 
   @moveBuiltInMenuItems: ->
     popupEl: document.getElementById 'popup_selectionTools'

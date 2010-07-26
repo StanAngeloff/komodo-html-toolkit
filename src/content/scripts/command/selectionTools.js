@@ -1,4 +1,4 @@
-(function(){
+(function() {
   var TOOL_COMMANDS_GROUP, TOOL_NATIVE_MENU_ID, TOOL_ORDERING, encodingService, root;
   root = (typeof $toolkit !== "undefined" && $toolkit !== null) ? $toolkit : this;
   const Cc = Components.classes;
@@ -13,8 +13,8 @@
   };
   $self.manager = {
     tools: [],
-    register: function() {    },
-    unregister: function() {    },
+    register: function() {},
+    unregister: function() {},
     changeHandler: null,
     addTool: function(obj) {
       var index;
@@ -40,7 +40,7 @@
     },
     indexOfTool: function(obj) {
       var _a, index;
-      (_a = $self.manager.tools.length);
+      _a = $self.manager.tools.length;
       for (index = 0; (0 <= _a ? index < _a : index > _a); (0 <= _a ? index += 1 : index -= 1)) {
         if ($self.manager.tools[index] === obj) {
           return index;
@@ -184,9 +184,27 @@
       return null;
     };
     this.onMenuShowing = function() {
-      var topMenuEl;
+      var _b, _c, _d, _e, childEl, isDisabled, topMenuEl, updateDisabled;
       topMenuEl = document.getElementById(this.hasNative ? TOOL_NATIVE_MENU_ID : 'menu_selectionTools');
-      return topMenuEl.setAttribute('disabled', this.canExecute(false) ? 'false' : 'true');
+      isDisabled = this.canExecute(false) ? true : false;
+      updateDisabled = function(node) {
+        var _b, _c, _d, _e, child;
+        isDisabled ? node.removeAttribute('disabled') : node.setAttribute('disabled', 'true');
+        if (node.childNodes.length) {
+          _b = []; _d = node.childNodes;
+          for (_c = 0, _e = _d.length; _c < _e; _c++) {
+            child = _d[_c];
+            _b.push(updateDisabled(child));
+          }
+          return _b;
+        }
+      };
+      _b = []; _d = topMenuEl.childNodes;
+      for (_c = 0, _e = _d.length; _c < _e; _c++) {
+        childEl = _d[_c];
+        _b.push(updateDisabled(childEl));
+      }
+      return _b;
     };
     this.moveBuiltInMenuItems = function() {
       var convertLowerCaseEl, convertUpperCaseEl, popupEl;
@@ -210,45 +228,36 @@
     this.registerBase = this.register;
     this.register = function() {
       $self.manager.onChange((function(__this) {
-        var __func = function() {
-          return this.rebuildEditMenu();
+        return function() {
+          return __this.rebuildEditMenu();
         };
-        return (function() {
-          return __func.apply(__this, arguments);
-        });
       })(this));
       root.events.onLoad((function(__this) {
-        var __func = function() {
+        return function() {
           var menuEl;
-          this.rebuildEditMenu();
-          if (!this.hasNative) {
-            this.moveBuiltInMenuItems();
+          __this.rebuildEditMenu();
+          if (!__this.hasNative) {
+            __this.moveBuiltInMenuItems();
           }
           menuEl = document.getElementById('popup_sourcecode');
-          menuEl.addEventListener('popupshowing', this.onMenuShowing, false);
-          return window.controllers.appendController(this);
+          menuEl.addEventListener('popupshowing', __this.onMenuShowing, false);
+          return window.controllers.appendController(__this);
         };
-        return (function() {
-          return __func.apply(__this, arguments);
-        });
       })(this));
       return this.registerBase();
     };
     this.unregisterBase = this.unregister;
     this.unregister = function() {
       root.events.onUnload((function(__this) {
-        var __func = function() {
+        return function() {
           var menuEl;
           menuEl = document.getElementById('popup_sourcecode');
-          menuEl.removeEventListener('popupshowing', this.onMenuShowing, false);
-          if (!this.hasNative) {
-            this.restoreBuiltInMenuItems();
+          menuEl.removeEventListener('popupshowing', __this.onMenuShowing, false);
+          if (!__this.hasNative) {
+            __this.restoreBuiltInMenuItems();
           }
-          return window.controllers.removeController(this);
+          return window.controllers.removeController(__this);
         };
-        return (function() {
-          return __func.apply(__this, arguments);
-        });
       })(this));
       return this.unregisterBase();
     };
