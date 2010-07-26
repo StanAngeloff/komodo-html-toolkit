@@ -1,26 +1,37 @@
 @font-face {
-	font-family: 'Vollkorn';
-	src:         url('fonts/vollkorn.ttf') format('truetype');
+	font-family: 'Molengo';
 	font-style:  normal;
 	font-weight: normal;
+	src:         local('Molengo'), url('fonts/Molengo.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'Yanone Kaffeesatz';
+	font-style:  normal;
+	font-weight: normal;
+	src:         local('Yanone Kaffeesatz'), url('fonts/Yanone Kaffeesatz.ttf') format('truetype');
 }
 
 * {
-	font-family: Vollkorn, Georgia, Garamond, 'Palatino Linotype', Palatino, 'Book Antiqua', 'Times New Roman', times, serif;
-	margin:      0;
-	padding:     0;
+	margin:  0;
+	padding: 0;
 }
 
 html, body {
-	background: Window;
-	color:      WindowText;
-	height:     100%;
-	overflow:   hidden;
-	width:      100%;
+	background:     Window;
+	color:          WindowText;
+	height:         100%;
+	overflow:       hidden;
+	padding-bottom: 5px;
+	width:          100%;
 }
 
-body {
-	padding-bottom: 10px;
+body, button {
+	font-family: 'Molengo', Georgia, Garamond, 'Palatino Linotype', Palatino, 'Book Antiqua', 'Times New Roman', times, serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: 'Yanone Kaffeesatz', Georgia, Garamond, 'Palatino Linotype', Palatino, 'Book Antiqua', 'Times New Roman', times, serif;
 }
 
 h1 {
