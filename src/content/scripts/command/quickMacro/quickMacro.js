@@ -1,4 +1,4 @@
-(function(){
+(function() {
   var $toolkit, compileMacro, languageEl, macroBufferEl, originalIndent, originalTabWidth, originalUseTabs, partService, prefsBranch, prefsService, switchLanguage;
   xtk.include('domutils');
   $toolkit = window.opener.extensions.htmlToolkit;
@@ -86,13 +86,11 @@
     if (language === 'coffeescript') {
       macroBufferEl.scimoz.tabWidth = 2;
       macroBufferEl.scimoz.indent = 2;
-      macroBufferEl.scimoz.useTabs = false;
-      return macroBufferEl.scimoz.useTabs;
+      return (macroBufferEl.scimoz.useTabs = false);
     } else if (language === 'javascript') {
       macroBufferEl.scimoz.tabWidth = originalTabWidth;
       macroBufferEl.scimoz.indent = originalIndent;
-      macroBufferEl.scimoz.useTabs = originalUseTabs;
-      return macroBufferEl.scimoz.useTabs;
+      return (macroBufferEl.scimoz.useTabs = originalUseTabs);
     }
   };
   compileMacro = function(contents, language) {

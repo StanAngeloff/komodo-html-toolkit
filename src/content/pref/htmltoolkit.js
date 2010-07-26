@@ -1,4 +1,4 @@
-(function(){
+(function() {
   var $toolkit, eventsBag, prefsBranch, prefsService, recentKomodoWindow, windowManagerService;
   const Cc = Components.classes;
   const Ci = Components.interfaces;
@@ -39,7 +39,7 @@
         rangeEnd = {};
         for (i = 0; (0 <= selectionLength ? i < selectionLength : i > selectionLength); (0 <= selectionLength ? i += 1 : i -= 1)) {
           selection.getRangeAt(i, rangeStart, rangeEnd);
-          (_a = rangeStart.value); (_b = rangeEnd.value);
+          _a = rangeStart.value; _b = rangeEnd.value;
           for (j = _a; (_a <= _b ? j <= _b : j >= _b); (_a <= _b ? j += 1 : j -= 1)) {
             if (j >= 0) {
               selectedRows.push(j);
@@ -47,14 +47,14 @@
           }
         }
         groupedState = true;
-        (_c = selectedRows.length);
+        _c = selectedRows.length;
         for (i = 0; (0 <= _c ? i < _c : i > _c); (0 <= _c ? i += 1 : i -= 1)) {
           groupedState = groupedState && tree.view.getCellValue(selectedRows[i], {}) === 'true';
           if (!(groupedState)) {
             break;
           }
         }
-        (_d = selectedRows.length);
+        _d = selectedRows.length;
         for (i = 0; (0 <= _d ? i < _d : i > _d); (0 <= _d ? i += 1 : i -= 1)) {
           tree.view.setCellValue(selectedRows[i], {}, groupedState ? 'false' : 'true');
         }

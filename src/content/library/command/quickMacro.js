@@ -1,4 +1,4 @@
-(function(){
+(function() {
   var _, __, anchor, document, print, scimoz, session, view;
   view = ko.views.manager && ko.views.manager.currentView;
   document = view && view.document;
@@ -7,8 +7,7 @@
   _ = (__ = scimoz && scimoz.selText);
   print = function(string) {
     scimoz.insertText(scimoz.currentPos, string);
-    scimoz.anchor = scimoz.currentPos += string.length;
-    return scimoz.anchor;
+    return (scimoz.anchor = scimoz.currentPos += string.length);
   };
   _ = "contents";
   if (__ && _ !== __) {

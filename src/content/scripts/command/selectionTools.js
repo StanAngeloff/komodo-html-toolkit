@@ -1,5 +1,8 @@
 (function() {
   var TOOL_COMMANDS_GROUP, TOOL_NATIVE_MENU_ID, TOOL_ORDERING, encodingService, root;
+  var __bind = function(func, context) {
+    return function(){ return func.apply(context, arguments); };
+  };
   root = (typeof $toolkit !== "undefined" && $toolkit !== null) ? $toolkit : this;
   const Cc = Components.classes;
   const Ci = Components.interfaces;
@@ -62,8 +65,7 @@
     onChange: function(handler) {
       var _a;
       if (typeof handler !== "undefined" && handler !== null) {
-        this.changeHandler = handler;
-        return this.changeHandler;
+        return (this.changeHandler = handler);
       } else if ((typeof (_a = this.changeHandler) !== "undefined" && _a !== null)) {
         return this.changeHandler();
       }
@@ -227,38 +229,32 @@
     };
     this.registerBase = this.register;
     this.register = function() {
-      $self.manager.onChange((function(__this) {
-        return function() {
-          return __this.rebuildEditMenu();
-        };
-      })(this));
-      root.events.onLoad((function(__this) {
-        return function() {
-          var menuEl;
-          __this.rebuildEditMenu();
-          if (!__this.hasNative) {
-            __this.moveBuiltInMenuItems();
-          }
-          menuEl = document.getElementById('popup_sourcecode');
-          menuEl.addEventListener('popupshowing', __this.onMenuShowing, false);
-          return window.controllers.appendController(__this);
-        };
-      })(this));
+      $self.manager.onChange(__bind(function() {
+        return this.rebuildEditMenu();
+      }, this));
+      root.events.onLoad(__bind(function() {
+        var menuEl;
+        this.rebuildEditMenu();
+        if (!this.hasNative) {
+          this.moveBuiltInMenuItems();
+        }
+        menuEl = document.getElementById('popup_sourcecode');
+        menuEl.addEventListener('popupshowing', this.onMenuShowing, false);
+        return window.controllers.appendController(this);
+      }, this));
       return this.registerBase();
     };
     this.unregisterBase = this.unregister;
     this.unregister = function() {
-      root.events.onUnload((function(__this) {
-        return function() {
-          var menuEl;
-          menuEl = document.getElementById('popup_sourcecode');
-          menuEl.removeEventListener('popupshowing', __this.onMenuShowing, false);
-          if (!__this.hasNative) {
-            __this.restoreBuiltInMenuItems();
-          }
-          return window.controllers.removeController(__this);
-        };
-      })(this));
+      root.events.onUnload(__bind(function() {
+        var menuEl;
+        menuEl = document.getElementById('popup_sourcecode');
+        menuEl.removeEventListener('popupshowing', this.onMenuShowing, false);
+        if (!this.hasNative) {
+          this.restoreBuiltInMenuItems();
+        }
+        return window.controllers.removeController(this);
+      }, this));
       return this.unregisterBase();
     };
     this.supportsCommand = function(command) {

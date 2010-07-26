@@ -1,4 +1,4 @@
-(function(){
+(function() {
   var _a, characterToEntity, entityName, root;
   var __hasProp = Object.prototype.hasOwnProperty;
   root = (typeof $toolkit !== "undefined" && $toolkit !== null) ? $toolkit : this;

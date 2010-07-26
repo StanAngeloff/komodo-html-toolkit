@@ -1,4 +1,4 @@
-(function(){
+(function() {
   var SUBLANGUAGE_EXTRA_LIST, SUBLANGUAGE_SUPPORTED_LIST, root;
   root = (typeof $toolkit !== "undefined" && $toolkit !== null) ? $toolkit : this;
   root.include('editor');

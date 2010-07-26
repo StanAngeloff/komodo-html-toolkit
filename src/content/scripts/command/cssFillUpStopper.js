@@ -1,4 +1,4 @@
-(function(){
+(function() {
   var root;
   root = (typeof $toolkit !== "undefined" && $toolkit !== null) ? $toolkit : this;
   root.include('command.language');

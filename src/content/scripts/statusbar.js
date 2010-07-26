@@ -1,4 +1,4 @@
-(function(){
+(function() {
   var $toolkit, _a, clearEncoding, clearEverything, clearIndentation, currentView, encodingSvc, encodingsBuilt, eventHandler, eventName, events, indentationBuilt, indentationsList, lastEncodingLongName, lastEncodingName, lastEncodingPythonName, lastEncodingUseBOM, lastIndentHardTabs, lastIndentLevels, lastIndentTabWidth, lastNewlineEndings, newlineEndings, pollingTimer, restartPolling, root, startPolling, stopPolling, stopPollingAndClear;
   var __hasProp = Object.prototype.hasOwnProperty;
   root = this;
@@ -30,8 +30,7 @@
     lastEncodingLongName = null;
     lastEncodingPythonName = null;
     lastEncodingUseBOM = null;
-    lastNewlineEndings = null;
-    return lastNewlineEndings;
+    return (lastNewlineEndings = null);
   };
   clearIndentation = function() {
     var indentationWidget;
@@ -39,8 +38,7 @@
     indentationWidget.removeAttribute('label');
     lastIndentHardTabs = null;
     lastIndentLevels = null;
-    lastIndentTabWidth = null;
-    return lastIndentTabWidth;
+    return (lastIndentTabWidth = null);
   };
   clearEverything = function() {
     clearEncoding();
@@ -88,8 +86,7 @@
               indentationWidget.setAttribute('label', indentationButtonText);
               lastIndentHardTabs = newIndentHardTabs;
               lastIndentLevels = newIndentLevels;
-              lastIndentTabWidth = newIndentTabWidth;
-              return lastIndentTabWidth;
+              return (lastIndentTabWidth = newIndentTabWidth);
             }
           } else {
             return clearIndentation();
@@ -103,16 +100,14 @@
     };
     block();
     pollingTimer = setInterval(block, POLLING_INTERVAL);
-    id = pollingTimer;
-    return id;
+    return (id = pollingTimer);
   };
   stopPolling = function() {
     if (!(pollingTimer)) {
       return null;
     }
     clearInterval(pollingTimer);
-    pollingTimer = null;
-    return pollingTimer;
+    return (pollingTimer = null);
   };
   stopPollingAndClear = function() {
     stopPolling();
@@ -170,8 +165,7 @@
     if (!(view = currentView())) {
       return null;
     }
-    view.document.existing_line_endings = lastNewlineEndings;
-    return view.document.existing_line_endings;
+    return (view.document.existing_line_endings = lastNewlineEndings);
   };
   $toolkit.statusbar.updateViewEncoding = function(pythonName) {
     var applyButton, cancelButton, choice, errorCode, errorMessage, lastErrorSvc, message, newEncoding, question, view, viewEncoding, warning;

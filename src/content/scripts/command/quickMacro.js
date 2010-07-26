@@ -1,19 +1,17 @@
-(function(){
+(function() {
   var root;
+  var __bind = function(func, context) {
+    return function(){ return func.apply(context, arguments); };
+  };
   root = (typeof $toolkit !== "undefined" && $toolkit !== null) ? $toolkit : this;
   root.include('command.language');
   $self.controller = function() {
     var canChangeTriggerKeys, command, supportedLanguages, triggerKeys;
     root.command.language.controller.apply(this, [(command = 'quickMacro'), (triggerKeys = 'Ctrl+Alt+R'), (supportedLanguages = '*'), (canChangeTriggerKeys = true)]);
     this.parts = [];
-    $toolkit.events.onUnload((function(__this) {
-      var __func = function() {
-        return ko.projects.active.manager.removeItems(this.parts);
-      };
-      return (function() {
-        return __func.apply(__this, arguments);
-      });
-    })(this));
+    $toolkit.events.onUnload(__bind(function() {
+      return ko.projects.active.manager.removeItems(this.parts);
+    }, this));
     this.trigger = function(e) {
       var _a, result, scimoz, wnd;
       (ko.macros == undefined ? undefined : ko.macros.recorder == undefined ? undefined : ko.macros.recorder.mode) === 'recording' ? ko.macros.recorder.undo() : null;
