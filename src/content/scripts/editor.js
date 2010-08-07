@@ -28,7 +28,7 @@ $self.isHtmlBuffer = function(view) {
 			((languagePair.indexOf('JavaScript') >= 0 || languagePair.indexOf('CSS') >= 0 ||
 			  // Immediately before <?php blocks
 			  languagePair.indexOf('PHP') >= 0) &&
-			 ['HTML', 'HTML5'].indexOf(view.document.languageForPosition(Math.max(0, Math.max(view.scimoz.anchor, view.scimoz.currentPos) - 1)))) >= 0);
+			 ['HTML', 'HTML5'].indexOf(view.document.languageForPosition(Math.max(0, Math.max(view.scimoz.anchor, view.scimoz.currentPos) - 1))) >= 0));
 };
 
 $self.findTagBefore = function(position, scimoz) {
