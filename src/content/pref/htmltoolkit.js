@@ -73,7 +73,7 @@
           prefId = cell.getAttribute('preference');
           if (prefId.length) {
             prefEl = document.getElementById(prefId);
-            if (typeof prefEl !== "undefined" && prefEl !== null) {
+            if ((typeof prefEl !== "undefined" && prefEl !== null)) {
               preferenceName = prefEl.getAttribute('name');
               return prefsService.setCharPref(preferenceName, cell.getAttribute('value'));
             }

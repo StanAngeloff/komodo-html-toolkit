@@ -1,4 +1,4 @@
-root: $toolkit ? this
+root = $toolkit ? this
 
 `const entityToCode = { apos: 0x0027,
                         quot: 0x0022,
@@ -254,19 +254,19 @@ root: $toolkit ? this
                         hearts: 0x2665,
                         diams: 0x2666 }`
 
-characterToEntity: {}
+characterToEntity = {}
 for entityName of entityToCode
-    characterToEntity[String.fromCharCode entityToCode[entityName]]: entityName
+    characterToEntity[String.fromCharCode entityToCode[entityName]] = entityName
 
-$self.tool: ->
+$self.tool = ->
   root.command.selectionTools.tool.apply @, [
-    toolName:     'html'
-    toolOrdering: 5600
+    toolName     = 'html'
+    toolOrdering = 5600
   ]
 
-  @getSupportedTransformers: -> ['encode', 'decode']
+  @getSupportedTransformers = -> ['encode', 'decode']
 
-  @trigger: (transformer, string) ->
+  @trigger = (transformer, string) ->
     switch transformer
       when 'encode'
         return string.replace /[\u0022-\u2666]/g, (match) ->
@@ -278,5 +278,5 @@ $self.tool: ->
 
   this
 
-$self.registerAll: ->
+$self.registerAll = ->
   new $self.tool().register()

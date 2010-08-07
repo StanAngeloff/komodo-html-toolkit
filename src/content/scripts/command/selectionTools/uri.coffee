@@ -1,14 +1,14 @@
-root: $toolkit ? this
+root = $toolkit ? this
 
-$self.tool: ->
+$self.tool = ->
   root.command.selectionTools.tool.apply @, [
-    toolName:     'uri'
-    toolOrdering: 5700
+    toolName     = 'uri'
+    toolOrdering = 5700
   ]
 
-  @getSupportedTransformers: -> ['encode', 'decode']
+  @getSupportedTransformers = -> ['encode', 'decode']
 
-  @trigger: (transformer, string) ->
+  @trigger = (transformer, string) ->
     switch transformer
       when 'encode'
         return encodeURIComponent string
@@ -18,5 +18,5 @@ $self.tool: ->
 
   this
 
-$self.registerAll: ->
+$self.registerAll = ->
   new $self.tool().register()

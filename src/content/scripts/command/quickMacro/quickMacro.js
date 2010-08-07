@@ -43,7 +43,7 @@
     originalIndent = macroBufferEl.scimoz.indent;
     originalUseTabs = macroBufferEl.scimoz.useTabs;
     languageEl = document.getElementById('language');
-    languageEl.selectedItem = document.getElementById("language-" + lastMacroLanguage);
+    languageEl.selectedItem = document.getElementById(("language-" + (lastMacroLanguage)));
     switchLanguage(lastMacroLanguage);
     return macroBufferEl.scintilla.focus();
   };
@@ -97,9 +97,9 @@
     var code, templateFile, templatePath;
     templatePath = '/content/library/command/quickMacro.js';
     templateFile = $toolkit.io.getRelativeURI(templatePath, true);
-    language === 'coffeescript' ? (contents = CoffeeScript.compile(contents)) : (contents = ("(function() {\n" + contents + "\n})();"));
+    language === 'coffeescript' ? (contents = CoffeeScript.compile(contents)) : (contents = ("(function() {\n" + (contents) + "\n})();"));
     contents = contents.replace(/\s+$/, '').split(/[\r\n]+/);
-    contents[-2] = ("return " + (contents[-2]));
+    contents[contents.length - 2] = ("return " + (contents[contents.length - 2]));
     code = $toolkit.io.readEntireFile(templateFile);
     code = code.replace('"contents";', contents.join('\n'), 'g');
     return code;

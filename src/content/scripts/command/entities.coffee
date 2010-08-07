@@ -1,4 +1,4 @@
-root: $toolkit ? this
+root = $toolkit ? this
 root.include 'command.language'
 
 `const Cc = Components.classes`
@@ -267,31 +267,33 @@ entities.sort (left, right) ->
   return +1 if left.toLowerCase() > right.toLowerCase()
   return 0
 
-$self.destroy: ->
+$self.destroy = ->
   window.removeEventListener 'view_opened', $self.onViewOpened, true
 
-$self.initialize: ->
+$self.initialize = ->
   window.addEventListener 'view_opened', $self.onViewOpened, true
 
-$self.onViewOpened: (e) ->
-  view: e.originalTarget;
+$self.onViewOpened = (e) ->
+  view = e.originalTarget;
   if view and view.scimoz
     view.scimoz.registerImage ACIID_HTML_ENTITY, ko.markers.getPixmap 'chrome://htmltoolkit/skin/images/ac_html_entity.xpm'
   true
 
-$self.controller: ->
-  root.command.language.controller.apply @, [command: 'entities',
-                                             triggerKeys: '&',
-                                             supportedLanguages: ['HTML', 'HTML5'],
-                                             canChangeTriggerKeys: false]
+$self.controller = ->
+  root.command.language.controller.apply @, [
+    command              = 'entities'
+    triggerKeys          = '&'
+    supportedLanguages   = ['HTML', 'HTML5']
+    canChangeTriggerKeys = no
+  ]
 
-  @trigger: (e) ->
+  @trigger = (e) ->
     @onKeyEvent 'up', ->
-      scimoz: ko.views.manager.currentView.scimoz
+      scimoz = ko.views.manager.currentView.scimoz
       if scimoz.currentPos is scimoz.anchor and
            scimoz.currentPos > 0 and
            scimoz.getStyleAt(scimoz.currentPos - 1) is scimoz.SCE_UDL_M_ENTITY
-         lineStartPosition: scimoz.positionFromLine scimoz.lineFromPosition scimoz.currentPos
+         lineStartPosition = scimoz.positionFromLine scimoz.lineFromPosition scimoz.currentPos
          lineRange = scimoz.getTextRange lineStartPosition, scimoz.currentPos
          if /[^&]*&$/.test lineRange
            scimoz.autoCShow(1, ('&' + entity + ';?' + ACIID_HTML_ENTITY for entity in entities).join String.fromCharCode scimoz.autoCSeparator)
@@ -302,5 +304,5 @@ $self.controller: ->
 
   this
 
-$self.registerAll: ->
+$self.registerAll = ->
   new $self.controller().register()

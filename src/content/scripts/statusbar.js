@@ -80,7 +80,7 @@
               indentationButtonText = ("" + (newIndentHardTabs ? 'Tabs' : 'Soft Tabs') + ": ");
               indentationButtonText += newIndentLevels;
               if (newIndentLevels !== newIndentTabWidth) {
-                indentationButtonText += (" [" + newIndentTabWidth + "]");
+                indentationButtonText += (" [" + (newIndentTabWidth) + "]");
               }
               indentationWidget = document.getElementById('statusbar-indentation-button');
               indentationWidget.setAttribute('label', indentationButtonText);
@@ -121,8 +121,8 @@
     return startPolling(event.originalTarget);
   };
   events = {
-    'current_view_changed': restartPolling,
-    'view_closed': stopPollingAndClear
+    current_view_changed: restartPolling,
+    view_closed: stopPollingAndClear
   };
   currentView = function() {
     var view;
@@ -196,7 +196,7 @@
         errorMessage = lastErrorSvc.getLastErrorMessage();
         if (errorCode === 0) {
           message = $toolkit.l10n('htmltoolkit').formatStringFromName('internalErrorSettingTheEncoding', [view.document.displayPath, pythonName], 2);
-          return ko.dialogs.internalError(message, ("" + message + "\n\n" + errorMessage), error);
+          return ko.dialogs.internalError(message, ("" + (message) + "\n\n" + (errorMessage)), error);
         } else {
           question = $toolkit.l10n('htmltoolkit').formatStringFromName('forceEncodingConversion', [errorMessage], 1);
           choice = ko.dialogs.customButtons(question, [("&" + (applyButton = $toolkit.l10n('htmltoolkit').GetStringFromName('forceEncodingApplyButton'))), ("&" + (cancelButton = $toolkit.l10n('htmltoolkit').GetStringFromName('forceEncodingCancelButton')))], cancelButton);
@@ -208,7 +208,7 @@
               });
             } catch (error) {
               message = $toolkit.l10n('htmltoolkit').formatStringFromName('internalErrorForcingTheEncoding', [view.document.displayPath, pythonName], 2);
-              return ko.dialogs.internalError(message, ("" + message + "\n\n" + errorMessage), error);
+              return ko.dialogs.internalError(message, ("" + (message) + "\n\n" + (errorMessage)), error);
             }
           }
         }
@@ -270,7 +270,7 @@
     _b = newlineEndings;
     for (index = 0, _c = _b.length; index < _c; index++) {
       type = _b[index];
-      if (typeof lastNewlineEndings !== "undefined" && lastNewlineEndings !== null) {
+      if ((typeof lastNewlineEndings !== "undefined" && lastNewlineEndings !== null)) {
         itemsList[type].removeAttribute('disabled');
         itemsList[type].setAttribute('checked', lastNewlineEndings === index ? true : false);
       } else {
@@ -307,7 +307,7 @@
       }
       encodingsBuilt = true;
     }
-    if (typeof lastEncodingPythonName !== "undefined" && lastEncodingPythonName !== null) {
+    if ((typeof lastEncodingPythonName !== "undefined" && lastEncodingPythonName !== null)) {
       index = encodingSvc.get_encoding_index(lastEncodingPythonName);
     }
     if (index < 0) {
@@ -346,7 +346,7 @@
       }
     };
     bomEl = document.getElementById('contextmenu_encodingUseBOM');
-    if (typeof lastEncodingPythonName !== "undefined" && lastEncodingPythonName !== null) {
+    if ((typeof lastEncodingPythonName !== "undefined" && lastEncodingPythonName !== null)) {
       lastEncoding = encodingSvc.get_encoding_info(lastEncodingPythonName);
     }
     (typeof lastEncoding !== "undefined" && lastEncoding !== null) ? updateChecked(encodingsMenu) : updateDisabled(encodingsMenu);
@@ -369,7 +369,7 @@
           var levels = _c[_b];
           itemEl = document.createElementNS(XUL_NS, 'menuitem');
           itemEl.setAttribute('class', 'statusbar-label');
-          itemEl.setAttribute('id', ("contextmenu_indentation" + levels));
+          itemEl.setAttribute('id', ("contextmenu_indentation" + (levels)));
           itemEl.setAttribute('name', 'current_indentation');
           itemEl.setAttribute('label', levels);
           itemEl.setAttribute('accesskey', levels);
@@ -383,7 +383,7 @@
       }
       indentationBuilt = true;
     }
-    if (typeof lastIndentLevels !== "undefined" && lastIndentLevels !== null) {
+    if ((typeof lastIndentLevels !== "undefined" && lastIndentLevels !== null)) {
       inList = false;
       _f = indentationMenu.childNodes;
       for (_e = 0, _g = _f.length; _e < _g; _e++) {

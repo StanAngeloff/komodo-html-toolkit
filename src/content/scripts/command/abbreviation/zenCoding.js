@@ -29,7 +29,7 @@
             if (!this.getAllowedRegExp().test(rangeText)) {
               break;
             } else if (rangeStart === lineStartPosition) {
-              rangeText = (" " + rangeText);
+              rangeText = (" " + (rangeText));
               break;
             }
             rangeStart -= 1;

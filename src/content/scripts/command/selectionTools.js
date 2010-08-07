@@ -64,7 +64,7 @@
     },
     onChange: function(handler) {
       var _a;
-      if (typeof handler !== "undefined" && handler !== null) {
+      if ((typeof handler !== "undefined" && handler !== null)) {
         return (this.changeHandler = handler);
       } else if ((typeof (_a = this.changeHandler) !== "undefined" && _a !== null)) {
         return this.changeHandler();
@@ -124,7 +124,7 @@
         }
       } else {
         topMenuEl = document.getElementById('menu_selectionTools');
-        if (typeof topMenuEl !== "undefined" && topMenuEl !== null) {
+        if ((typeof topMenuEl !== "undefined" && topMenuEl !== null)) {
           topMenuEl.parentNode.removeChild(topMenuEl);
         }
         topMenuEl = document.createElementNS(XUL_NS, 'menu');
@@ -138,14 +138,14 @@
       $self.manager.tools.forEach(function(tool) {
         tool.getSupportedTransformers().forEach(function(transformer) {
           var broadcasterEl, commandAccessKey, commandDescription, commandLabel, commandName, defaultKeyBindings, existingKeyBindings, menuEl;
-          commandName = ("" + TOOL_COMMANDS_GROUP + (tool.name) + "_" + transformer);
+          commandName = ("" + (TOOL_COMMANDS_GROUP) + (tool.name) + "_" + (transformer));
           commandLabel = root.l10n('command').GetStringFromName(("selectionTools." + (tool.name) + "." + (transformer) + ".menuLabel"));
           commandAccessKey = root.l10n('command').GetStringFromName(("selectionTools." + (tool.name) + "." + (transformer) + ".menuAccessKey"));
           commandDescription = root.l10n('command').formatStringFromName('selectionTools.binding', [commandLabel], 1);
           broadcasterEl = document.createElementNS(XUL_NS, 'broadcaster');
           broadcasterEl.setAttribute('id', commandName);
-          broadcasterEl.setAttribute('key', ("key_" + commandName));
-          broadcasterEl.setAttribute('oncommand', ("ko.commands.doCommandAsync('" + commandName + "', event);"));
+          broadcasterEl.setAttribute('key', ("key_" + (commandName)));
+          broadcasterEl.setAttribute('oncommand', ("ko.commands.doCommandAsync('" + (commandName) + "', event);"));
           broadcasterEl.setAttribute('desc', commandDescription);
           globalSet.appendChild(broadcasterEl);
           try {
@@ -167,7 +167,7 @@
           }
           menuEl = document.createElementNS(XUL_NS, 'menuitem');
           menuEl.setAttribute('label', commandLabel);
-          menuEl.setAttribute('id', ("menu_selectionTools_" + (tool.name) + "_" + transformer));
+          menuEl.setAttribute('id', ("menu_selectionTools_" + (tool.name) + "_" + (transformer)));
           menuEl.setAttribute('accesskey', commandAccessKey);
           menuEl.setAttribute('observes', commandName);
           return popupEl.appendChild(menuEl);
@@ -190,16 +190,16 @@
       topMenuEl = document.getElementById(this.hasNative ? TOOL_NATIVE_MENU_ID : 'menu_selectionTools');
       isDisabled = this.canExecute(false) ? true : false;
       updateDisabled = function(node) {
-        var _b, _c, _d, _e, child;
+        var _b, _c, _d, child;
         isDisabled ? node.removeAttribute('disabled') : node.setAttribute('disabled', 'true');
         if (node.childNodes.length) {
-          _b = []; _d = node.childNodes;
-          for (_c = 0, _e = _d.length; _c < _e; _c++) {
-            child = _d[_c];
-            _b.push(updateDisabled(child));
+          _c = node.childNodes;
+          for (_b = 0, _d = _c.length; _b < _d; _b++) {
+            child = _c[_b];
+            updateDisabled(child);
           }
-          return _b;
         }
+        return null;
       };
       _b = []; _d = topMenuEl.childNodes;
       for (_c = 0, _e = _d.length; _c < _e; _c++) {

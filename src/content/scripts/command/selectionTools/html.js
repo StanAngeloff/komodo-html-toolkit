@@ -1,5 +1,5 @@
 (function() {
-  var _a, characterToEntity, entityName, root;
+  var _a, _b, characterToEntity, entityName, root;
   var __hasProp = Object.prototype.hasOwnProperty;
   root = (typeof $toolkit !== "undefined" && $toolkit !== null) ? $toolkit : this;
   const entityToCode = { apos: 0x0027,
@@ -256,9 +256,10 @@
                         hearts: 0x2665,
                         diams: 0x2666 };
   characterToEntity = {};
-  _a = entityToCode;
-  for (entityName in _a) {
-    if (!__hasProp.call(_a, entityName)) continue;
+  _b = entityToCode;
+  for (entityName in _b) {
+    if (!__hasProp.call(_b, entityName)) continue;
+    _a = _b[entityName];
     characterToEntity[String.fromCharCode(entityToCode[entityName])] = entityName;
   }
   $self.tool = function() {

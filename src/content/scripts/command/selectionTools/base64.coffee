@@ -1,14 +1,14 @@
-root: $toolkit ? this
+root = $toolkit ? this
 
-$self.tool: ->
+$self.tool = ->
   root.command.selectionTools.tool.apply @, [
-    toolName:     'base64'
-    toolOrdering: 5800
+    toolName     = 'base64'
+    toolOrdering = 5800
   ]
 
-  @getSupportedTransformers: -> ['encode', 'decode']
+  @getSupportedTransformers = -> ['encode', 'decode']
 
-  @trigger: (transformer, string) ->
+  @trigger = (transformer, string) ->
     switch transformer
       when 'encode'
         try
@@ -24,5 +24,5 @@ $self.tool: ->
 
   this
 
-$self.registerAll: ->
+$self.registerAll = ->
   new $self.tool().register()

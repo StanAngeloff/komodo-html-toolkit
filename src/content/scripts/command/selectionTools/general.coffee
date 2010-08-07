@@ -1,14 +1,14 @@
-root: $toolkit ? this
+root = $toolkit ? this
 
-$self.tool: ->
+$self.tool = ->
   root.command.selectionTools.tool.apply @, [
-    toolName:     'general'
-    toolOrdering: 5900
+    toolName     = 'general'
+    toolOrdering = 5900
   ]
 
-  @getSupportedTransformers: -> ['capitalise', 'hyphenise', 'underscorise']
+  @getSupportedTransformers = -> ['capitalise', 'hyphenise', 'underscorise']
 
-  @trigger: (transformer, string) ->
+  @trigger = (transformer, string) ->
     switch transformer
       when 'capitalise'
         return string
@@ -35,5 +35,5 @@ $self.tool: ->
 
   this
 
-$self.registerAll: ->
+$self.registerAll = ->
   new $self.tool().register()
