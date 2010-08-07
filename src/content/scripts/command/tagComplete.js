@@ -185,7 +185,7 @@ $self.controller = function() {
 							if ( ! isDocLanguage) {
 
 								var startTagCharCode = '<'.charCodeAt(0),
-									closeTagCharCode = '>'.charCodeAt(0);
+									closeTagCharCode = '>'.charCodeAt(0),
 
 									isOpenTag = function(scimoz, position, tagName) {
 										return (scimoz.getCharAt(position) === startTagCharCode &&
