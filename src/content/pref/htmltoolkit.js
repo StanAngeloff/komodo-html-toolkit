@@ -1,8 +1,7 @@
 (function() {
-  var $toolkit, eventsBag, prefsBranch, prefsService, recentKomodoWindow, windowManagerService;
   const Cc = Components.classes;
   const Ci = Components.interfaces;
-  const XUL_NS = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul';
+  const XUL_NS = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul';  var $toolkit, eventsBag, prefsBranch, prefsService, recentKomodoWindow, windowManagerService;
   windowManagerService = Cc['@mozilla.org/appshell/window-mediator;1'].getService(Ci.nsIWindowMediator);
   recentKomodoWindow = windowManagerService.getMostRecentWindow('Komodo');
   $toolkit = recentKomodoWindow.extensions.htmlToolkit;
@@ -26,12 +25,12 @@
       }), 1);
     },
     onTagCompleteGroupKeyPress: function(e) {
-      var _a, _b, _c, _d, groupedState, i, j, rangeEnd, rangeStart, selectedRows, selection, selectionLength, tree;
+      var groupedState, i, j, rangeEnd, rangeStart, selectedRows, selection, selectionLength, tree, _ref, _ref2, _ref3, _ref4;
       if (e.charCode === 32 && !e.altKey) {
         tree = document.getElementById('tag-complete-tree');
         selection = tree.view.selection;
         selectionLength = selection.getRangeCount();
-        if (!(selectionLength)) {
+        if (!selectionLength) {
           return false;
         }
         selectedRows = [];
@@ -39,23 +38,20 @@
         rangeEnd = {};
         for (i = 0; (0 <= selectionLength ? i < selectionLength : i > selectionLength); (0 <= selectionLength ? i += 1 : i -= 1)) {
           selection.getRangeAt(i, rangeStart, rangeEnd);
-          _a = rangeStart.value; _b = rangeEnd.value;
-          for (j = _a; (_a <= _b ? j <= _b : j >= _b); (_a <= _b ? j += 1 : j -= 1)) {
+          for (j = _ref = rangeStart.value, _ref2 = rangeEnd.value; (_ref <= _ref2 ? j <= _ref2 : j >= _ref2); (_ref <= _ref2 ? j += 1 : j -= 1)) {
             if (j >= 0) {
               selectedRows.push(j);
             }
           }
         }
         groupedState = true;
-        _c = selectedRows.length;
-        for (i = 0; (0 <= _c ? i < _c : i > _c); (0 <= _c ? i += 1 : i -= 1)) {
-          groupedState = groupedState && tree.view.getCellValue(selectedRows[i], {}) === 'true';
-          if (!(groupedState)) {
+        for (i = 0, _ref3 = selectedRows.length; (0 <= _ref3 ? i < _ref3 : i > _ref3); (0 <= _ref3 ? i += 1 : i -= 1)) {
+          groupedState && (groupedState = tree.view.getCellValue(selectedRows[i], {}) === 'true');
+          if (!groupedState) {
             break;
           }
         }
-        _d = selectedRows.length;
-        for (i = 0; (0 <= _d ? i < _d : i > _d); (0 <= _d ? i += 1 : i -= 1)) {
+        for (i = 0, _ref4 = selectedRows.length; (0 <= _ref4 ? i < _ref4 : i > _ref4); (0 <= _ref4 ? i += 1 : i -= 1)) {
           tree.view.setCellValue(selectedRows[i], {}, groupedState ? 'false' : 'true');
         }
         return false;
@@ -63,27 +59,19 @@
       return true;
     },
     onAccept: function() {
-      var _a, _b, _c, _d, cell, prefEl, prefId, preferenceName, tagCompleteCells, tagCompleteTree;
+      var cell, prefEl, prefId, preferenceName, tagCompleteCells, tagCompleteTree, _i, _len, _results;
       tagCompleteTree = document.getElementById('tag-complete-tree');
       tagCompleteCells = tagCompleteTree.getElementsByTagName('treecell');
-      _a = []; _c = tagCompleteCells;
-      for (_b = 0, _d = _c.length; _b < _d; _b++) {
-        cell = _c[_b];
-        _a.push((function() {
-          prefId = cell.getAttribute('preference');
-          if (prefId.length) {
-            prefEl = document.getElementById(prefId);
-            if ((typeof prefEl !== "undefined" && prefEl !== null)) {
-              preferenceName = prefEl.getAttribute('name');
-              return prefsService.setCharPref(preferenceName, cell.getAttribute('value'));
-            }
-          }
-        })());
+      _results = [];
+      for (_i = 0, _len = tagCompleteCells.length; _i < _len; _i++) {
+        cell = tagCompleteCells[_i];
+        prefId = cell.getAttribute('preference');
+        _results.push(prefId.length ? (prefEl = document.getElementById(prefId), prefEl != null ? (preferenceName = prefEl.getAttribute('name'), prefsService.setCharPref(preferenceName, cell.getAttribute('value'))) : void 0) : void 0);
       }
-      return _a;
+      return _results;
     }
   };
   $toolkit.trapExceptions(eventsBag);
   window.addEventListener('load', eventsBag.onLoad, false);
   window.addEventListener('dialogaccept', eventsBag.onAccept, false);
-})();
+}).call(this);

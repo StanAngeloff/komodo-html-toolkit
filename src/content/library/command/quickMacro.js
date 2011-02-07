@@ -1,13 +1,13 @@
 (function() {
-  var _, __, anchor, document, print, scimoz, session, view;
+  var anchor, document, print, scimoz, session, view, _, __;
   view = ko.views.manager && ko.views.manager.currentView;
   document = view && view.document;
   scimoz = view && view.scimoz;
-  session = (this.__quickMacro_session = this.__quickMacro_session || {});
-  _ = (__ = scimoz && scimoz.selText);
+  session = (this.__quickMacro_session || (this.__quickMacro_session = {}));
+  _ = __ = scimoz && scimoz.selText;
   print = function(string) {
     scimoz.insertText(scimoz.currentPos, string);
-    return (scimoz.anchor = scimoz.currentPos += string.length);
+    return scimoz.anchor = scimoz.currentPos += string.length;
   };
   _ = "contents";
   if (__ && _ !== __) {
@@ -26,4 +26,4 @@
       scimoz.endUndoAction();
     }
   }
-})();
+}).call(this);

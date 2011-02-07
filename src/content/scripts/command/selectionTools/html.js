@@ -1,7 +1,6 @@
 (function() {
-  var _a, _b, characterToEntity, entityName, root;
-  var __hasProp = Object.prototype.hasOwnProperty;
-  root = (typeof $toolkit !== "undefined" && $toolkit !== null) ? $toolkit : this;
+  var characterToEntity, entityName, root;
+  root = typeof $toolkit != "undefined" && $toolkit !== null ? $toolkit : this;
   const entityToCode = { apos: 0x0027,
                         quot: 0x0022,
                         amp: 0x0026,
@@ -256,35 +255,29 @@
                         hearts: 0x2665,
                         diams: 0x2666 };
   characterToEntity = {};
-  _b = entityToCode;
-  for (entityName in _b) {
-    if (!__hasProp.call(_b, entityName)) continue;
-    _a = _b[entityName];
+  for (entityName in entityToCode) {
     characterToEntity[String.fromCharCode(entityToCode[entityName])] = entityName;
   }
   $self.tool = function() {
     var toolName, toolOrdering;
-    root.command.selectionTools.tool.apply(this, [(toolName = 'html'), (toolOrdering = 5600)]);
+    root.command.selectionTools.tool.apply(this, [toolName = 'html', toolOrdering = 5600]);
     this.getSupportedTransformers = function() {
       return ['encode', 'decode'];
     };
     this.trigger = function(transformer, string) {
-      if (transformer === 'encode') {
-        return string.replace(/[\u0022-\u2666]/g, function(match) {
-          return match in characterToEntity ? '&' + characterToEntity[match] + ';' : match;
-        });
-      } else if (transformer === 'decode') {
-        return string.replace(/&(.+?);/g, function(match, entity) {
-          return String.fromCharCode((function() {
-            if (entity[0] !== '#') {
-              return entityToCode[entity];
-            } else if (entity[1] === 'x') {
-              return parseInt(entity.substr(2), 16);
+      switch (transformer) {
+        case 'encode':
+          return string.replace(/[\u0022-\u2666]/g, function(match) {
+            if (match in characterToEntity) {
+              return '&' + characterToEntity[match] + ';';
             } else {
-              return parseInt(entity.substr(1));
+              return match;
             }
-          })());
-        });
+          });
+        case 'decode':
+          return string.replace(/&(.+?);/g, function(match, entity) {
+            return String.fromCharCode(entity[0] !== '#' ? entityToCode[entity] : entity[1] === 'x' ? parseInt(entity.substr(2), 16) : parseInt(entity.substr(1)));
+          });
       }
       return null;
     };
@@ -293,4 +286,4 @@
   $self.registerAll = function() {
     return new $self.tool().register();
   };
-})();
+}).call(this);

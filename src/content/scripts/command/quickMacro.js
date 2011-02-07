@@ -1,20 +1,20 @@
 (function() {
   var root;
-  var __bind = function(func, context) {
-    return function(){ return func.apply(context, arguments); };
-  };
-  root = (typeof $toolkit !== "undefined" && $toolkit !== null) ? $toolkit : this;
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+  root = typeof $toolkit != "undefined" && $toolkit !== null ? $toolkit : this;
   root.include('command.language');
   $self.controller = function() {
     var canChangeTriggerKeys, command, supportedLanguages, triggerKeys;
-    root.command.language.controller.apply(this, [(command = 'quickMacro'), (triggerKeys = 'Ctrl+Alt+R'), (supportedLanguages = '*'), (canChangeTriggerKeys = true)]);
+    root.command.language.controller.apply(this, [command = 'quickMacro', triggerKeys = 'Ctrl+Alt+R', supportedLanguages = '*', canChangeTriggerKeys = true]);
     this.parts = [];
     $toolkit.events.onUnload(__bind(function() {
       return ko.projects.active.manager.removeItems(this.parts);
     }, this));
     this.trigger = function(e) {
-      var _a, result, scimoz, wnd;
-      (ko.macros == undefined ? undefined : ko.macros.recorder == undefined ? undefined : ko.macros.recorder.mode) === 'recording' ? ko.macros.recorder.undo() : null;
+      var result, scimoz, wnd, _ref, _ref2;
+      if (((_ref = ko.macros) != null ? (_ref2 = _ref.recorder) != null ? _ref2.mode : void 0 : void 0) === 'recording') {
+        ko.macros.recorder.undo();
+      }
       result = {
         part: null
       };
@@ -26,7 +26,7 @@
       } catch (e) {
         scimoz.isFocused = true;
       }
-      if ((typeof (_a = result.part) !== "undefined" && _a !== null)) {
+      if (result.part != null) {
         this.parts.push(result.part);
         return ko.projects.invokePart(result.part);
       }
@@ -36,11 +36,10 @@
     return this;
   };
   $self.registerAll = function() {
-    var _a;
-    if ((typeof (_a = ko.toolbox2) !== "undefined" && _a !== null)) {
+    if (ko.toolbox2 != null) {
       $log('Quick Macro is not compatible with Komodo 6');
       return false;
     }
     return new $self.controller().register();
   };
-})();
+}).call(this);

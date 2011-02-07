@@ -1,6 +1,6 @@
 (function() {
   var root;
-  root = (typeof $toolkit !== "undefined" && $toolkit !== null) ? $toolkit : this;
+  root = typeof $toolkit != "undefined" && $toolkit !== null ? $toolkit : this;
   root.include('command.language');
   const Cc = Components.classes;
   const Ci = Components.interfaces;
@@ -278,27 +278,32 @@
   $self.onViewOpened = function(e) {
     var view;
     view = e.originalTarget;
-    view && view.scimoz ? view.scimoz.registerImage(ACIID_HTML_ENTITY, ko.markers.getPixmap('chrome://htmltoolkit/skin/images/ac_html_entity.xpm')) : null;
+    if (view && view.scimoz) {
+      view.scimoz.registerImage(ACIID_HTML_ENTITY, ko.markers.getPixmap('chrome://htmltoolkit/skin/images/ac_html_entity.xpm'));
+    }
     return true;
   };
   $self.controller = function() {
     var canChangeTriggerKeys, command, supportedLanguages, triggerKeys;
-    root.command.language.controller.apply(this, [(command = 'entities'), (triggerKeys = '&'), (supportedLanguages = ['HTML', 'HTML5']), (canChangeTriggerKeys = false)]);
+    root.command.language.controller.apply(this, [command = 'entities', triggerKeys = '&', supportedLanguages = ['HTML', 'HTML5'], canChangeTriggerKeys = false]);
     this.trigger = function(e) {
       this.onKeyEvent('up', function() {
-        var _a, _b, _c, _d, entity, lineRange, lineStartPosition, scimoz;
+        var entity, lineRange, lineStartPosition, scimoz;
         scimoz = ko.views.manager.currentView.scimoz;
         if (scimoz.currentPos === scimoz.anchor && scimoz.currentPos > 0 && scimoz.getStyleAt(scimoz.currentPos - 1) === scimoz.SCE_UDL_M_ENTITY) {
           lineStartPosition = scimoz.positionFromLine(scimoz.lineFromPosition(scimoz.currentPos));
           lineRange = scimoz.getTextRange(lineStartPosition, scimoz.currentPos);
-          /[^&]*&$/.test(lineRange) ? scimoz.autoCShow(1, (function() {
-            _a = []; _c = entities;
-            for (_b = 0, _d = _c.length; _b < _d; _b++) {
-              entity = _c[_b];
-              _a.push('&' + entity + ';?' + ACIID_HTML_ENTITY);
-            }
-            return _a;
-          })().join(String.fromCharCode(scimoz.autoCSeparator))) : null;
+          if (/[^&]*&$/.test(lineRange)) {
+            scimoz.autoCShow(1, ((function() {
+              var _i, _len, _results;
+              _results = [];
+              for (_i = 0, _len = entities.length; _i < _len; _i++) {
+                entity = entities[_i];
+                _results.push('&' + entity + ';?' + ACIID_HTML_ENTITY);
+              }
+              return _results;
+            })()).join(String.fromCharCode(scimoz.autoCSeparator)));
+          }
         }
         return true;
       });
@@ -310,4 +315,4 @@
   $self.registerAll = function() {
     return new $self.controller().register();
   };
-})();
+}).call(this);

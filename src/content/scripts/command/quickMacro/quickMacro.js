@@ -43,7 +43,7 @@
     originalIndent = macroBufferEl.scimoz.indent;
     originalUseTabs = macroBufferEl.scimoz.useTabs;
     languageEl = document.getElementById('language');
-    languageEl.selectedItem = document.getElementById(("language-" + (lastMacroLanguage)));
+    languageEl.selectedItem = document.getElementById("language-" + lastMacroLanguage);
     switchLanguage(lastMacroLanguage);
     return macroBufferEl.scintilla.focus();
   };
@@ -83,25 +83,30 @@
     return macroBufferEl.close();
   };
   switchLanguage = function(language) {
-    if (language === 'coffeescript') {
-      macroBufferEl.scimoz.tabWidth = 2;
-      macroBufferEl.scimoz.indent = 2;
-      return (macroBufferEl.scimoz.useTabs = false);
-    } else if (language === 'javascript') {
-      macroBufferEl.scimoz.tabWidth = originalTabWidth;
-      macroBufferEl.scimoz.indent = originalIndent;
-      return (macroBufferEl.scimoz.useTabs = originalUseTabs);
+    switch (language) {
+      case 'coffeescript':
+        macroBufferEl.scimoz.tabWidth = 2;
+        macroBufferEl.scimoz.indent = 2;
+        return macroBufferEl.scimoz.useTabs = false;
+      case 'javascript':
+        macroBufferEl.scimoz.tabWidth = originalTabWidth;
+        macroBufferEl.scimoz.indent = originalIndent;
+        return macroBufferEl.scimoz.useTabs = originalUseTabs;
     }
   };
   compileMacro = function(contents, language) {
     var code, templateFile, templatePath;
     templatePath = '/content/library/command/quickMacro.js';
     templateFile = $toolkit.io.getRelativeURI(templatePath, true);
-    language === 'coffeescript' ? (contents = CoffeeScript.compile(contents)) : (contents = ("(function() {\n" + (contents) + "\n})();"));
+    if (language === 'coffeescript') {
+      contents = CoffeeScript.compile(contents);
+    } else {
+      contents = "(function() {\n" + contents + "\n})();";
+    }
     contents = contents.replace(/\s+$/, '').split(/[\r\n]+/);
-    contents[contents.length - 2] = ("return " + (contents[contents.length - 2]));
+    contents[contents.length - 2] = "return " + contents[contents.length - 2];
     code = $toolkit.io.readEntireFile(templateFile);
     code = code.replace('"contents";', contents.join('\n'), 'g');
     return code;
   };
-})();
+}).call(this);

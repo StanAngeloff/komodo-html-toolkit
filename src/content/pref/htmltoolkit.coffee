@@ -73,7 +73,6 @@ eventsBag =
         if prefEl?
           preferenceName = prefEl.getAttribute 'name'
           prefsService.setCharPref preferenceName, cell.getAttribute 'value'
-}
 
 $toolkit.trapExceptions eventsBag
 

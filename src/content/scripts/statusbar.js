@@ -1,9 +1,8 @@
 (function() {
-  var $toolkit, _a, clearEncoding, clearEverything, clearIndentation, currentView, encodingSvc, encodingsBuilt, eventHandler, eventName, events, indentationBuilt, indentationsList, lastEncodingLongName, lastEncodingName, lastEncodingPythonName, lastEncodingUseBOM, lastIndentHardTabs, lastIndentLevels, lastIndentTabWidth, lastNewlineEndings, newlineEndings, pollingTimer, restartPolling, root, startPolling, stopPolling, stopPollingAndClear;
-  var __hasProp = Object.prototype.hasOwnProperty;
+  var $toolkit, clearEncoding, clearEverything, clearIndentation, currentView, encodingSvc, encodingsBuilt, eventHandler, eventName, events, indentationBuilt, indentationsList, lastEncodingLongName, lastEncodingName, lastEncodingPythonName, lastEncodingUseBOM, lastIndentHardTabs, lastIndentLevels, lastIndentTabWidth, lastNewlineEndings, newlineEndings, pollingTimer, restartPolling, root, startPolling, stopPolling, stopPollingAndClear, _base;
   root = this;
-  root.extensions = root.extensions || {};
-  $toolkit = root.extensions.htmlToolkit = root.extensions.htmlToolkit || {};
+  root.extensions || (root.extensions = {});
+  $toolkit = (_base = root.extensions).htmlToolkit || (_base.htmlToolkit = {});
   const Cc = Components.classes;
   const Ci = Components.interfaces;
   const XUL_NS = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul';
@@ -30,7 +29,7 @@
     lastEncodingLongName = null;
     lastEncodingPythonName = null;
     lastEncodingUseBOM = null;
-    return (lastNewlineEndings = null);
+    return lastNewlineEndings = null;
   };
   clearIndentation = function() {
     var indentationWidget;
@@ -38,7 +37,7 @@
     indentationWidget.removeAttribute('label');
     lastIndentHardTabs = null;
     lastIndentLevels = null;
-    return (lastIndentTabWidth = null);
+    return lastIndentTabWidth = null;
   };
   clearEverything = function() {
     clearEncoding();
@@ -48,7 +47,7 @@
     var block, id;
     block = function() {
       var encodingButtonText, encodingWidget, indentationButtonText, indentationWidget, newEncodingLongName, newEncodingName, newEncodingPythonName, newEncodingUseBOM, newIndentHardTabs, newIndentLevels, newIndentTabWidth, newNewlineEndings;
-      if (!(typeof view === "undefined" || view == undefined ? undefined : view.document)) {
+      if (!(view != null ? view.document : void 0)) {
         return clearEverything();
       }
       try {
@@ -63,7 +62,7 @@
             if (newEncodingUseBOM) {
               encodingButtonText += '+BOM';
             }
-            encodingButtonText += (": " + (newlineEndings[newNewlineEndings]));
+            encodingButtonText += ": " + newlineEndings[newNewlineEndings];
             encodingWidget = document.getElementById('statusbar-new-encoding-button');
             encodingWidget.setAttribute('label', encodingButtonText);
             lastEncodingName = newEncodingName;
@@ -77,16 +76,16 @@
             newIndentLevels = view.scimoz.indent;
             newIndentTabWidth = view.scimoz.tabWidth;
             if (lastIndentHardTabs !== newIndentHardTabs || lastIndentLevels !== newIndentLevels || lastIndentTabWidth !== newIndentTabWidth) {
-              indentationButtonText = ("" + (newIndentHardTabs ? 'Tabs' : 'Soft Tabs') + ": ");
+              indentationButtonText = "" + (newIndentHardTabs ? 'Tabs' : 'Soft Tabs') + ": ";
               indentationButtonText += newIndentLevels;
               if (newIndentLevels !== newIndentTabWidth) {
-                indentationButtonText += (" [" + (newIndentTabWidth) + "]");
+                indentationButtonText += " [" + newIndentTabWidth + "]";
               }
               indentationWidget = document.getElementById('statusbar-indentation-button');
               indentationWidget.setAttribute('label', indentationButtonText);
               lastIndentHardTabs = newIndentHardTabs;
               lastIndentLevels = newIndentLevels;
-              return (lastIndentTabWidth = newIndentTabWidth);
+              return lastIndentTabWidth = newIndentTabWidth;
             }
           } else {
             return clearIndentation();
@@ -100,14 +99,14 @@
     };
     block();
     pollingTimer = setInterval(block, POLLING_INTERVAL);
-    return (id = pollingTimer);
+    return id = pollingTimer;
   };
   stopPolling = function() {
-    if (!(pollingTimer)) {
-      return null;
+    if (!pollingTimer) {
+      return;
     }
     clearInterval(pollingTimer);
-    return (pollingTimer = null);
+    return pollingTimer = null;
   };
   stopPollingAndClear = function() {
     stopPolling();
@@ -115,7 +114,7 @@
   };
   restartPolling = function(event) {
     if (ko.views.manager.batchMode) {
-      return null;
+      return;
     }
     stopPolling();
     return startPolling(event.originalTarget);
@@ -125,34 +124,35 @@
     view_closed: stopPollingAndClear
   };
   currentView = function() {
-    var view;
-    view = ko.views.manager == undefined ? undefined : ko.views.manager.currentView;
-    return view && view.getAttribute('type') === 'editor' && view.document && view.scimoz ? view : false;
+    var view, _ref;
+    view = (_ref = ko.views.manager) != null ? _ref.currentView : void 0;
+    if (view && view.getAttribute('type') === 'editor' && view.document && view.scimoz) {
+      return view;
+    } else {
+      return false;
+    }
   };
-  _a = events;
-  for (eventName in _a) {
-    if (!__hasProp.call(_a, eventName)) continue;
-    eventHandler = _a[eventName];
+  for (eventName in events) {
+    eventHandler = events[eventName];
     root.addEventListener(eventName, eventHandler, true);
   }
   ko.main.addWillCloseHandler(function() {
-    var _b, _c;
-    _b = []; _c = events;
-    for (eventName in _c) {
-      if (!__hasProp.call(_c, eventName)) continue;
-      eventHandler = _c[eventName];
-      _b.push(root.removeEventListener(eventName, eventHandler, true));
+    var eventHandler, eventName, _results;
+    _results = [];
+    for (eventName in events) {
+      eventHandler = events[eventName];
+      _results.push(root.removeEventListener(eventName, eventHandler, true));
     }
-    return _b;
+    return _results;
   });
-  $toolkit.statusbar = $toolkit.statusbar || {};
+  $toolkit.statusbar || ($toolkit.statusbar = {});
   $toolkit.statusbar.updateViewLineEndings = function(mode) {
     var view;
     if (lastNewlineEndings === mode) {
-      return null;
+      return;
     }
     if (!(view = currentView())) {
-      return null;
+      return;
     }
     view.document.new_line_endings = mode;
     view.document.prefs.setStringPref('endOfLine', newlineEndings[mode]);
@@ -163,20 +163,20 @@
   $toolkit.statusbar.updateViewExistingEndings = function() {
     var view;
     if (!(view = currentView())) {
-      return null;
+      return;
     }
-    return (view.document.existing_line_endings = lastNewlineEndings);
+    return view.document.existing_line_endings = lastNewlineEndings;
   };
   $toolkit.statusbar.updateViewEncoding = function(pythonName) {
     var applyButton, cancelButton, choice, errorCode, errorMessage, lastErrorSvc, message, newEncoding, question, view, viewEncoding, warning;
     if (lastEncodingPythonName === pythonName) {
-      return null;
+      return;
     }
     if (!(view = currentView())) {
-      return null;
+      return;
     }
     if (!(newEncoding = encodingSvc.get_encoding_info(pythonName))) {
-      return null;
+      return;
     }
     viewEncoding = Cc['@activestate.com/koEncoding;1'].createInstance(Ci.koIEncoding);
     viewEncoding.python_encoding_name = pythonName;
@@ -196,10 +196,10 @@
         errorMessage = lastErrorSvc.getLastErrorMessage();
         if (errorCode === 0) {
           message = $toolkit.l10n('htmltoolkit').formatStringFromName('internalErrorSettingTheEncoding', [view.document.displayPath, pythonName], 2);
-          return ko.dialogs.internalError(message, ("" + (message) + "\n\n" + (errorMessage)), error);
+          return ko.dialogs.internalError(message, "" + message + "\n\n" + errorMessage, error);
         } else {
           question = $toolkit.l10n('htmltoolkit').formatStringFromName('forceEncodingConversion', [errorMessage], 1);
-          choice = ko.dialogs.customButtons(question, [("&" + (applyButton = $toolkit.l10n('htmltoolkit').GetStringFromName('forceEncodingApplyButton'))), ("&" + (cancelButton = $toolkit.l10n('htmltoolkit').GetStringFromName('forceEncodingCancelButton')))], cancelButton);
+          choice = ko.dialogs.customButtons(question, ["&" + (applyButton = $toolkit.l10n('htmltoolkit').GetStringFromName('forceEncodingApplyButton')), "&" + (cancelButton = $toolkit.l10n('htmltoolkit').GetStringFromName('forceEncodingCancelButton'))], cancelButton);
           if (choice === applyButton) {
             try {
               view.document.forceEncodingFromEncodingName(pythonName);
@@ -208,7 +208,7 @@
               });
             } catch (error) {
               message = $toolkit.l10n('htmltoolkit').formatStringFromName('internalErrorForcingTheEncoding', [view.document.displayPath, pythonName], 2);
-              return ko.dialogs.internalError(message, ("" + (message) + "\n\n" + (errorMessage)), error);
+              return ko.dialogs.internalError(message, "" + message + "\n\n" + errorMessage, error);
             }
           }
         }
@@ -218,11 +218,11 @@
   $toolkit.statusbar.updateViewEncodingBOM = function() {
     var bomEl, useBOM, view;
     if (!(view = currentView())) {
-      return null;
+      return;
     }
     bomEl = document.getElementById('contextmenu_encodingUseBOM');
     if (lastEncodingUseBOM === (useBOM = bomEl.getAttribute('checked') === 'true')) {
-      return null;
+      return;
     }
     view.document.encoding.use_byte_order_marker = useBOM;
     view.document.isDirty = true;
@@ -233,12 +233,12 @@
   $toolkit.statusbar.updateViewIndentation = function(levels) {
     var view;
     if (levels === lastIndentLevels) {
-      return null;
+      return;
     }
     if (!(view = currentView())) {
-      return null;
+      return;
     }
-    view.scimoz.tabWidth = (view.scimoz.indent = levels);
+    view.scimoz.tabWidth = view.scimoz.indent = levels;
     view.document.prefs.setLongPref('indentWidth', levels);
     view.document.prefs.setLongPref('tabWidth', levels);
     return restartPolling({
@@ -248,10 +248,10 @@
   $toolkit.statusbar.updateViewHardTabs = function(useTabs) {
     var view;
     if (useTabs === lastIndentHardTabs) {
-      return null;
+      return;
     }
     if (!(view = currentView())) {
-      return null;
+      return;
     }
     view.scimoz.useTabs = useTabs;
     view.document.prefs.setBooleanPref('useTabs', useTabs);
@@ -260,17 +260,16 @@
     });
   };
   $toolkit.statusbar.updateLineEndingsMenu = function() {
-    var _b, _c, convertEl, index, itemsList, lineEndingsMenu, type;
+    var convertEl, index, itemsList, lineEndingsMenu, type, _len;
     lineEndingsMenu = document.getElementById('statusbar-line-endings-menu');
     itemsList = {
       LF: document.getElementById('contextmenu_lineEndingsUnix'),
       CR: document.getElementById('contextmenu_lineEndingsMac'),
       CRLF: document.getElementById('contextmenu_lineEndingsDOSWindows')
     };
-    _b = newlineEndings;
-    for (index = 0, _c = _b.length; index < _c; index++) {
-      type = _b[index];
-      if ((typeof lastNewlineEndings !== "undefined" && lastNewlineEndings !== null)) {
+    for (index = 0, _len = newlineEndings.length; index < _len; index++) {
+      type = newlineEndings[index];
+      if (lastNewlineEndings != null) {
         itemsList[type].removeAttribute('disabled');
         itemsList[type].setAttribute('checked', lastNewlineEndings === index ? true : false);
       } else {
@@ -279,35 +278,40 @@
       }
     }
     convertEl = document.getElementById('contextmenu_lineEndingsConvertExisting');
-    return (typeof lastNewlineEndings !== "undefined" && lastNewlineEndings !== null) ? convertEl.removeAttribute('disabled') : convertEl.setAttribute('disabled', true);
+    if (lastNewlineEndings != null) {
+      return convertEl.removeAttribute('disabled');
+    } else {
+      return convertEl.setAttribute('disabled', true);
+    }
   };
   $toolkit.statusbar.updateEncodingsMenu = function() {
-    var bomEl, encodingsMenu, firstChild, index, itemEl, lastEncoding, popupEl, updateChecked, updateClass, updateDisabled;
+    var bomEl, encodingsMenu, index, itemEl, lastEncoding, popupEl, updateChecked, updateClass, updateDisabled;
     encodingsMenu = document.getElementById('statusbar-encodings-menu');
-    if (!(encodingsBuilt)) {
+    if (!encodingsBuilt) {
       popupEl = ko.widgets.getEncodingPopup(encodingSvc.encoding_hierarchy, true, 'window.extensions.htmlToolkit.statusbar.updateViewEncoding(this.getAttribute("data"));');
       updateClass = function(node) {
-        var _b, _c, _d, _e, _f, child;
+        var child, _i, _len, _ref, _results;
         node.setAttribute('class', 'statusbar-label');
-        if ((typeof (_b = node.getAttribute('data')) !== "undefined" && _b !== null)) {
+        if (node.getAttribute('data') != null) {
           node.setAttribute('type', 'checkbox');
         }
         if (node.childNodes.length) {
-          _c = []; _e = node.childNodes;
-          for (_d = 0, _f = _e.length; _d < _f; _d++) {
-            child = _e[_d];
-            _c.push(updateClass(child));
+          _ref = node.childNodes;
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            child = _ref[_i];
+            _results.push(updateClass(child));
           }
-          return _c;
+          return _results;
         }
       };
       updateClass(popupEl);
       while (popupEl.childNodes.length) {
-        encodingsMenu.insertBefore(popupEl.firstChild, (firstChild = firstChild || encodingsMenu.firstChild));
+        encodingsMenu.insertBefore(popupEl.firstChild, (firstChild || (firstChild = encodingsMenu.firstChild)));
       }
       encodingsBuilt = true;
     }
-    if ((typeof lastEncodingPythonName !== "undefined" && lastEncodingPythonName !== null)) {
+    if (lastEncodingPythonName != null) {
       index = encodingSvc.get_encoding_index(lastEncodingPythonName);
     }
     if (index < 0) {
@@ -318,39 +322,49 @@
       encodingsMenu.insertBefore(itemEl, encodingsMenu.firstChild);
     }
     updateChecked = function(node) {
-      var _b, _c, _d, _e, _f, child, pythonName;
+      var child, pythonName, _i, _len, _ref, _results;
       node.removeAttribute('disabled');
-      (typeof (_b = (pythonName = node.getAttribute('data'))) !== "undefined" && _b !== null) ? node.setAttribute('checked', pythonName === lastEncodingPythonName ? true : false) : null;
+      if ((pythonName = node.getAttribute('data')) != null) {
+        node.setAttribute('checked', pythonName === lastEncodingPythonName ? true : false);
+      }
       if (node.childNodes.length) {
-        _c = []; _e = node.childNodes;
-        for (_d = 0, _f = _e.length; _d < _f; _d++) {
-          child = _e[_d];
-          _c.push(updateChecked(child));
+        _ref = node.childNodes;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          child = _ref[_i];
+          _results.push(updateChecked(child));
         }
-        return _c;
+        return _results;
       }
     };
     updateDisabled = function(node) {
-      var _b, _c, _d, _e, _f, child, pythonName;
+      var child, pythonName, _i, _len, _ref, _results;
       if (!node.childNodes.length) {
         node.setAttribute('disabled', true);
       }
-      (typeof (_b = (pythonName = node.getAttribute('data'))) !== "undefined" && _b !== null) ? node.setAttribute('checked', false) : null;
+      if ((pythonName = node.getAttribute('data')) != null) {
+        node.setAttribute('checked', false);
+      }
       if (node.childNodes.length) {
-        _c = []; _e = node.childNodes;
-        for (_d = 0, _f = _e.length; _d < _f; _d++) {
-          child = _e[_d];
-          _c.push(updateDisabled(child));
+        _ref = node.childNodes;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          child = _ref[_i];
+          _results.push(updateDisabled(child));
         }
-        return _c;
+        return _results;
       }
     };
     bomEl = document.getElementById('contextmenu_encodingUseBOM');
-    if ((typeof lastEncodingPythonName !== "undefined" && lastEncodingPythonName !== null)) {
+    if (lastEncodingPythonName != null) {
       lastEncoding = encodingSvc.get_encoding_info(lastEncodingPythonName);
     }
-    (typeof lastEncoding !== "undefined" && lastEncoding !== null) ? updateChecked(encodingsMenu) : updateDisabled(encodingsMenu);
-    if (typeof lastEncoding === "undefined" || lastEncoding == undefined ? undefined : lastEncoding.byte_order_marker) {
+    if (lastEncoding != null) {
+      updateChecked(encodingsMenu);
+    } else {
+      updateDisabled(encodingsMenu);
+    }
+    if (lastEncoding != null ? lastEncoding.byte_order_marker : void 0) {
       bomEl.removeAttribute('disabled');
       return bomEl.setAttribute('checked', lastEncodingUseBOM ? true : false);
     } else {
@@ -359,37 +373,33 @@
     }
   };
   $toolkit.statusbar.updateIndentationMenu = function() {
-    var _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, inList, indentationMenu, itemEl, levels, otherLevelEl, softTabsEl;
+    var inList, indentationMenu, itemEl, levels, otherLevelEl, softTabsEl, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _results;
     indentationMenu = document.getElementById('statusbar-indentation-menu');
-    if (!(indentationBuilt)) {
-      _c = indentationsList;
-      for (_b = 0, _d = _c.length; _b < _d; _b++) {
-        (function() {
-          var firstChild, itemEl;
-          var levels = _c[_b];
-          itemEl = document.createElementNS(XUL_NS, 'menuitem');
-          itemEl.setAttribute('class', 'statusbar-label');
-          itemEl.setAttribute('id', ("contextmenu_indentation" + (levels)));
-          itemEl.setAttribute('name', 'current_indentation');
-          itemEl.setAttribute('label', levels);
-          itemEl.setAttribute('accesskey', levels);
-          itemEl.setAttribute('type', 'checkbox');
-          itemEl.setAttribute('data-indent', levels);
-          itemEl.addEventListener('command', (function() {
-            return $toolkit.statusbar.updateViewIndentation(levels);
-          }), null);
-          return indentationMenu.insertBefore(itemEl, (firstChild = firstChild || indentationMenu.firstChild));
-        })();
+    if (!indentationBuilt) {
+      for (_i = 0, _len = indentationsList.length; _i < _len; _i++) {
+        levels = indentationsList[_i];
+        itemEl = document.createElementNS(XUL_NS, 'menuitem');
+        itemEl.setAttribute('class', 'statusbar-label');
+        itemEl.setAttribute('id', "contextmenu_indentation" + levels);
+        itemEl.setAttribute('name', 'current_indentation');
+        itemEl.setAttribute('label', levels);
+        itemEl.setAttribute('accesskey', levels);
+        itemEl.setAttribute('type', 'checkbox');
+        itemEl.setAttribute('data-indent', levels);
+        itemEl.addEventListener('command', (function() {
+          return $toolkit.statusbar.updateViewIndentation(levels);
+        }), null);
+        indentationMenu.insertBefore(itemEl, (firstChild || (firstChild = indentationMenu.firstChild)));
       }
       indentationBuilt = true;
     }
-    if ((typeof lastIndentLevels !== "undefined" && lastIndentLevels !== null)) {
+    if (lastIndentLevels != null) {
       inList = false;
-      _f = indentationMenu.childNodes;
-      for (_e = 0, _g = _f.length; _e < _g; _e++) {
-        itemEl = _f[_e];
+      _ref = indentationMenu.childNodes;
+      for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
+        itemEl = _ref[_j];
         itemEl.removeAttribute('disabled');
-        if ((typeof (_h = (levels = itemEl.getAttribute('data-indent'))) !== "undefined" && _h !== null)) {
+        if ((levels = itemEl.getAttribute('data-indent')) != null) {
           itemEl.setAttribute('checked', Number(levels) === lastIndentLevels ? (inList = true) : false);
         }
       }
@@ -398,21 +408,20 @@
       softTabsEl = document.getElementById('contextmenu_indentationSoftTabs');
       return softTabsEl.setAttribute('checked', lastIndentHardTabs ? false : true);
     } else {
-      _i = []; _k = indentationMenu.childNodes;
-      for (_j = 0, _l = _k.length; _j < _l; _j++) {
-        itemEl = _k[_j];
-        _i.push((function() {
-          itemEl.setAttribute('disabled', true);
-          return itemEl.setAttribute('checked', false);
-        })());
+      _ref2 = indentationMenu.childNodes;
+      _results = [];
+      for (_k = 0, _len3 = _ref2.length; _k < _len3; _k++) {
+        itemEl = _ref2[_k];
+        itemEl.setAttribute('disabled', true);
+        _results.push(itemEl.setAttribute('checked', false));
       }
-      return _i;
+      return _results;
     }
   };
   $toolkit.statusbar.showCustomIndentationPanel = function() {
     var panelEl, relativeEl, scaleEl, view;
     if (!(view = currentView())) {
-      return null;
+      return;
     }
     scaleEl = document.getElementById('customIndentation_scale');
     scaleEl.setAttribute('value', lastIndentLevels);
@@ -421,9 +430,9 @@
     return panelEl.openPopup(relativeEl, 'before_end', -document.getElementById('statusbar-language').boxObject.width - 10, 0);
   };
   $toolkit.statusbar.handleCustomIndentationPanelKey = function(event) {
-    var _b, panelEl, scaleEl;
-    if (!((event.DOM_VK_ENTER === (_b = event.keyCode) || event.DOM_VK_RETURN === _b))) {
-      return null;
+    var panelEl, scaleEl, _ref;
+    if ((_ref = event.keyCode) !== event.DOM_VK_ENTER && _ref !== event.DOM_VK_RETURN) {
+      return;
     }
     event.preventDefault();
     event.stopPropagation();
@@ -438,4 +447,4 @@
     return $toolkit.statusbar.updateViewHardTabs(softTabsEl.getAttribute('checked') !== 'true');
   };
   $toolkit.trapExceptions($toolkit.statusbar);
-})();
+}).call(this);

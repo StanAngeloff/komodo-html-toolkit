@@ -53,7 +53,6 @@ $self.manager =
     else if @changeHandler?
       return @changeHandler()
     null
-}
 
 root.trapExceptions $self.manager
 
