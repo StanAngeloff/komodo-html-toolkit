@@ -237,8 +237,7 @@ $self.controller = function() {
 					throw e;
 				}
 			};
-
-		if ((snippet instanceof Ci.koIPart_snippet) ||
+		if ((snippet instanceof Ci.koITool) ||
 			(typeof (snippet) === 'object' && 'snippet' === snippet.type)) {
 
 			// Allow Komodo and other extensions to process the key first
