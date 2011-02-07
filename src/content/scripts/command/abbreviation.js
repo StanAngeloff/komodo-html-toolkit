@@ -237,8 +237,10 @@ $self.controller = function() {
 					throw e;
 				}
 			};
-		if ((snippet instanceof Ci.koITool) ||
-			(typeof (snippet) === 'object' && 'snippet' === snippet.type)) {
+		if ((
+			 (('koIPart_snippet' in Ci) && snippet instanceof Ci.koIPart_snippet) ||
+			 (('koITool' in Ci) && snippet instanceof Ci.koITool && snippet.type === 'snippet')
+			 ) || (typeof (snippet) === 'object' && 'snippet' === snippet.type)) {
 
 			// Allow Komodo and other extensions to process the key first
 			window.setTimeout(function() { insert(snippet); }, 1);
