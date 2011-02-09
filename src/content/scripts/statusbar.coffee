@@ -227,7 +227,7 @@ $toolkit.statusbar.updateEncodingsMenu = ->
       node.setAttribute 'type', 'checkbox' if node.getAttribute('data')?
       updateClass(child) for child in node.childNodes if node.childNodes.length
     updateClass popupEl
-    encodingsMenu.insertBefore popupEl.firstChild, (firstChild or= encodingsMenu.firstChild) while popupEl.childNodes.length
+    encodingsMenu.insertBefore popupEl.firstChild, encodingsMenu.firstChild while popupEl.childNodes.length
     encodingsBuilt = yes
   index = encodingSvc.get_encoding_index(lastEncodingPythonName) if lastEncodingPythonName?
   if index < 0
@@ -272,7 +272,7 @@ $toolkit.statusbar.updateIndentationMenu = ->
       itemEl.setAttribute 'type', 'checkbox'
       itemEl.setAttribute 'data-indent', levels
       itemEl.addEventListener 'command', ( -> $toolkit.statusbar.updateViewIndentation levels), null
-      indentationMenu.insertBefore itemEl, (firstChild or= indentationMenu.firstChild)
+      indentationMenu.insertBefore itemEl, indentationMenu.firstChild
     indentationBuilt = yes
   if lastIndentLevels?
     inList = no

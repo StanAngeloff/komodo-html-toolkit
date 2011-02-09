@@ -307,7 +307,7 @@
       };
       updateClass(popupEl);
       while (popupEl.childNodes.length) {
-        encodingsMenu.insertBefore(popupEl.firstChild, (firstChild || (firstChild = encodingsMenu.firstChild)));
+        encodingsMenu.insertBefore(popupEl.firstChild, encodingsMenu.firstChild);
       }
       encodingsBuilt = true;
     }
@@ -389,7 +389,7 @@
         itemEl.addEventListener('command', (function() {
           return $toolkit.statusbar.updateViewIndentation(levels);
         }), null);
-        indentationMenu.insertBefore(itemEl, (firstChild || (firstChild = indentationMenu.firstChild)));
+        indentationMenu.insertBefore(itemEl, indentationMenu.firstChild);
       }
       indentationBuilt = true;
     }
