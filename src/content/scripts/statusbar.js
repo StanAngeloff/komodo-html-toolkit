@@ -373,11 +373,11 @@
     }
   };
   $toolkit.statusbar.updateIndentationMenu = function() {
-    var inList, indentationMenu, itemEl, levels, otherLevelEl, softTabsEl, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _results;
+    var inList, indentationMenu, itemEl, levels, otherLevelEl, softTabsEl, _fn, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _results;
     indentationMenu = document.getElementById('statusbar-indentation-menu');
     if (!indentationBuilt) {
-      for (_i = 0, _len = indentationsList.length; _i < _len; _i++) {
-        levels = indentationsList[_i];
+      _fn = function(levels) {
+        var itemEl;
         itemEl = document.createElementNS(XUL_NS, 'menuitem');
         itemEl.setAttribute('class', 'statusbar-label');
         itemEl.setAttribute('id', "contextmenu_indentation" + levels);
@@ -389,7 +389,11 @@
         itemEl.addEventListener('command', (function() {
           return $toolkit.statusbar.updateViewIndentation(levels);
         }), null);
-        indentationMenu.insertBefore(itemEl, indentationMenu.firstChild);
+        return indentationMenu.insertBefore(itemEl, indentationMenu.firstChild);
+      };
+      for (_i = 0, _len = indentationsList.length; _i < _len; _i++) {
+        levels = indentationsList[_i];
+        _fn(levels);
       }
       indentationBuilt = true;
     }

@@ -262,7 +262,7 @@ $toolkit.statusbar.updateEncodingsMenu = ->
 $toolkit.statusbar.updateIndentationMenu = ->
   indentationMenu = document.getElementById 'statusbar-indentation-menu'
   unless indentationBuilt
-    for levels in indentationsList
+    for levels in indentationsList then do (levels) ->
       itemEl = document.createElementNS XUL_NS, 'menuitem'
       itemEl.setAttribute 'class', 'statusbar-label'
       itemEl.setAttribute 'id', "contextmenu_indentation#{levels}"
