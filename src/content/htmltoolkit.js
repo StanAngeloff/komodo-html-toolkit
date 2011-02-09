@@ -38,7 +38,7 @@ if (typeof (extensions) === 'undefined')
 	var $toolkit = extensions.htmlToolkit || (extensions.htmlToolkit = {});
 
 	$toolkit.VERSION_MAJOR = 1.3;
-	$toolkit.VERSION_MINOR = 1.2;
+	$toolkit.VERSION_MINOR = 1.3;
 
 	$toolkit.include = function(namespace, includeOnce) {
 
